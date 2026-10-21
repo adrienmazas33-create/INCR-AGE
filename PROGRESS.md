@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : audio, lot B (pas, ambiances de nature, deux bruitages) fait, en commit local, en attente de validation (non poussé, pas de tag). Lot A validé (tag `audio-a`). Musique et menu des volumes : non commencés.**
+**État : audio, lots A et B validés et publiés (tags `audio-a`, `audio-b`). Menu des volumes et musique : prévus, non commencés.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -223,19 +223,18 @@ Voir les priorités 2 et 3 du plan artistique.
   - combat au repaire est : coups (10), grognements (6), sanglier abattu (1), butin (2), pas (7), 9 sons écartés par l'anti-empilement ;
   - tour complet à 8 compagnons : 150 s, 60 FPS, 5 replacements forcés, résultat identique au lot A (aucun effet sur le jeu) ; 681 pas joués en 150 s (environ 4,5 par seconde de marche), 17 sons écartés ;
   - aucune erreur de script ; lot A inchangé à l'octet près ;
-  - **non vérifié** : l'écoute (je ne peux pas entendre), c'est à ton test.
+  - écoute : **validée** par le porteur du projet le 22/10/2026.
 - **Non vérifié** : vrai clic de souris et toucher sur écran tactile (clics simulés seulement), sensation de contrôle à la souris ; sensations de contrôle, de caméra et de combat par un humain, clic réel dans le panneau (achats testés par commande), toucher sur écran tactile, écran 120/144 Hz, plein écran.
 
 ## En cours
 
-- **Audio, lot B : pas et ambiances** (section 3 de `docs/ROADMAP.md`), en attente de validation :
+- **Audio, lot B : pas et ambiances** (section 3 de `docs/ROADMAP.md`), validé le 22/10/2026 et publié (tag `audio-b`) :
   - pas du héros selon le sol (herbe, terre, planches du pont, roche du plateau et des escaliers), un tous les 21 pixels parcourus, discrets ;
   - ambiance de prairie (vent doux et oiseaux épars, boucle de 12 s) partout, en fondu au lancement ;
   - murmure de l'eau (boucle de 6 s) qui monte à moins de 5 cases d'une rivière ou du lac ;
   - sanglier abattu (dernier grognement et chute) ; évolution du camp (trois coups de tambour et un accord) ;
   - fichiers : `scripts/world/ambience.gd` (ajouté par `main.gd`), sons ajoutés à `tools/generate_sfx.gd` (licences : `assets/audio/README.md`) ;
   - aucun changement de gameplay.
-  - Commit local seulement. Après validation : tag `audio-b` et push.
 - **Audio, lot A : premiers bruitages** (section 3 de `docs/ROADMAP.md`), validé le 22/10/2026 et publié (tag `audio-a`) :
   - autoload `AudioManager` (`scripts/autoload/audio_manager.gd`) : bus Music, SFX et Ambience créés au lancement, volumes séparés (0 à 1) et coupure par catégorie, enregistrés dans `user://settings.cfg`, à part de la sauvegarde ; pas encore de menu pour les régler ;
   - bruitages originaux synthétisés par `tools/generate_sfx.gd` (licences : `assets/audio/README.md`) : coup sur un ennemi, ramassage du butin, achat d'amélioration (arpège de marimba), grognement du sanglier avant sa charge, crépitement du feu en boucle (bus Ambiance, audible près du camp) ;
@@ -278,7 +277,7 @@ Voir les priorités 2 et 3 du plan artistique.
 ## Prochaines étapes
 
 1. **Feuille de route `docs/ROADMAP.md`**, ordre revu le 22/10/2026 (rien de tout cela n'est développé) :
-   1. ambiance sonore : lot A validé (tag `audio-a`), lot B (pas, ambiances) fait, en attente de validation ; ensuite menu des volumes et musique rétro originale ;
+   1. ambiance sonore : lot A validé (tag `audio-a`), lot B (pas, ambiances) validé (tag `audio-b`) ; ensuite menu des volumes et musique rétro originale ;
    2. art du monde jouable : d'abord une zone témoin soignée autour du campement, en partant de vrais assets pixel art ;
    3. comportement plus organique des troupes ;
    4. carte du monde et mini-carte, plus tard.
@@ -296,12 +295,12 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ### 1. Où en est-on
 
-- Dépôt : https://github.com/adrienmazas33-create/INCR-AGE, branche `main`. Chaque lot validé porte un tag : `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`, `art-pass-1`, `camp-compass`, `mouse-move`, `hero-id`, `audio-a`.
+- Dépôt : https://github.com/adrienmazas33-create/INCR-AGE, branche `main`. Chaque lot validé porte un tag : `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`, `art-pass-1`, `camp-compass`, `mouse-move`, `hero-id`, `audio-a`, `audio-b`.
 - Copie locale : `C:\Users\Adrien\OneDrive\Bureau\INCR-AGE`. Identité Git définie **uniquement pour ce dépôt** (`user.name` « Adrien »).
 - Bible créative : `Bible_creative_Jeu_incremental_2D_V01.md` / `.docx`, dans les Téléchargements de l'utilisateur, **hors dépôt**.
 - **Chantier artistique** : étape 1 et passe visuelle 1 faites et validées (tag `art-pass-1`). Prochaine étape, sur demande : priorité 2 de `docs/ART_DIRECTION_PLAN.md`. Ne pas commencer d'autre phase sans demande explicite.
 - **Indicateur du campement** : validé et publié (tag `camp-compass`).
-- **Feuille de route** `docs/ROADMAP.md` : déplacement à la souris (**fait et validé**, tag `mouse-move`) ; identification du héros (**faite et validée**, tag `hero-id`). Audio : lot A **fait et validé** (tag `audio-a`), lot B **fait, commit local en attente de validation**. Ensuite, **prévus et non développés** : menu des volumes, musique, art du monde (zone témoin au camp), troupes organiques, carte du monde ; amélioration VITESSE reportée.
+- **Feuille de route** `docs/ROADMAP.md` : déplacement à la souris (**fait et validé**, tag `mouse-move`) ; identification du héros (**faite et validée**, tag `hero-id`). Audio : lot A **fait et validé** (tag `audio-a`), lot B **fait et validé** (tag `audio-b`). Ensuite, **prévus et non développés** : menu des volumes, musique, art du monde (zone témoin au camp), troupes organiques, carte du monde ; amélioration VITESSE reportée.
 
 ### 2. Méthode de travail attendue
 
