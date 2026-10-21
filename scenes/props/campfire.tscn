@@ -20,7 +20,7 @@ script = ExtResource("1_script")
 
 [node name="Glow" type="Sprite2D" parent="."]
 material = SubResource("add_blend")
-position = Vector2(0, -8)
+position = Vector2(0, -1)
 texture = ExtResource("3_glow")
 
 [node name="Flames" type="Sprite2D" parent="."]

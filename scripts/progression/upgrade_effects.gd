@@ -35,6 +35,8 @@ func _process(delta: float) -> void:
 func _on_bought(id: String, _level: int) -> void:
 	var members: Array = [_party.hero]
 	members.append_array(_party.followers)
+	# Touche épique : brefs rayons dorés autour du feu à chaque achat.
+	CombatFx.rays(_camp + Vector2(0, -10), 0.8)
 	match id:
 		"recruit":
 			var at := _camp + Vector2(randf_range(-16.0, 16.0), 24.0)

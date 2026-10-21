@@ -21,11 +21,9 @@ var _veil := ColorRect.new()
 
 func _ready() -> void:
 	layer = 10
-	var back := ColorRect.new()
-	back.color = Color(0.07, 0.05, 0.05, 0.45)
-	back.position = Vector2(-44, -7)
-	back.size = Vector2(46, ROWS.size() * ROW_HEIGHT + 2)
-	back.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var back := UiFrame.new()
+	back.position = Vector2(-51, -11)
+	back.size = Vector2(54, ROWS.size() * ROW_HEIGHT + 9)
 	_panel.add_child(back)
 	for i in ROWS.size():
 		var icon := Sprite2D.new()
@@ -53,16 +51,15 @@ func _ready() -> void:
 ## Bandeau d'annonce en haut de l'écran (évolution du campement) : apparaît, tient, s'efface.
 func announce(text: String) -> void:
 	var band := Node2D.new()
-	var back := ColorRect.new()
+	var back := UiFrame.new()
 	var label := PixelText.new()
 	label.text = text
 	label.scale = Vector2(2, 2)
 	label.modulate = GAIN_COLOR
 	var width := label.text_width() * 2.0 + 24.0
-	back.color = Color(0.07, 0.05, 0.05, 0.6)
-	back.size = Vector2(width, 24)
-	back.position = Vector2(-width * 0.5, -12)
-	back.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	back.size = Vector2(width, 26)
+	back.position = Vector2(roundf(-width * 0.5), -13)
 	band.add_child(back)
 	band.add_child(label)
 	band.position = Vector2(roundf(get_viewport().get_visible_rect().size.x * 0.5), 46)

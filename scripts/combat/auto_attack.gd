@@ -32,7 +32,7 @@ func try_attack(target: Combatant) -> void:
 	_windup = unit.stats.attack_windup
 	var dir := (target.global_position - unit.global_position).normalized()
 	unit.lunge(dir)
-	CombatFx.slash(unit.global_position + Vector2(0, -10) + dir * 8.0, dir)
+	CombatFx.slash(unit.global_position + Vector2(0, -10) + dir * 8.0, dir, CombatFx.HERO_TINT if unit.is_in_group(&"hero") else Color.WHITE)
 
 
 func _physics_process(delta: float) -> void:

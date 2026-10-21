@@ -6,5 +6,7 @@ uniform vec3 flash_color = vec3(1.0);
 
 void fragment() {
 	vec4 c = texture(TEXTURE, UV) * COLOR;
-	COLOR = vec4(mix(c.rgb, flash_color, flash), c.a);
+	// Les pixels sombres (contours) restent sombres : la silhouette reste lisible sous le flash.
+	float lum = dot(c.rgb, vec3(0.299, 0.587, 0.114));
+	COLOR = vec4(mix(c.rgb, flash_color, flash * smoothstep(0.12, 0.32, lum)), c.a);
 }

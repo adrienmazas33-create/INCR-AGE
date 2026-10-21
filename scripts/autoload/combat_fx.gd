@@ -1,6 +1,6 @@
 extends Node
 ## Retours du combat, appelables de partout : arcs de coup, étincelles, poussière, chiffres de dégâts,
-## micro-pause d'impact et secousse de caméra. Réglages dans GameSettings.
+## micro-pause d'impact, secousse de caméra, rayons et éclat des moments forts. Réglages dans GameSettings.
 
 const ONE_SHOT := preload("res://scenes/fx/one_shot_fx.gd")
 const DAMAGE_NUMBER := preload("res://scenes/fx/damage_number.gd")
@@ -9,6 +9,10 @@ const RING := preload("res://scenes/fx/ring_fx.gd")
 const SLASH := "res://assets/art/fx/slash.png"
 const SPARK := "res://assets/art/fx/spark.png"
 const PUFF := "res://assets/art/fx/puff.png"
+const POOF := "res://assets/art/fx/poof.png"
+const RAYS := "res://assets/art/fx/rays.png"
+## Teinte de l'arc de coup du héros (accent or de la direction artistique).
+const HERO_TINT := Color8(255, 210, 110)
 
 ## Couche d'effets du monde (au-dessus des personnages) et caméra, fournies par la scène principale.
 var layer: Node2D
@@ -18,14 +22,15 @@ var _stop_token := 0
 
 
 ## Arc du geste, orienté selon l'une des 8 directions (une rotation libre abîmerait le pixel art).
-func slash(pos: Vector2, dir: Vector2) -> void:
+func slash(pos: Vector2, dir: Vector2, tint := Color.WHITE) -> void:
 	var fx := _spawn(SLASH, 3, 20.0, pos)
 	if fx:
 		fx.rotation = snappedf(dir.angle(), PI / 4.0)
+		fx.modulate = tint
 
 
 func impact(pos: Vector2, by_hero: bool, kill: bool) -> void:
-	_spawn(SPARK, 3, 24.0, pos)
+	_spawn(SPARK, 4, 28.0, pos)
 	if kill:
 		hit_stop(0.07)
 		shake(2.0)
@@ -35,12 +40,54 @@ func impact(pos: Vector2, by_hero: bool, kill: bool) -> void:
 
 ## Coup reçu par le groupe : plus marqué quand c'est le héros.
 func party_hit(pos: Vector2, is_hero: bool) -> void:
-	_spawn(SPARK, 3, 24.0, pos)
+	_spawn(SPARK, 4, 28.0, pos)
 	if is_hero:
 		hit_stop(0.05)
 		shake(3.0)
 	else:
 		shake(1.0)
+
+
+## Nuage de mort d'un ennemi.
+func poof(pos: Vector2) -> void:
+	_spawn(POOF, 5, 14.0, pos)
+
+
+## Rayons de lumière qui s'ouvrent, tournent un peu et s'effacent (moments forts, moins d'une seconde).
+func rays(pos: Vector2, size := 1.0) -> void:
+	if layer == null:
+		return
+	var fx := Sprite2D.new()
+	fx.texture = load(RAYS)
+	fx.position = pos
+	fx.z_index = 4
+	var mat := CanvasItemMaterial.new()
+	mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	fx.material = mat
+	fx.scale = Vector2.ONE * size * 0.5
+	layer.add_child(fx)
+	var tween := fx.create_tween().set_parallel()
+	tween.tween_property(fx, "scale", Vector2.ONE * size, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(fx, "rotation", 0.5, 0.9)
+	tween.tween_property(fx, "modulate:a", 0.0, 0.5).set_delay(0.4)
+	tween.chain().tween_callback(fx.queue_free)
+
+
+## Bref éclat lumineux de tout l'écran (changement de stade du camp).
+func flash_screen(strength := 0.22) -> void:
+	if not GameSettings.screen_shake:
+		return
+	var canvas := CanvasLayer.new()
+	canvas.layer = 20
+	var rect := ColorRect.new()
+	rect.color = Color(1.0, 0.95, 0.8, strength)
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	canvas.add_child(rect)
+	add_child(canvas)
+	var tween := rect.create_tween()
+	tween.tween_property(rect, "color:a", 0.0, 0.45)
+	tween.tween_callback(canvas.queue_free)
 
 
 func puff(pos: Vector2) -> void:

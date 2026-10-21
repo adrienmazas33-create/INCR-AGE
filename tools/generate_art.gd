@@ -523,79 +523,100 @@ func _highland(c: Color) -> Color:
 	return c.lerp(Color8(196, 210, 112), 0.2)
 
 
-# --- Héros -----------------------------------------------------------------
-# Gabarits 16 x 23 sans contour (ajouté automatiquement). Bras dessinés à part pour le balancement.
+# --- Personnages (héros, compagnons, villageois) ------------------------------
+# Proportions plus naturelles (direction artistique, passe 1) : environ 25 px de haut, tête d'environ
+# un tiers. Gabarits 16 x 18 (haut du corps) + 7 rangées de jambes ; bras, cape et arme dessinés à
+# part pour suivre le balancement. Lettres : h/H cheveux, s/S peau, e œil, m bouche, d barbe,
+# n bandeau, f/F/g fourrure, r ceinture, k bandes aux pieds, c/C/q cape. Contour sélectif ajouté ensuite.
 
-const HERO_DOWN := [
-	"................",
-	".....hhHHhh.....",
-	"...hhHHHhhhhh...",
-	"..hhHHhhhhhhhh..",
-	"..hHhhhhhhhhhh..",
-	"..hhhsssssshhh..",
-	"..hhssssssssSh..",
-	"..hssessssesSh..",
-	"..hssessssesSh..",
-	"..hssssSSsssSh..",
-	"..hhshhhhhhshh..",
-	"...hhhhhhhhhh...",
-	"....ffhhhhff....",
-	"....gfhhhhfF....",
-	"....gffhhffF....",
-	"....gfffffFF....",
-	"....ffgfffFF....",
-	"....rrrrrrrr....",
-	"....fFfFfFfF....",
+const BODY_DOWN := [
+	"......hHHhh.....",
+	".....hHHHhhh....",
+	"....hhHhhhhhh...",
+	"....hhhsssshh...",
+	"....hhsesseSh...",
+	"....hhsssSsSh...",
+	"....hhdsmmsdh...",
+	".....hddddddh...",
+	"......ddddd.....",
+	".....sSfffFF....",
+	"....sSgffffFF...",
+	"....SgfffffFF...",
+	"....gffffffFF...",
+	"....gfffffFFF...",
+	"....gffgfffFF...",
+	"....rrrrrrrrr...",
+	"....fFfffFffF...",
+	".....F.fF.Ff....",
 ]
-const HERO_UP := [
-	"................",
-	".....hhHHhh.....",
-	"...hhHHHhhhhh...",
-	"..hhHHhhhhhhhh..",
-	"..hHhhhhhhhhhh..",
-	"..hhHhhhhhhhhh..",
-	"..hhhhhhhhhhhh..",
-	"..hhhHhhhhhhhh..",
-	"..hhhhhhhhhhhh..",
-	"..hhhhhhhhhhhh..",
-	"...hhhhhhhhhh...",
-	"....hhhhhhhh....",
-	"....ffhhhhff....",
-	"....gffhhffF....",
-	"....gfffffFF....",
-	"....gfffffFF....",
-	"....ffgfffFF....",
-	"....rrrrrrrr....",
-	"....fFfFfFfF....",
+const BODY_UP := [
+	"......hHHhh.....",
+	".....hHHHhhh....",
+	"....hhHhhhhhh...",
+	"....hhhHhhhhh...",
+	"....hHhhhhhhh...",
+	"....hhhhhHhhh...",
+	"....hhhhhhhhh...",
+	".....hhhhhhh....",
+	"......hhhhh.....",
+	".....gffffFF....",
+	"....gfffffFFF...",
+	"....gfffffFFF...",
+	"....gffgffFFF...",
+	"....gfffffFFF...",
+	"....gffffgFFF...",
+	"....rrrrrrrrr...",
+	"....fFfffFffF...",
+	".....F.fF.Ff....",
 ]
-const HERO_SIDE := [
-	"................",
-	"....hhHHhh......",
-	"...hhHHHhhhh....",
-	"..hhHHhhhhhhh...",
-	"..hhhhhhhhhhhh..",
-	"..hhhhhhsssss...",
-	"..hhhhhsssssss..",
-	"..hhhhSssssess..",
-	"..hhhhSssssesss.",
-	"..hhhhhsssssSs..",
-	"...hhhhhshhhh...",
-	"....hhhhhhhh....",
-	".....ffhhhhf....",
-	".....gfffhhf....",
-	".....gfffffF....",
-	".....gffFffF....",
-	".....ffffFFF....",
-	".....rrrrrrr....",
-	".....fFfFfFf....",
+const BODY_SIDE := [
+	".....hHHh.......",
+	"....hHHHhhh.....",
+	"...hhHhhhhhh....",
+	"...hhhhhssss....",
+	"...hhhhsssess...",
+	"...hhhSsssssS...",
+	"...hhhhsdddmd...",
+	"....hhhddddd....",
+	".......dddd.....",
+	".....gfsSfF.....",
+	".....gffsfF.....",
+	".....gfffsF.....",
+	".....gffffF.....",
+	".....gfgffF.....",
+	".....gffffF.....",
+	".....rrrrrr.....",
+	".....fFfffF.....",
+	".....F.fF.f.....",
 ]
-const LEGS_FRONT_IDLE := [".....sS..sS.....", ".....sS..sS.....", ".....sS..sS.....", "....kkk..kkk...."]
-const LEGS_FRONT_L := [".....sS..sS.....", ".....sS..sS.....", "....kkk..sS.....", ".........kkk...."]
-const LEGS_FRONT_R := [".....sS..sS.....", ".....sS..sS.....", ".....sS..kkk....", "....kkk........."]
-const LEGS_SIDE_IDLE := [".......sS.......", ".......sS.......", ".......sS.......", ".......kkk......"]
-const LEGS_SIDE_STRIDE := ["......sS.sS.....", ".....sS...sS....", ".....sS....sS...", "....kkk....kkk.."]
-const LEGS_SIDE_STRIDE2 := ["......Ss.Ss.....", ".....Ss...Ss....", ".....Ss....Ss...", "....kkk....kkk.."]
+## Visage sans barbe : rangées 6 à 8 remplacées, par vue (le dos n'en a pas besoin).
+const SHAVEN := {
+	0: {6: "....hhssmmsSh...", 7: ".....hsSssSh....", 8: ".......sS......."},
+	2: {6: "...hhhhssssmS...", 7: "....hhhsssS.....", 8: ".......sS......."},
+}
+## Jambes (7 rangées) : repos, pas gauche, pas droit (face et dos) ; profil : repos et deux foulées.
+const LEGS_IDLE := [".....sS...sS....", ".....sS...sS....", ".....sS...sS....", ".....sS...sS....",
+	".....sS...sS....", ".....sS...sS....", "....kkk...kkk..."]
+const LEGS_LEFT := [".....sS...sS....", ".....sS...sS....", ".....sS...sS....", ".....sS...sS....",
+	"....kkk...sS....", "..........sS....", "..........kkk..."]
+const LEGS_RIGHT := [".....sS...sS....", ".....sS...sS....", ".....sS...sS....", ".....sS...sS....",
+	".....sS...kkk...", ".....sS.........", "....kkk........."]
+const LEGS_SIDE := [".......sS.......", ".......sS.......", ".......sS.......", ".......sS.......",
+	".......sS.......", ".......sS.......", ".......kkk......"]
+const LEGS_STRIDE := ["......sS.sS.....", "......sS.sS.....", ".....sS...sS....", ".....sS...sS....",
+	"....sS.....sS...", "....sS.....sS...", "...kkk.....kkk.."]
+const LEGS_STRIDE2 := ["......Ss.Ss.....", "......Ss.Ss.....", ".....Ss...Ss....", ".....Ss...Ss....",
+	"....Ss.....Ss...", "....Ss.....Ss...", "...kkk.....kkk.."]
+## Cape du héros (rangées 9 à 17) : col sur les épaules, pans derrière les bras ; grande de dos.
+const CAPE_DOWN := ["...ccC.....Ccc..", "..cccCq...qCccc.", "..cC.........Cc.", "..cC.........Cc.", "..Cq.........qC.",
+	"...C.........C.."]
+const CAPE_UP := ["...cccCcccccC...", "...ccqcccCccC...", "...cccccqcccC...", "...cCcccccccC...",
+	"...ccccqcccCC...", "...cccccccccC...", "...cCcccqcccC...", "...ccccccccCC...", "...c.cC.c.cC.C.."]
+const CAPE_SIDE := ["...ccc..........", "..ccC...........", "..cCq...........", "..cCC...........",
+	"..ccC...........", "..cqC...........", "...cC...........", "...c............"]
 
+## Peau de bête dorée : l'accent or réservé au héros.
+const HERO_CAPE := {"c": Color8(228, 178, 84), "C": Color8(176, 124, 52), "q": Color8(118, 78, 36)}
 
 ## Alliés : couleurs remplacées sur la palette du héros, sans barbe (« jeune ») ou avec bandeau.
 const FOLLOWERS := [
@@ -619,101 +640,176 @@ const FOLLOWERS := [
 		"f": Color8(106, 128, 68), "F": Color8(76, 96, 48), "g": Color8(138, 162, 92)}, "beard": false, "band": true},
 ]
 const BAND := Color8(186, 58, 48)
-## Villageois du campement (phase 3B) : tuniques claires, sans barbe.
+## Villageois du campement (phase 3B) : tuniques claires, sans barbe, sans arme.
 const VILLAGERS := [
 	{"h": Color8(60, 40, 30), "H": Color8(98, 68, 48), "f": Color8(214, 196, 158), "F": Color8(164, 146, 112), "g": Color8(236, 222, 190)},
 	{"h": Color8(176, 110, 56), "H": Color8(214, 150, 86), "f": Color8(150, 74, 56), "F": Color8(108, 50, 38), "g": Color8(184, 104, 80)},
 ]
+const CLUB_WOOD := [Color8(150, 100, 58), Color8(98, 62, 36)]
+const CLUB_STONE := [Color8(196, 186, 170), Color8(140, 128, 120), Color8(92, 82, 82)]
+const SPEAR_TIP := [Color8(210, 214, 222), Color8(140, 146, 160)]
 
 
 func _gen_hero() -> void:
-	_save(_character_sheet(HERO_COLORS, true, false), "hero.png")
+	var hero := HERO_COLORS.duplicate()
+	hero.merge(HERO_CAPE, true)
+	_save(_character_sheet(hero, true, false, "club", true), "hero.png")
 	for i in FOLLOWERS.size():
 		var v: Dictionary = FOLLOWERS[i]
 		var colors := HERO_COLORS.duplicate()
 		colors.merge(v["colors"], true)
-		colors["b"] = BAND
-		_save(_character_sheet(colors, v["beard"], v["band"]), "follower_%d.png" % i)
+		_save(_character_sheet(colors, v["beard"], v["band"], "spear", false), "follower_%d.png" % i)
 	for i in VILLAGERS.size():
 		var colors := HERO_COLORS.duplicate()
 		colors.merge(VILLAGERS[i], true)
-		_save(_character_sheet(colors, false, false), "villager_%d.png" % i)
+		_save(_character_sheet(colors, false, false, "", false), "villager_%d.png" % i)
 
 
 ## Planche 6 x 3 : colonnes repos 0-1, marche 2-5 ; lignes face, dos, profil (vers la droite).
-func _character_sheet(colors: Dictionary, beard: bool, band: bool) -> Image:
+## weapon : "club" (massue du héros), "spear" (lance des compagnons) ou "" ; cape : héros seulement.
+func _character_sheet(colors: Dictionary, beard: bool, band: bool, weapon: String, cape: bool) -> Image:
+	colors = colors.duplicate()
+	colors["d"] = colors["h"]
+	colors["n"] = BAND
+	colors["m"] = Color8(120, 52, 46)
 	var img := _img(32 * 6, 32 * 3)
 	var bob := [0, 1, 0, -1, 0, -1]
 	for row in 3:
-		var body := _variant_rows([HERO_DOWN, HERO_UP, HERO_SIDE][row], row, beard, band)
+		var body := _body_rows(row, beard, band)
 		for col in 6:
 			var legs: Array
 			var arm_l := 0
 			var arm_r := 0
 			var arm_dx := 0
 			if row < 2:
-				legs = [LEGS_FRONT_IDLE, LEGS_FRONT_IDLE, LEGS_FRONT_L, LEGS_FRONT_IDLE, LEGS_FRONT_R, LEGS_FRONT_IDLE][col]
+				legs = [LEGS_IDLE, LEGS_IDLE, LEGS_LEFT, LEGS_IDLE, LEGS_RIGHT, LEGS_IDLE][col]
 				arm_l = [0, 1, 0, 0, 1, 0][col]
 				arm_r = [0, 1, 1, 0, 0, 0][col]
 			else:
-				legs = [LEGS_SIDE_IDLE, LEGS_SIDE_IDLE, LEGS_SIDE_STRIDE, LEGS_SIDE_IDLE, LEGS_SIDE_STRIDE2, LEGS_SIDE_IDLE][col]
+				legs = [LEGS_SIDE, LEGS_SIDE, LEGS_STRIDE, LEGS_SIDE, LEGS_STRIDE2, LEGS_SIDE][col]
 				arm_dx = [0, 0, -1, 0, 1, 0][col]
 				arm_l = 1 if col == 1 else 0
 			var frame := _img(32, 32)
-			var o := Vector2i(8, 8)
-			# Jambes (avec une rangée de hanche cachée sous la tunique).
-			_stamp(frame, [legs[0]], o + Vector2i(0, 18), colors)
-			_stamp(frame, legs, o + Vector2i(0, 19), colors)
+			var o := Vector2i(8, 6)
 			var up := o + Vector2i(0, bob[col])
-			if row < 2:
-				_arm(frame, up + Vector2i(2, 12 + arm_l), false, colors)
-				_arm(frame, up + Vector2i(12, 12 + arm_r), true, colors)
+			# Ordre de dessin : dos (cape, arme côté dos), jambes, corps, bras, arme tenue devant.
+			if cape and row == 2:
+				_stamp(frame, CAPE_SIDE, up + Vector2i(0, 9), colors)
+			if row == 1 and weapon != "":
+				_weapon(frame, weapon, row, up + Vector2i(2, 15 + arm_r))
+			_stamp(frame, [legs[0]], o + Vector2i(0, 17), colors)
+			_stamp(frame, legs, o + Vector2i(0, 18), colors)
 			_stamp(frame, body, up, colors)
-			if row == 2:
-				_arm(frame, up + Vector2i(7 + arm_dx, 12 + arm_l), false, colors)
-			_outline(frame, OUTLINE)
+			if cape and row == 0:
+				_stamp(frame, CAPE_DOWN, up + Vector2i(0, 8), colors)
+			if cape and row == 1:
+				_stamp(frame, CAPE_UP, up + Vector2i(0, 9), colors)
+			if row < 2:
+				_arm(frame, up + Vector2i(2, 10 + arm_l), false, colors)
+				_arm(frame, up + Vector2i(13, 10 + arm_r), true, colors)
+				if row == 0 and weapon != "":
+					_weapon(frame, weapon, row, up + Vector2i(14, 16 + arm_r))
+			else:
+				_arm(frame, up + Vector2i(7 + arm_dx, 10 + arm_l), false, colors)
+				if weapon != "":
+					_weapon(frame, weapon, row, up + Vector2i(8 + arm_dx, 16 + arm_l))
+			_outline_tinted(frame)
 			img.blit_rect(frame, Rect2i(0, 0, 32, 32), Vector2i(col * 32, row * 32))
 	return img
 
 
-## Variantes de gabarit : menton rasé (rangées 10-11 en peau, poitrine sans barbe) et bandeau (rangée 4).
-func _variant_rows(rows: Array, view: int, beard: bool, band: bool) -> Array:
-	var out := []
-	for y in rows.size():
-		var line: String = rows[y]
-		if band and y == 4:
-			line = line.replace("h", "b").replace("H", "b")
-		if not beard and view != 1:
-			# Colonnes du visage par vue : [rangée 10, rangée 11, poitrine].
-			var spans: Array = [[[4, 11], [5, 10], [5, 10]], [], [[8, 12], [8, 11], [7, 10]]][view]
-			var span: Array = []
-			var to := "s"
-			if y == 10 or y == 11:
-				span = spans[y - 10]
-			elif y >= 12 and y <= 14:
-				span = spans[2]
-				to = "f"
-			for x in range(span[0], span[1] + 1) if not span.is_empty() else []:
-				if line[x] == "h":
-					line = line.substr(0, x) + to + line.substr(x + 1)
-		out.append(line)
-	return out
+func _body_rows(view: int, beard: bool, band: bool) -> Array:
+	var rows: Array = [BODY_DOWN, BODY_UP, BODY_SIDE][view].duplicate()
+	if not beard and SHAVEN.has(view):
+		for y in SHAVEN[view]:
+			rows[y] = SHAVEN[view][y]
+	if band:
+		rows[2] = rows[2].replace("h", "n").replace("H", "n")
+	return rows
 
 
+## Arme tenue à la main `hand` (position du poing) :
+## massue posée sur l'épaule, ou lance verticale qui dépasse au-dessus de la tête ; en profil, inclinée vers l'avant.
+func _weapon(img: Image, kind: String, view: int, hand: Vector2i) -> void:
+	if kind == "spear":
+		var top := hand + (Vector2i(9, -14) if view == 2 else Vector2i(0, -18))
+		var bottom := hand + (Vector2i(-3, 4) if view == 2 else Vector2i(0, 6))
+		_line(img, bottom, top, CLUB_WOOD[0], CLUB_WOOD[1])
+		var dir := Vector2(top - bottom).normalized()
+		for k in 4:
+			var p := Vector2(top) + dir * k
+			_px(img, Vector2i(p), SPEAR_TIP[0] if k >= 2 else SPEAR_TIP[1])
+			if k == 2:
+				_px(img, Vector2i(p) + Vector2i(1, 0), SPEAR_TIP[1])
+				_px(img, Vector2i(p) - Vector2i(1, 0), SPEAR_TIP[1])
+	else:
+		# Massue : manche en biais vers le haut, tête de pierre au bout.
+		var head := hand + (Vector2i(5, -5) if view == 2 else Vector2i(1, -7))
+		_line(img, hand, head, CLUB_WOOD[0], CLUB_WOOD[1])
+		for y in range(-2, 2):
+			for x in range(-1, 3):
+				if absf(x - 0.5) + absf(y + 0.5) > 3.0:
+					continue
+				var c: Color = CLUB_STONE[0] if x + y < 0 else (CLUB_STONE[1] if x + y < 2 else CLUB_STONE[2])
+				_px(img, head + Vector2i(x, y), c)
+
+
+## Pixel posé seulement s'il tombe dans l'image.
+func _px(img: Image, p: Vector2i, c: Color) -> void:
+	if p.x >= 0 and p.y >= 0 and p.x < img.get_width() and p.y < img.get_height():
+		img.set_pixelv(p, c)
+
+
+## Trait de 1 px, côté éclairé `light` à gauche du trait (ombre `dark` à droite).
+func _line(img: Image, a: Vector2i, b: Vector2i, light: Color, dark: Color) -> void:
+	var n := maxi(absi(b.x - a.x), absi(b.y - a.y))
+	for i in n + 1:
+		var p := Vector2(a).lerp(Vector2(b), float(i) / maxf(n, 1))
+		var q := Vector2i(roundi(p.x), roundi(p.y))
+		if q.x >= 0 and q.y >= 0 and q.x < img.get_width() and q.y < img.get_height():
+			img.set_pixelv(q, light)
+		if q.x + 1 < img.get_width() and q.y >= 0 and q.y < img.get_height() and absi(b.y - a.y) > absi(b.x - a.x):
+			img.set_pixelv(q + Vector2i(1, 0), dark)
+
+
+## Gabarit vers image. La fourrure (f) reçoit un léger grain fixé au corps (il ne « nage » pas au pas).
 func _stamp(img: Image, rows: Array, o: Vector2i, colors: Dictionary = HERO_COLORS) -> void:
 	for y in rows.size():
 		var line: String = rows[y]
 		for x in line.length():
 			var ch := line[x]
-			if ch != ".":
-				img.set_pixel(o.x + x, o.y + y, colors[ch])
+			if ch == ".":
+				continue
+			if ch == "f" and _h(x, y, 120) < 0.14:
+				ch = "F"
+			elif ch == "f" and _h(x, y, 121) > 0.93:
+				ch = "g"
+			var p := o + Vector2i(x, y)
+			if p.x >= 0 and p.y >= 0 and p.x < img.get_width() and p.y < img.get_height():
+				img.set_pixelv(p, colors[ch])
 
 
 func _arm(img: Image, o: Vector2i, shaded: bool, colors: Dictionary) -> void:
-	for y in 6:
+	for y in 7:
 		img.set_pixel(o.x, o.y + y, colors["S" if shaded else "s"])
 		img.set_pixel(o.x + 1, o.y + y, colors["S"])
+	# Poing un peu plus clair.
+	img.set_pixel(o.x, o.y + 6, colors["s"].lightened(0.1))
 
+
+## Contour sélectif : chaque pixel de contour prend une teinte sombre de son voisin (plutôt qu'un brun
+## uniforme), ce qui garde une silhouette nette tout en respectant les matières.
+func _outline_tinted(img: Image) -> void:
+	var src := img.duplicate() as Image
+	for y in img.get_height():
+		for x in img.get_width():
+			if src.get_pixel(x, y).a > 0.5:
+				continue
+			for d in [Vector2i(0, 1), Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, -1)]:
+				var p: Vector2i = Vector2i(x, y) + d
+				if p.x >= 0 and p.y >= 0 and p.x < img.get_width() and p.y < img.get_height() and src.get_pixelv(p).a > 0.5:
+					img.set_pixel(x, y, src.get_pixelv(p).darkened(0.72).lerp(OUTLINE, 0.45))
+					break
 
 # --- Décors (atlas props.png + props.json) ---------------------------------
 
@@ -925,42 +1021,49 @@ func _rock_large() -> Image:
 	return img
 
 
+## Hutte conique en chaume. Passe artistique 1 : rangs de chaume qui se chevauchent (haut éclairé, bas
+## ombré et effiloché), mèches, pied assombri, porte profonde encadrée de perches liées, ligature au sommet.
 func _hut_cone() -> Image:
 	var img := _img(64, 64)
 	for y in range(8, 57):
 		var half := 29.0 * pow((y - 8) / 48.0, 0.8)
+		var row := (y - 8) / 5
+		var in_row := (y - 8) % 5
 		for x in range(int(32 - half), int(32 + half) + 1):
 			var rel := (x + 0.5 - 32.0) / maxf(half, 1.0)
-			var row := (y - 8) / 5
 			var c := ST_MID
 			if rel < -0.45:
 				c = ST_LIGHT
 			elif rel > 0.4:
 				c = ST_DARK
-			if (y - 8) % 5 == 4 and _h(x, row, 66) < 0.7:
-				c = c.lerp(WD_DARK, 0.45)
-			elif _h(x, row, 67) < 0.14:
-				c = c.lerp(ST_LIGHT, 0.5)
+			if in_row == 0:
+				c = c.lerp(ST_LIGHT, 0.4)
+			elif in_row == 4:
+				# Bas du rang effiloché : quelques mèches dépassent sur le rang suivant.
+				c = c.lerp(WD_DARK, 0.5) if _h(x, row, 66) < 0.75 else c
+			if _h(x, row, 152) < 0.2 and in_row in [1, 2, 3]:
+				c = c.darkened(0.12)
+			elif _h(x, y, 67) < 0.08:
+				c = c.lerp(ST_LIGHT, 0.6)
+			if y > 50:
+				c = c.darkened(0.06 * (y - 50))
 			img.set_pixel(x, y, c)
-	# Entrée.
-	for y in range(36, 57):
-		for x in range(25, 39):
-			var inside := y >= 43 or Vector2(x + 0.5, y + 0.5).distance_to(Vector2(32, 43)) <= 7.0
-			if inside:
-				img.set_pixel(x, y, Color8(44, 26, 20) if x > 26 else Color8(70, 44, 30))
-	for y in range(40, 57):
-		img.set_pixel(24, y, WD_LIGHT)
-		img.set_pixel(39, y, WD_DARK)
-	# Perches au sommet.
+	_hut_door(img, 32, 36, 7)
+	# Perches au sommet et ligature de corde.
 	for p in [[Vector2(32, 10), Vector2(24, 0)], [Vector2(32, 10), Vector2(40, 0)], [Vector2(32, 10), Vector2(31, 0)]]:
 		for i in 12:
 			var q: Vector2 = p[0].lerp(p[1], i / 11.0)
 			img.set_pixel(int(q.x), int(q.y), WD_MID if i % 3 else WD_DARK)
-	_outline(img, OUTLINE)
+	for x in range(29, 36):
+		img.set_pixel(x, 10, HERO_COLORS["r"])
+		img.set_pixel(x, 11, ST_DARK)
+	_outline_tinted(img)
 	_ground_shadow(img, 33, 58, 30, 4.5)
 	return img
 
 
+## Hutte en dôme couverte de peaux. Passe 1 : panneaux de teintes légèrement différentes, coutures
+## pointillées, pierres de lestage au pied, porte profonde avec rabat de peau.
 func _hut_dome() -> Image:
 	var img := _img(64, 64)
 	for y in range(18, 57):
@@ -969,25 +1072,34 @@ func _hut_dome() -> Image:
 			var dy := (y + 0.5 - 57.0) / 38.0
 			if dx * dx + dy * dy > 1.0:
 				continue
-			var c := Color8(160, 104, 60)
+			var panel := (x - 4) / 11
+			var c := Color8(160, 104, 60).lerp(Color8(176, 120, 72), _h(panel, 0, 150) * 0.8)
 			var t := dx * 0.7 + dy * 0.4
 			if t < -0.5:
-				c = Color8(196, 140, 88)
+				c = c.lightened(0.18)
 			elif t > 0.35:
-				c = Color8(118, 74, 42)
+				c = c.darkened(0.28)
 			if (x - 4) % 11 == 0:
 				c = Color8(96, 60, 36)
+				if y % 3 == 0:
+					c = Color8(220, 196, 150)
 			elif _h(x >> 1, y >> 1, 68) < 0.08:
-				c = Color8(132, 84, 48)
+				c = c.darkened(0.18)
 			img.set_pixel(x, y, c)
-	for y in range(38, 57):
-		for x in range(26, 39):
-			if y >= 44 or Vector2(x + 0.5, y + 0.5).distance_to(Vector2(32.5, 44)) <= 6.5:
-				img.set_pixel(x, y, Color8(44, 26, 20))
-	# Rabat de peau et défenses décoratives.
-	for y in range(40, 52):
-		img.set_pixel(36, y, Color8(196, 140, 88))
-		img.set_pixel(37, y, Color8(160, 104, 60))
+	# Pierres de lestage au pied.
+	for k in 9:
+		var sx := 7 + k * 6 + int(_h(k, 1, 151) * 2.0)
+		if sx > 23 and sx < 41:
+			continue
+		for y in range(53, 57):
+			for x in range(sx, sx + 4):
+				if Vector2(x + 0.5 - sx - 2.0, (y + 0.5 - 55.0) * 1.3).length() <= 2.2:
+					img.set_pixel(x, y, R_LIGHT if y < 55 else R_MID)
+	_hut_door(img, 32, 38, 6)
+	# Rabat de peau relevé et défenses décoratives.
+	for y in range(38, 50):
+		img.set_pixel(37, y, Color8(206, 150, 98))
+		img.set_pixel(38, y, Color8(160, 104, 60))
 	for p in [Vector2i(20, 22), Vector2i(43, 22)]:
 		for i in 6:
 			img.set_pixel(p.x + (i / 2 if p.x > 32 else -i / 2), p.y - i, Color8(238, 230, 206))
@@ -995,9 +1107,29 @@ func _hut_dome() -> Image:
 		for i in 12:
 			var q: Vector2 = p[0].lerp(p[1], i / 11.0)
 			img.set_pixel(int(q.x), int(q.y), WD_MID)
-	_outline(img, OUTLINE)
+	_outline_tinted(img)
 	_ground_shadow(img, 33, 58, 30, 4.5)
 	return img
+
+
+## Porte en arc : intérieur profond (plus sombre au centre et en haut), seuil éclairé, montants de bois.
+func _hut_door(img: Image, cx: int, top: int, radius: int) -> void:
+	for y in range(top, 57):
+		for x in range(cx - radius, cx + radius + 1):
+			var arch := Vector2(x + 0.5, y + 0.5).distance_to(Vector2(cx + 0.5, top + radius))
+			if y < top + radius and arch > radius:
+				continue
+			var depth := 1.0 - absf(x + 0.5 - cx - 0.5) / (radius + 0.5)
+			var c := Color8(52, 32, 24).lerp(Color8(22, 12, 10), depth)
+			if y >= 55:
+				c = Color8(96, 64, 44)
+			img.set_pixel(x, y, c)
+	for y in range(top + radius - 2, 57):
+		img.set_pixel(cx - radius - 1, y, WD_LIGHT)
+		img.set_pixel(cx + radius + 1, y, WD_DARK)
+	for y in [top + radius, top + radius + 6]:
+		img.set_pixel(cx - radius - 1, y, HERO_COLORS["r"])
+		img.set_pixel(cx + radius + 1, y, HERO_COLORS["r"])
 
 
 func _crate() -> Image:
@@ -1292,20 +1424,21 @@ func _gen_fx() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUT + "fx"))
 	_save(_campfire(), "fx/campfire.png")
 	_save(_campfire_big(), "fx/campfire_big.png")
-	var glow := _img(48, 48)
+	# Lumière du feu posée au sol : ellipse en perspective 3/4, bandes tramées (pixel art), mélange additif.
+	var glow := _img(96, 48)
 	for y in 48:
-		for x in 48:
-			var d := Vector2(x + 0.5, y + 0.5).distance_to(Vector2(24, 24))
+		for x in 96:
+			var d := Vector2((x + 0.5 - 48.0) / 48.0, (y + 0.5 - 24.0) / 24.0).length()
 			var a := 0.0
-			if d < 8:
-				a = 0.4
-			elif d < 14:
-				a = 0.24
-			elif d < 20:
-				a = 0.12
-			elif d < 24:
-				a = 0.05
-			glow.set_pixel(x, y, Color(1.0, 0.62, 0.25, a))
+			if d < 0.3:
+				a = 0.34
+			elif d < 0.55:
+				a = 0.22 if d < 0.5 or (x + y) % 2 else 0.34
+			elif d < 0.8:
+				a = 0.11 if d < 0.75 or (x + y) % 2 else 0.22
+			elif d < 1.0:
+				a = 0.05 if (x + y) % 2 else 0.0
+			glow.set_pixel(x, y, Color(1.0, 0.6, 0.25, a))
 	_save(glow, "fx/glow.png")
 	var smoke := _img(4, 4)
 	smoke.fill(Color(0.84, 0.82, 0.8, 0.9))
@@ -1326,44 +1459,14 @@ func _gen_fx() -> void:
 	_save(fly, "fx/butterfly.png")
 
 
+## Feu de camp : 4 images 32 x 32. Passe artistique 1 : langues de flamme qui s'enroulent (cœur pâle,
+## orange, bords rouges), braises qui montent, bouts de bûches incandescents, pierres éclairées par-dessus.
 func _campfire() -> Image:
 	var img := _img(32 * 4, 32)
-	var heights := [[7, 12, 8], [9, 10, 6], [6, 13, 9], [8, 11, 7]]
 	for f in 4:
 		var fr := _img(32, 32)
-		var stones := []
-		for k in 8:
-			var a := TAU * k / 8.0 + 0.3
-			stones.append(Vector2(16 + cos(a) * 10.0, 25 + sin(a) * 4.0))
-		for st in stones:
-			if st.y <= 25:
-				_stone(fr, st)
-		for i in 12:
-			fr.set_pixel(10 + i, 24 - i / 3, WD_MID)
-			fr.set_pixel(10 + i, 25 - i / 3, WD_DARK)
-			fr.set_pixel(21 - i, 24 - i / 3, WD_LIGHT)
-			fr.set_pixel(21 - i, 25 - i / 3, WD_DARK)
-		for st in stones:
-			if st.y > 25:
-				_stone(fr, st)
-		_outline(fr, OUTLINE)
-		var xs := [12, 16, 20]
-		for t in 3:
-			var hgt: int = heights[f][t]
-			for i in hgt:
-				var k := float(i) / hgt
-				var half := int(round(2.6 * (1.0 - k) + 0.4))
-				var sway := int(round(sin(k * 3.0 + f * 1.6 + t) * 1.2 * k))
-				for dx in range(-half, half + 1):
-					var rel := absf(dx) / maxf(half, 1.0)
-					var c := Color8(240, 106, 40)
-					if rel < 0.4 and k < 0.6:
-						c = Color8(255, 244, 170)
-					elif rel < 0.8 and k < 0.85:
-						c = Color8(255, 194, 64)
-					fr.set_pixel(xs[t] + dx + sway, 23 - i, c)
-		var sx: int = [19, 13, 17, 14][f]
-		fr.set_pixel(sx, 7 - f, Color8(255, 224, 130))
+		_fire_ring(fr, Vector2(16, 25), 10.0, 4.0, 8)
+		_fire_frame(fr, Vector2(16, 23), 1.0, f, 3)
 		img.blit_rect(fr, Rect2i(0, 0, 32, 32), Vector2i(f * 32, 0))
 	return img
 
@@ -1371,53 +1474,85 @@ func _campfire() -> Image:
 ## Grand feu central du village prospère : 4 images 48 x 40, couronne de pierres plus large.
 func _campfire_big() -> Image:
 	var img := _img(48 * 4, 40)
-	var heights := [[9, 14, 18, 13, 8], [11, 16, 15, 14, 9], [8, 13, 19, 15, 10], [10, 17, 16, 12, 9]]
 	for f in 4:
 		var fr := _img(48, 40)
-		var stones := []
-		for k in 11:
-			var a := TAU * k / 11.0 + 0.2
-			stones.append(Vector2(24 + cos(a) * 15.0, 32 + sin(a) * 5.5))
-		for st in stones:
-			if st.y <= 32:
-				_stone(fr, st)
-		for i in 18:
-			fr.set_pixel(15 + i, 32 - i / 3, WD_MID)
-			fr.set_pixel(15 + i, 33 - i / 3, WD_DARK)
-			fr.set_pixel(32 - i, 32 - i / 3, WD_LIGHT)
-			fr.set_pixel(32 - i, 33 - i / 3, WD_DARK)
-		for st in stones:
-			if st.y > 32:
-				_stone(fr, st)
-		_outline(fr, OUTLINE)
-		var xs := [16, 20, 24, 28, 32]
-		for t in 5:
-			var hgt: int = heights[f][t]
-			for i in hgt:
-				var k := float(i) / hgt
-				var half := int(round(3.4 * (1.0 - k) + 0.5))
-				var sway := int(round(sin(k * 3.0 + f * 1.6 + t) * 1.5 * k))
-				for dx in range(-half, half + 1):
-					var rel := absf(dx) / maxf(half, 1.0)
-					var c := Color8(240, 106, 40)
-					if rel < 0.4 and k < 0.6:
-						c = Color8(255, 244, 170)
-					elif rel < 0.8 and k < 0.85:
-						c = Color8(255, 194, 64)
-					fr.set_pixel(xs[t] + dx + sway, 30 - i, c)
-		for s in 2:
-			var sx: int = [27, 19, 25, 21][(f + s) % 4]
-			fr.set_pixel(sx, 9 - f - s * 3, Color8(255, 224, 130))
+		_fire_ring(fr, Vector2(24, 32), 15.0, 5.5, 11)
+		_fire_frame(fr, Vector2(24, 30), 1.45, f, 5)
 		img.blit_rect(fr, Rect2i(0, 0, 48, 40), Vector2i(f * 48, 0))
 	return img
 
 
-func _stone(img: Image, c: Vector2) -> void:
+## Couronne de pierres et bûches croisées (contour compris) ; les flammes se dessinent par-dessus.
+func _fire_ring(fr: Image, c: Vector2, rx: float, ry: float, count: int) -> void:
+	var stones := []
+	for k in count:
+		var a := TAU * k / count + 0.25
+		stones.append(Vector2(c.x + cos(a) * rx, c.y + sin(a) * ry))
+	for st in stones:
+		if st.y <= c.y:
+			_stone(fr, st, true)
+	# Lit de cendres sombre.
+	for y in range(-2, 2):
+		for x in range(-int(rx * 0.6), int(rx * 0.6) + 1):
+			if x * x / (rx * rx * 0.36) + y * y / 4.0 <= 1.0:
+				_px(fr, Vector2i(c) + Vector2i(x, y - 1), Color8(58, 44, 40))
+	var span := int(rx * 1.1)
+	for i in span:
+		var t := float(i) / span
+		var y := c.y - 1 - t * 3.0
+		_px(fr, Vector2i(int(c.x - rx * 0.55 + i), int(y)), WD_MID)
+		_px(fr, Vector2i(int(c.x - rx * 0.55 + i), int(y) + 1), WD_DARK)
+		_px(fr, Vector2i(int(c.x + rx * 0.55 - i), int(y)), WD_LIGHT)
+		_px(fr, Vector2i(int(c.x + rx * 0.55 - i), int(y) + 1), WD_DARK)
+	# Bouts de bûches incandescents.
+	for p in [Vector2(c.x - rx * 0.55, c.y - 1), Vector2(c.x + rx * 0.55, c.y - 1)]:
+		_px(fr, Vector2i(p), Color8(255, 150, 60))
+	for st in stones:
+		if st.y > c.y:
+			_stone(fr, st, true)
+	_outline_tinted(fr)
+
+
+## Langues de flamme : `tongues` langues autour de `base`, image `f` de l'animation.
+func _fire_frame(fr: Image, base: Vector2, scale: float, f: int, tongues: int) -> void:
+	var mid := (tongues - 1) * 0.5
+	for t in tongues:
+		var centrality := 1.0 - absf(t - mid) / (mid + 1.0)
+		var tx := base.x + (t - mid) * 3.4 * scale
+		var hgt := (6.0 + 8.0 * centrality) * scale * (0.8 + 0.4 * _h(t, f, 140))
+		for i in int(hgt):
+			var k := i / hgt
+			var half := 2.7 * scale * pow(1.0 - k, 0.75) + 0.3
+			var sway := sin(k * 4.2 + f * 1.57 + t * 1.3) * 1.7 * k * scale
+			for dx in range(-ceili(half), ceili(half) + 1):
+				var rel := absf(dx) / maxf(half, 0.6)
+				if rel > 1.0:
+					continue
+				var c := Color8(200, 64, 40)
+				if rel < 0.35 and k < 0.55:
+					c = Color8(255, 246, 196)
+				elif rel < 0.72 and k < 0.8:
+					c = Color8(255, 196, 70)
+				elif k < 0.92:
+					c = Color8(242, 112, 40)
+				_px(fr, Vector2i(roundi(tx + dx + sway), roundi(base.y - i)), c)
+	# Braises qui s'élèvent (positions qui défilent d'une image à l'autre).
+	for e in 3:
+		var rise := float((f * 3 + e * 5) % 14)
+		var ember := Vector2(base.x + (_h(e, f, 141) - 0.5) * 8.0 * scale, base.y - (7.0 + rise) * scale)
+		_px(fr, Vector2i(ember), Color8(255, 224, 130) if e % 2 else Color8(255, 150, 60))
+
+
+## Pierre du foyer ; `warm` : dessus éclairé par le feu.
+func _stone(img: Image, c: Vector2, warm := false) -> void:
 	for y in range(-2, 3):
 		for x in range(-3, 4):
 			if x * x / 9.0 + y * y / 4.0 > 1.0:
 				continue
-			img.set_pixel(int(c.x) + x, int(c.y) + y, R_HI if y < 0 else (R_MID if y == 0 else R_DARK))
+			var col := R_HI if y < 0 else (R_MID if y == 0 else R_DARK)
+			if warm and y < 0:
+				col = col.lerp(Color8(255, 170, 90), 0.35)
+			_px(img, Vector2i(int(c.x) + x, int(c.y) + y), col)
 
 
 # --- Combat : sangliers, impacts, butin, chiffres -------------------------
@@ -1482,6 +1617,9 @@ func _gen_combat() -> void:
 	_save(_slash(), "fx/slash.png")
 	_save(_spark(), "fx/spark.png")
 	_save(_puff(), "fx/puff.png")
+	_save(_poof(), "fx/poof.png")
+	_save(_twinkle(), "fx/twinkle.png")
+	_save(_rays(), "fx/rays.png")
 	_save(_pickups(), "fx/pickups.png")
 	_save(_digits(), "fx/digits.png")
 	_save(_upgrade_icons(), "fx/upgrade_icons.png")
@@ -1555,125 +1693,185 @@ func _marker() -> Image:
 
 
 ## Planche de profil (vers la droite), cases 44 x 30 : repos 0-1, course 2-5, charge préparée 6, K.O. 7.
+## Passe artistique 1 : tête nettement séparée du corps (pli du cou, joue claire, groin, oreille dressée),
+## œil avec reflet, crinière aux pointes claires, croupe éclairée, pattes sombres et sabots, contour sélectif.
 func _boar_sheet(v: Dictionary) -> Image:
 	var img := _img(44 * 8, 30)
 	var fur: Array = v["fur"]
 	var s: float = v["size"]
+	var dark: Color = fur[0].darkened(0.35)
 	for f in 8:
 		var fr := _img(44, 30)
 		var bob: int = [0, 1, 0, -1, 0, -1, 0, 0][f]
 		var down := f == 6
 		var ko := f == 7
-		var body := Vector2(20, 17 + bob) if not ko else Vector2(20, 21)
+		var body := Vector2(19, 17 + bob) if not ko else Vector2(20, 21)
 		var rx := 12.0 * s
 		var ry := 7.0 * s
-		# Pattes (dessinées d'abord, le corps les recouvre).
+		# Pattes : sombres, sabots presque noirs ; celles du côté lointain un ton plus foncé.
 		var legs := [-8.0, -4.0, 5.0, 9.0]
 		var swing: Array = [[0, 0, 0, 0], [0, 0, 0, 0], [2, -2, -2, 2], [0, 0, 0, 0], [-2, 2, 2, -2], [0, 0, 0, 0], [-1, -2, 2, 3], [0, 0, 0, 0]][f]
 		for k in 4:
 			var lx: int = int(body.x + legs[k] * s) + swing[k]
+			var leg_col: Color = dark if k % 2 == 0 else fur[0]
 			if ko:
 				for y in range(int(body.y - ry) - 4, int(body.y - ry) + 1):
-					fr.set_pixel(lx, y, fur[0])
-					fr.set_pixel(lx + 1, y, fur[0])
+					_px(fr, Vector2i(lx, y), leg_col)
+					_px(fr, Vector2i(lx + 1, y), leg_col)
+				_px(fr, Vector2i(lx, int(body.y - ry) - 5), Color8(40, 30, 28))
 			else:
 				for y in range(int(body.y + ry * 0.5), 27):
-					fr.set_pixel(lx, y, fur[0])
-					fr.set_pixel(lx + 1, y, fur[0] if y < 26 else OUTLINE)
-		# Corps : dos clair (lumière en haut), ventre sombre.
+					var hoof := y >= 25
+					_px(fr, Vector2i(lx, y), Color8(40, 30, 28) if hoof else leg_col)
+					_px(fr, Vector2i(lx + 1, y), Color8(40, 30, 28) if hoof else leg_col.darkened(0.15))
+		# Corps : croupe éclairée en haut à gauche, ventre sombre, poil en mèches.
 		for y in fr.get_height():
 			for x in fr.get_width():
 				var dx := (x + 0.5 - body.x) / rx
 				var dy := (y + 0.5 - body.y) / ry
 				if dx * dx + dy * dy > 1.0:
 					continue
+				var light := -dx * 0.45 - dy * 0.9
 				var c: Color = fur[1]
-				if dy < -0.35:
+				if light > 0.55:
 					c = fur[2]
-				elif dy > 0.45:
+				elif light < -0.45:
 					c = fur[0]
-				if _h(x >> 1, y, 95) < 0.12:
-					c = c.lerp(fur[0], 0.6)
+				if _h(x >> 1, y, 130) < 0.16 and light < 0.6:
+					c = c.darkened(0.12)
 				fr.set_pixel(x, y, c)
-		# Crinière en pics le long du dos.
+		# Crinière en pics, pointes claires (lisible même en ombre).
 		if not ko:
-			for x in range(int(body.x - rx * 0.6), int(body.x + rx * 0.7)):
-				var spike := 2 + int(_h(x, 0, 96) * 2.0)
+			for x in range(int(body.x - rx * 0.55), int(body.x + rx * 0.75)):
+				var spike := 2 + int(_h(x, 0, 96) * 2.5)
 				var y0 := int(body.y - ry * sqrt(maxf(1.0 - pow((x + 0.5 - body.x) / rx, 2.0), 0.0)))
 				for k in spike:
-					fr.set_pixel(x, y0 - k + 1, v["mane"])
-		# Tête, groin, défense, œil, oreille.
-		var head := body + Vector2(rx + 1.0, 1.0 + (2.0 if down else 0.0))
+					_px(fr, Vector2i(x, y0 - k + 1), v["mane"] if k < spike - 1 else v["mane"].lightened(0.45))
+		# Tête : plus sombre que le corps, joue claire, séparée par un pli de cou.
+		var head := body + Vector2(rx + 0.5, 1.5 + (2.0 if down else 0.0))
+		var hr := Vector2(6.5, 5.2) * s
 		for y in fr.get_height():
 			for x in fr.get_width():
-				var dx := (x + 0.5 - head.x) / (6.0 * s)
-				var dy := (y + 0.5 - head.y) / (5.0 * s)
-				if dx * dx + dy * dy <= 1.0:
-					fr.set_pixel(x, y, fur[2] if dy < -0.3 else fur[1])
-		var snout := Vector2i(int(head.x + 5.0 * s), int(head.y))
-		for y in range(-1, 2):
-			for x in 3:
-				fr.set_pixel(snout.x + x, snout.y + y, v["snout"])
-		fr.set_pixel(snout.x + 2, snout.y, OUTLINE)
-		for k in int(v["tusk"]):
-			fr.set_pixel(snout.x - 1 + k / 2, snout.y + 2 - k, Color8(244, 236, 214))
+				var d := Vector2((x + 0.5 - head.x) / hr.x, (y + 0.5 - head.y) / hr.y)
+				if d.length() > 1.0:
+					continue
+				var c: Color = fur[1].darkened(0.08)
+				if d.y > 0.35:
+					c = fur[0]
+				elif d.x < 0.1 and d.y > -0.2:
+					c = fur[2]
+				if d.length() > 0.82 and d.x < -0.3:
+					c = dark
+				fr.set_pixel(x, y, c)
+		# Groin rosé avec narine, défense recourbée.
+		var snout := Vector2i(int(head.x + hr.x - 1), int(head.y + 1))
+		for y in range(-2, 2):
+			for x in 4:
+				if (x == 3 and y == -2) or (x == 3 and y == 1):
+					continue
+				_px(fr, snout + Vector2i(x, y), v["snout"] if y < 1 else v["snout"].darkened(0.2))
+		_px(fr, snout + Vector2i(3, -1), Color8(70, 40, 40))
+		var tusk := Color8(246, 240, 222)
+		for k in int(v["tusk"]) + 1:
+			_px(fr, snout + Vector2i(1 - k / 2, 2 - k), tusk)
+		# Œil : point sombre et reflet ; rouge pendant la préparation de la charge.
 		var eye := Vector2i(int(head.x + 1), int(head.y - 2))
 		if ko:
-			for d in [Vector2i(-1, -1), Vector2i(1, 1), Vector2i(1, -1), Vector2i(-1, 1)]:
-				fr.set_pixelv(eye + d, OUTLINE)
+			for d in [Vector2i(-1, -1), Vector2i(1, 1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i.ZERO]:
+				_px(fr, eye + d, Color8(30, 20, 18))
+		elif down:
+			_px(fr, eye, Color8(232, 52, 40))
+			_px(fr, eye + Vector2i(-1, 0), Color8(150, 30, 26))
 		else:
-			fr.set_pixelv(eye, Color8(200, 40, 30) if down else OUTLINE)
-		for k in 3:
-			fr.set_pixel(int(head.x - 3) + k / 2, int(head.y - 5 * s) - k + 1, fur[0])
+			_px(fr, eye, Color8(24, 16, 14))
+			_px(fr, eye + Vector2i(0, -1), Color8(236, 226, 210))
+		# Oreille dressée (couchée vers l'arrière pendant la charge préparée).
+		var ear := Vector2i(int(head.x - 3), int(head.y - hr.y))
+		var ear_pts := [Vector2i(-1, 0), Vector2i(0, 0), Vector2i(1, 0), Vector2i(-1, -1), Vector2i(0, -1), Vector2i(-2, -2), Vector2i(-1, -2)] if down \
+			else [Vector2i(-1, 0), Vector2i(0, 0), Vector2i(1, 0), Vector2i(-1, -1), Vector2i(0, -1), Vector2i(1, -1), Vector2i(0, -2), Vector2i(0, -3)]
+		for p in ear_pts:
+			_px(fr, ear + p, fur[0])
+		_px(fr, ear + Vector2i(0, -1), v["snout"].darkened(0.15))
 		# Queue en tire-bouchon.
 		for p in [Vector2i(-1, -2), Vector2i(-2, -3), Vector2i(-3, -2)]:
-			fr.set_pixelv(Vector2i(int(body.x - rx), int(body.y)) + p, fur[0])
-		_outline(fr, OUTLINE)
-		_ground_shadow(fr, body.x, 27.5, rx + 2.0, 2.5)
+			_px(fr, Vector2i(int(body.x - rx), int(body.y)) + p, fur[0])
+		_outline_tinted(fr)
+		_ground_shadow(fr, body.x + 1.0, 27.5, rx + 3.0, 2.5)
 		img.blit_rect(fr, Rect2i(0, 0, 44, 30), Vector2i(f * 44, 0))
 	return img
 
 
-## Arc de coup de massue, 3 images 32 x 32, orienté vers la droite.
+## Arc de coup, 3 images 32 x 32, orienté vers la droite. Dessiné en blanc et gris clair pour être
+## teinté à l'affichage (or pour le héros, blanc pour les compagnons). Passe 1 : croissant épais,
+## cœur éclatant, traits de vitesse sur la dernière image.
 func _slash() -> Image:
 	var img := _img(96, 32)
-	var arcs := [[-80.0, -10.0, 1.0], [-60.0, 60.0, 1.0], [10.0, 80.0, 0.55]]
+	var arcs := [[-85.0, -5.0, 0.85], [-70.0, 70.0, 1.0], [5.0, 85.0, 0.55]]
 	for f in 3:
 		var a0: float = arcs[f][0]
 		var a1: float = arcs[f][1]
 		var alpha: float = arcs[f][2]
 		for y in 32:
 			for x in 32:
-				var d := Vector2(x + 0.5 - 10.0, y + 0.5 - 16.0)
+				var d := Vector2(x + 0.5 - 9.0, y + 0.5 - 16.0)
 				var ang := rad_to_deg(d.angle())
 				var r := d.length()
-				if ang < a0 or ang > a1 or r < 9.0 or r > 15.0:
+				if ang < a0 or ang > a1 or r < 7.0 or r > 16.0:
 					continue
-				var thick := 2.0 + 3.0 * sin((ang - a0) / (a1 - a0) * PI)
-				if r > 9.0 + thick + 1.5:
+				var t := (ang - a0) / (a1 - a0)
+				var thick := 2.0 + 5.0 * sin(t * PI)
+				var inner := 14.5 - thick
+				if r < inner:
 					continue
-				var c := Color8(255, 252, 230) if r > 9.0 + thick * 0.4 else Color8(255, 214, 120)
-				img.set_pixel(f * 32 + x, y, Color(c, alpha))
+				var depth := (r - inner) / maxf(thick, 0.1)
+				var c := Color(1, 1, 1, alpha)
+				if depth < 0.3:
+					c = Color(0.86, 0.86, 0.82, alpha * 0.8)
+				elif depth > 0.85:
+					c = Color(0.9, 0.9, 0.86, alpha)
+				img.set_pixel(f * 32 + x, y, c)
+		if f == 2:
+			for k in 3:
+				for i in 5:
+					img.set_pixel(f * 32 + 6 + i + k * 2, 9 + k * 7, Color(1, 1, 1, 0.5 - i * 0.08))
 	return img
 
 
-## Étincelle d'impact, 3 images 16 x 16.
+## Étincelle d'impact, 4 images 20 x 20 : éclat en losange, étoile à quatre branches, puis anneau qui s'ouvre.
 func _spark() -> Image:
-	var img := _img(48, 16)
+	var img := _img(80, 20)
 	var white := Color8(255, 252, 236)
 	var gold := Color8(255, 206, 90)
-	for f in 3:
-		var o := Vector2i(f * 16 + 8, 8)
-		var arm: int = [2, 5, 6][f]
-		for k in range(-arm, arm + 1):
-			if f == 2 and absi(k) < 4:
-				continue
-			var c := white if absi(k) < arm - 1 else gold
-			img.set_pixelv(o + Vector2i(k, 0), c)
-			img.set_pixelv(o + Vector2i(0, k), c)
-		if f == 1:
-			for d in [Vector2i(-2, -2), Vector2i(2, -2), Vector2i(-2, 2), Vector2i(2, 2)]:
-				img.set_pixelv(o + d, gold)
+	var orange := Color8(255, 150, 60)
+	for f in 4:
+		var o := Vector2i(f * 20 + 10, 10)
+		match f:
+			0:
+				for y in range(-2, 3):
+					for x in range(-2, 3):
+						if absi(x) + absi(y) <= 2:
+							img.set_pixelv(o + Vector2i(x, y), white if absi(x) + absi(y) < 2 else gold)
+			1:
+				for k in range(-7, 8):
+					var c := white if absi(k) < 4 else (gold if absi(k) < 6 else orange)
+					img.set_pixelv(o + Vector2i(k, 0), c)
+					img.set_pixelv(o + Vector2i(0, k), c)
+				for k in range(1, 4):
+					for sgn in [Vector2i(1, 1), Vector2i(-1, 1), Vector2i(1, -1), Vector2i(-1, -1)]:
+						img.set_pixelv(o + sgn * k, gold if k < 3 else orange)
+				for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1), Vector2i.ZERO]:
+					img.set_pixelv(o + d, white)
+			_:
+				var radius := 6.0 if f == 2 else 8.5
+				for i in 24:
+					if f == 3 and i % 2:
+						continue
+					var p := Vector2(o) + Vector2.from_angle(TAU * i / 24.0) * radius
+					img.set_pixel(int(p.x), int(p.y), gold if f == 2 else Color(1.0, 0.8, 0.4, 0.6))
+				if f == 2:
+					for k in range(-3, 4):
+						img.set_pixelv(o + Vector2i(k, 0), white if absi(k) < 2 else gold)
+						img.set_pixelv(o + Vector2i(0, k), white if absi(k) < 2 else gold)
 	return img
 
 
@@ -1690,37 +1888,111 @@ func _puff() -> Image:
 	return img
 
 
+## Nuage de mort d'un ennemi, 5 images 28 x 22 : volutes de poussière qui gonflent puis se dissipent (trame).
+func _poof() -> Image:
+	var img := _img(28 * 5, 22)
+	var lobes := [Vector2(-5, 2), Vector2(5, 2), Vector2(0, -3), Vector2(-3, -6), Vector2(4, -5)]
+	for f in 5:
+		var grow := 0.55 + f * 0.22
+		for y in 22:
+			for x in 28:
+				var best := 99.0
+				for l in lobes:
+					var c: Vector2 = Vector2(14, 13) + l * grow + Vector2(0, -f * 1.2)
+					best = minf(best, Vector2(x + 0.5, y + 0.5).distance_to(c) - (3.6 + f * 0.5))
+				if best > 0.0:
+					continue
+				if f >= 3 and (x + y + f) % 2 == 0:
+					continue
+				var col := Color8(232, 222, 198) if best < -2.0 else Color8(186, 170, 142)
+				if f == 4:
+					col.a = 0.6
+				img.set_pixel(f * 28 + x, y, col)
+	return img
+
+
+## Scintillement du butin au sol : petite étoile, 2 images 5 x 5.
+func _twinkle() -> Image:
+	var img := _img(10, 5)
+	for d in [Vector2i(0, 0), Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+		img.set_pixelv(Vector2i(2, 2) + d, Color.WHITE if d == Vector2i.ZERO else Color(1, 0.95, 0.8, 0.9))
+	for d in [Vector2i(0, 0), Vector2i(2, 0), Vector2i(-2, 0), Vector2i(0, 2), Vector2i(0, -2), Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+		img.set_pixelv(Vector2i(7, 2) + d, Color.WHITE if absi(d.x) + absi(d.y) < 2 else Color(1, 0.9, 0.6, 0.7))
+	return img
+
+
+## Rayons de lumière (moments forts : achats, évolution du camp), 96 x 96, mélange additif.
+func _rays() -> Image:
+	var img := _img(96, 96)
+	for y in 96:
+		for x in 96:
+			var d := Vector2(x + 0.5 - 48.0, y + 0.5 - 48.0)
+			var r := d.length() / 48.0
+			if r > 1.0:
+				continue
+			var wedge := absf(sin(d.angle() * 6.0))
+			if wedge < 0.55:
+				continue
+			var a := (1.0 - r) * (wedge - 0.55) * 1.6
+			if r < 0.18:
+				a = 0.0
+			# Paliers d'opacité (pas de dégradé continu, dans l'esprit pixel art).
+			a = floorf(a * 4.0) / 4.0 * 0.95
+			if a > 0.0:
+				img.set_pixel(x, y, Color(1.0, 0.85, 0.45, a))
+	return img
+
+
 ## Butin, cases 12 x 12 : viande (vivres), peau, os (matériaux), dent gravée (savoir).
+## Passe 1 : volumes et reflets plus francs, contour sélectif.
 func _pickups() -> Image:
 	var img := _img(48, 12)
 	var meat := _img(12, 12)
 	for y in 12:
 		for x in 12:
-			var d := Vector2((x + 0.5 - 5.0) / 4.0, (y + 0.5 - 5.5) / 3.2)
-			if d.length() <= 1.0:
-				meat.set_pixel(x, y, Color8(214, 92, 84) if d.y > 0.2 or d.x > 0.3 else Color8(240, 140, 128))
-	for p in [Vector2i(8, 7), Vector2i(9, 8), Vector2i(10, 9), Vector2i(10, 8), Vector2i(9, 9)]:
-		meat.set_pixelv(p, Color8(244, 236, 214))
+			var d := Vector2((x + 0.5 - 5.0) / 4.2, (y + 0.5 - 5.0) / 3.4)
+			if d.length() > 1.0:
+				continue
+			var c := Color8(214, 84, 76)
+			if d.y > 0.35 or d.x > 0.55:
+				c = Color8(164, 54, 54)
+			elif d.x < -0.2 and d.y < -0.1:
+				c = Color8(244, 136, 120)
+			meat.set_pixel(x, y, c)
+	meat.set_pixel(3, 3, Color8(255, 214, 200))
+	meat.set_pixel(4, 3, Color8(255, 196, 180))
+	for p in [Vector2i(8, 7), Vector2i(9, 8), Vector2i(10, 9)]:
+		meat.set_pixelv(p, Color8(246, 238, 216))
+	for p in [Vector2i(10, 8), Vector2i(9, 9), Vector2i(11, 10), Vector2i(11, 9)]:
+		meat.set_pixelv(p, Color8(220, 206, 180))
 	var hide := _img(12, 12)
-	for y in range(2, 10):
+	for y in range(2, 11):
 		var inset := absi(y - 6) / 2
 		for x in range(1 + inset, 11 - inset):
-			hide.set_pixel(x, y, Color8(186, 128, 74) if _h(x, y, 97) > 0.25 else Color8(124, 78, 44))
+			var c := Color8(186, 128, 74)
+			if y < 4 or x < 3 + inset:
+				c = Color8(214, 160, 100)
+			elif y > 8 or x > 8 - inset:
+				c = Color8(140, 90, 50)
+			if _h(x, y, 97) < 0.18:
+				c = Color8(110, 70, 40)
+			hide.set_pixel(x, y, c)
 	var bone := _img(12, 12)
 	for i in 7:
-		bone.set_pixel(3 + i, 8 - i, Color8(244, 236, 214))
-	for p in [Vector2i(2, 8), Vector2i(3, 9), Vector2i(9, 1), Vector2i(10, 2)]:
-		bone.set_pixelv(p, Color8(222, 210, 184))
+		bone.set_pixel(3 + i, 8 - i, Color8(248, 242, 224))
+		bone.set_pixel(3 + i, 9 - i, Color8(206, 194, 168))
+	for p in [Vector2i(2, 8), Vector2i(2, 9), Vector2i(3, 10), Vector2i(9, 1), Vector2i(10, 1), Vector2i(10, 2)]:
+		bone.set_pixelv(p, Color8(238, 228, 204))
 	var tooth := _img(12, 12)
 	for y in range(1, 11):
 		var half := 3 - absi(y - 4) / 3 if y < 8 else 1
 		for x in range(6 - half, 6 + half):
-			tooth.set_pixel(x, y, Color8(150, 128, 236) if x < 6 else Color8(104, 86, 200))
-	tooth.set_pixel(5, 3, Color8(236, 228, 255))
-	tooth.set_pixel(5, 4, Color8(236, 228, 255))
+			tooth.set_pixel(x, y, Color8(168, 144, 246) if x < 6 else Color8(104, 82, 204))
+	for p in [Vector2i(5, 2), Vector2i(5, 3), Vector2i(4, 4)]:
+		tooth.set_pixelv(p, Color8(240, 234, 255))
 	var sprites := [meat, hide, bone, tooth]
 	for i in sprites.size():
-		_outline(sprites[i], OUTLINE)
+		_outline_tinted(sprites[i])
 		img.blit_rect(sprites[i], Rect2i(0, 0, 12, 12), Vector2i(i * 12, 0))
 	return img
 

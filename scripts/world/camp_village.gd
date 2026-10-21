@@ -61,6 +61,10 @@ func _on_upgrade_bought(_id: String, _level: int) -> void:
 func _build(s: int, animated: bool) -> void:
 	if animated:
 		_hud.announce(ANNOUNCES[s])
+		# Moment fort : grands rayons au-dessus du feu et bref éclat de l'écran.
+		var at := _fire.global_position if _fire else _world.camp_position
+		CombatFx.rays(at + Vector2(0, -14), 1.6)
+		CombatFx.flash_screen()
 		await get_tree().create_timer(0.5).timeout
 	if s == 3 and _fire:
 		_fire.enlarge()

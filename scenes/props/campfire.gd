@@ -34,7 +34,7 @@ func enlarge() -> void:
 	_flames.texture = BIG_SHEET
 	_flames.offset = Vector2(-24, -34)
 	_glow_size = 1.5
-	_glow.position = Vector2(0, -12)
+	_glow.position = Vector2(0, -2)
 	_smoke.amount = 10
 	_smoke.position = Vector2(0, -24)
 	($Body/Shape.shape as CircleShape2D).radius = 15.0

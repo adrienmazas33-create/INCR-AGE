@@ -32,6 +32,11 @@ func is_dead() -> bool:
 	return current <= 0.0
 
 
+## Secondes écoulées depuis le dernier coup reçu.
+func since_damage() -> float:
+	return _since_damage
+
+
 func ratio() -> float:
 	return current / max_health
 

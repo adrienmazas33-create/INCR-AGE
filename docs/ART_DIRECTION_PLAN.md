@@ -128,4 +128,6 @@ Document de cadrage du chantier artistique.
 
 ## État d'avancement
 
-Voir `PROGRESS.md`, section « Chantier artistique ».
+- **Étape 1** (ce document) : faite.
+- **Passe visuelle 1** (tout le « améliorer d'abord ») : faite, en attente d'avis ; détail dans `PROGRESS.md`, section « Chantier artistique — passe visuelle 1 ».
+- **Priorités 2 et 3** : non commencées.

@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : phase 3 terminée et validée (lots 3A, 3B, 3C). Aucune opération en cours. Prochaine étape prévue : chantier « direction artistique et rendu pixel art », à lancer sur demande explicite.**
+**État : chantier artistique en cours. Étape 1 (audit et direction, `docs/ART_DIRECTION_PLAN.md`) et passe visuelle 1 réalisées et commitées en local, en attente du regard du porteur du projet. Aucun changement de gameplay.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -50,7 +50,38 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
   - atlas `props.png` + `props.json` (rectangle et point d'ancrage par nom) ;
   - tuiles 32 px et dispositions décrites dans `scripts/world/tile_ids.gd` ;
   - auto-tuiles indexées par masque de 8 voisins (256 variantes).
-- Aucune refonte graphique n'est engagée à ce jour.
+- Chantier artistique engagé : cadrage dans `docs/ART_DIRECTION_PLAN.md`, passe visuelle 1 décrite ci-dessous. Le reste de l'art reste provisoire.
+
+## Chantier artistique — passe visuelle 1 (en attente d'avis)
+
+Ciblée sur la tranche préhistorique, **sans aucun changement de mécanique** : mêmes collisions, portées, vitesses, règles et formats de planches.
+
+- **Héros** : proportions plus naturelles (environ 25 px de haut, tête d'environ un tiers au lieu de la moitié), tunique portée sur une épaule. **Signature : cape de peau de bête dorée et massue à tête de pierre.**
+- **Compagnons** : même gabarit, **lance à pointe de silex** qui dépasse de la silhouette (une troupe lisible à 8). Les 8 apparences sont conservées.
+- **Villageois** : mêmes nouvelles proportions, sans arme.
+- **Commun aux personnages** : ombrage plus riche, grain de fourrure fixé au corps, **contour sélectif** (teinté selon la matière voisine au lieu d'un brun uniforme).
+- **Sanglier** :
+  - tête nettement séparée (pli du cou, joue claire, groin rosé avec narine, défense blanche), œil avec reflet, oreille dressée ;
+  - crinière aux pointes claires, croupe éclairée, sabots ;
+  - œil rouge pendant la préparation de la charge.
+- **Flash d'impact** : il éclaircit sans effacer la silhouette, les contours sombres restent sombres (shader `flash.gdshader`).
+- **Feu de camp** (petit et grand) : langues qui s'enroulent, braises qui montent, bouts de bûches incandescents, pierres éclairées par-dessus, **halo posé au sol en ellipse tramée** au lieu d'un disque.
+- **Combat** :
+  - arc de coup épais, **doré pour le héros**, blanc pour les compagnons ;
+  - étincelle en étoile avec anneau (4 images) ;
+  - **nuage de poussière** à la mort d'un ennemi.
+- **Butin** : icônes plus contrastées, **scintillement** périodique au sol, **aura violette** pour le savoir, éclats colorés au ramassage.
+- **Moments forts** : **rayons dorés** autour du feu à chaque achat ; au changement de stade du camp, grands rayons et **bref éclat de l'écran**, en plus du ruban d'annonce.
+- **Huttes** : chaume en rangs effilochés (hutte conique), panneaux cousus et pierres de lestage (dôme), portes profondes encadrées de perches liées.
+- **Interface** : un même **cadre en cuir et bois cloutés** (`scripts/ui/ui_frame.gd`) pour le panneau du feu, le compteur de ressources et le ruban d'annonce.
+- **Barres de vie** : affichées seulement juste après un coup (2,5 s) ou quand la vie est sous la moitié. Le groupe de 8 n'est plus surmonté d'un empilement de barres.
+
+**Encore provisoire** :
+- tout le reste de l'art (terrain, végétation, décors secondaires, maison longue, palissade, police) ;
+- l'absence d'animation d'attaque dédiée (élan seulement) ;
+- le grand sanglier, simple variante de couleur.
+
+Voir les priorités 2 et 3 du plan artistique.
 
 ## Terminé (phase 1)
 
@@ -145,11 +176,17 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
   - position dans la maison longue : héros repoussé sur une case libre.
 - Performances (lot 3C), toujours sur batterie (secteur indisponible pendant la session) : **60 FPS de moyenne stable** au camp, au village avec 8 compagnons, et en vue large au-dessus de la forêt.
 - **Validations humaines** : phase 1, lots 2A, 2B, 3A, 3B et 3C testés en jeu et validés par le porteur du projet (le 21/10/2026).
+- **Passe visuelle 1** :
+  - captures avant et après au camp et en combat, plus le passage au stade TRIBU (rayons et éclat) ; chaque planche vérifiée en aperçu agrandi ;
+  - combat et butin inchangés (sanglier abattu, butin ramassé et compté) ;
+  - tour complet de la carte : 2 replacements forcés (après combats), 60 FPS de moyenne ;
+  - copie neuve des fichiers versionnés : import et lancement sans erreur.
+  - **À juger par le porteur du projet** : rendu d'ensemble, lisibilité en mouvement, rythme des rayons et de l'éclat.
 - **Non vérifié** : sensations de contrôle, de caméra et de combat par un humain, clic réel dans le panneau (achats testés par commande), toucher sur écran tactile, écran 120/144 Hz, plein écran.
 
 ## En cours
 
-- Rien. Phase 3 validée et publiée (tag `phase-3c`) ; aucune opération en cours.
+- Rien d'inachevé. La passe visuelle 1 est commitée en local et attend l'avis du porteur du projet ; elle n'est pas publiée sur GitHub (pas de tag).
 
 ## Problèmes connus / limites
 
@@ -172,7 +209,9 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
 ## Prochaines étapes
 
-1. **Chantier « direction artistique et rendu pixel art »** : prévu prochainement, non commencé (voir « Direction artistique »).
+1. **Chantier artistique** :
+   - avis du porteur du projet sur la passe 1, ajustements éventuels, puis publication ;
+   - ensuite, priorité 2 du plan (`docs/ART_DIRECTION_PLAN.md`) : animation d'attaque dédiée, diagonales du terrain, végétation proche du camp, éclairage d'ambiance, décors des stades TRIBU et VILLAGE.
 2. Ajustements d'équilibrage au fil des essais : `data/units/*.tres`, `scripts/progression/upgrades.gd`. À 8 compagnons, les sangliers deviennent trop faciles.
 3. Profilage des performances sur secteur ; pistes : forêt en MultiMesh ou en tuiles, calculs du groupe (`Party`).
 4. Plus tard, selon la bible : compétences actives du héros, classes militaires, nouvelles époques.
@@ -187,7 +226,7 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 - Dépôt : https://github.com/adrienmazas33-create/INCR-AGE, branche `main`. Chaque lot validé porte un tag : `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`.
 - Copie locale : `C:\Users\Adrien\OneDrive\Bureau\INCR-AGE`. Identité Git définie **uniquement pour ce dépôt** (`user.name` « Adrien »).
 - Bible créative : `Bible_creative_Jeu_incremental_2D_V01.md` / `.docx`, dans les Téléchargements de l'utilisateur, **hors dépôt**.
-- **Prochaine étape : chantier « direction artistique et rendu pixel art »**, prévu, non commencé, à lancer sur demande explicite. Ne pas commencer d'autre phase sans demande explicite.
+- **En cours : chantier artistique.** Étape 1 et passe visuelle 1 faites, commitées en local et non publiées. Cadrage, priorités et règles visuelles dans `docs/ART_DIRECTION_PLAN.md`. Ne pas commencer d'autre phase sans demande explicite.
 
 ### 2. Méthode de travail attendue
 
@@ -206,7 +245,14 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 - Le dossier `.godot/` n'est pas versionné. Sur un clone neuf, lancer d'abord `godot --headless --path . --import`, ou `lancer_jeu.bat`, qui le fait. Sans cet import, les `class_name` et les images ne sont pas encore connus.
 - Pas de Python sur la machine : tout l'outillage est en GDScript (`tools/`), lancé avec `--headless --script`.
 - L'ordinateur est souvent sur batterie : les FPS peuvent y varier. Se fier à la **moyenne** affichée par l'outil de test et vérifier l'alimentation : `(Get-CimInstance Win32_Battery).BatteryStatus` (1 = batterie, 2 = secteur).
-- **Tests et sauvegarde** : toujours lancer l'outil de test avec `--no-save` ou `--save=<fichier temporaire>`, pour ne jamais toucher la vraie partie du joueur. Les arguments `--give`, `--buy`, `--at` et `--route` coupent déjà l'écriture d'eux-mêmes.
+- **Tests et sauvegarde** :
+  - toujours lancer l'outil de test avec `--no-save` ou `--save=<fichier temporaire>`, pour ne jamais toucher la vraie partie du joueur ;
+  - les arguments `--give`, `--buy`, `--at` et `--route` coupent déjà l'écriture d'eux-mêmes ;
+  - attention : `--no-save` empêche l'écriture mais **lit** quand même la vraie sauvegarde (le joueur peut avoir des recrues). Pour un état de départ neutre, utiliser `--save=<fichier temporaire inexistant>`.
+- **Art** :
+  - les règles visuelles sont dans `docs/ART_DIRECTION_PLAN.md` (palette, rôles des couleurs, contour sélectif `_outline_tinted()`) ;
+  - personnages : gabarits `BODY_*` et `LEGS_*`, cape `CAPE_*` et arme `_weapon()` dans `tools/generate_art.gd` ;
+  - vérifier chaque planche avec un aperçu agrandi avant de la juger en jeu.
 
 ### 4. Architecture (essentiel)
 
