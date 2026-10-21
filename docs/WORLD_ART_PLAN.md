@@ -1,0 +1,116 @@
+# INCR-AGE — Montée en qualité artistique du monde jouable
+
+Étude du lot 2, rédigée le 22/10/2026. **Rien n'est encore transformé dans le jeu.**
+
+Cette étude ne touche à rien de ce qui suit, aujourd'hui comme dans les étapes proposées :
+- la géographie de la carte ;
+- les collisions ;
+- les règles de déplacement ;
+- le gameplay.
+
+Seul le **rendu** du sol, de l'eau, des reliefs et des décors est en jeu.
+
+Captures de référence (état actuel) : `docs/art/zone_temoin/`.
+- `avant_vue_large.png` : le camp et ses abords, zoom large.
+- `avant_pont.png` : la rivière et le pont à l'est du camp.
+- `avant_falaise.png` : le grand plateau et son escalier.
+
+## 1. Limites visuelles actuelles (constat bref)
+
+| Élément | Ce qui fait « prototype » |
+|---|---|
+| **Sol** | Herbe d'un seul vert, quelques points épars : de grandes surfaces plates, sans nuances ni touffes. Elles se lisent comme un tapis. |
+| **Transitions** | Les chemins ont des bords en bulles réguliers (formes de nuage) et une seule teinte de terre. Pas de zone intermédiaire : herbe clairsemée, cailloux, terre tassée. |
+| **Grille** | Les diagonales et les rives suivent les cases de 32 px : on voit des marches d'escalier. |
+| **Végétation** | Trois modèles d'arbres répétés. Les forêts forment des blocs aux bords droits, sans sous-bois, fougères, souches ni arbres isolés en lisière. |
+| **Eau** | Un bleu uniforme avec des tirets de reflet et une berge réduite à un trait brun. Pas de hauts-fonds, d'écume, de rochers ni de végétation de rive (à part quelques roseaux). |
+| **Falaises** | Un mur droit et rectiligne, au motif répétitif proche d'une maçonnerie. Bord supérieur parfaitement plat, aucun angle arrondi. L'escalier ressemble à du béton. |
+| **Lumière et couleurs** | Vert très saturé partout, aucune variation d'éclairage, pas d'ombres des arbres au sol. |
+| **Composition** | De grandes étendues vides entre les éléments, peu de points d'intérêt pour guider le regard. |
+
+**Cause profonde.** Tout est produit par des règles appliquées à une grille de 32 px. Ajouter des détails programmés améliore chaque tuile, mais pas l'ensemble.
+
+Ce qui manque :
+- des formes dessinées à la main ;
+- des transitions pensées par paires de terrains ;
+- une composition voulue.
+
+## 2. Point technique décisif : la densité de pixels
+
+Nos personnages sont dessinés à **32 px par tuile** : un pixel de dessin vaut un pixel de jeu. Tout nouveau décor doit garder cette densité, sinon le monde et les personnages ne vont pas ensemble.
+
+- Un pack en **16 px** agrandi deux fois aurait des pixels deux fois plus gros que ceux des personnages. Il faudrait alors redessiner aussi les personnages en 16 px.
+- Un pack en **32 px** s'intègre directement.
+
+## 3. Trois voies de production
+
+| | A. Pack libre en 32 px | B. Pack libre en 16 px | C. Jeu de tuiles original, dessiné à la main |
+|---|---|---|---|
+| Exemples | LPC (Liberated Pixel Cup) et ses extensions | Ninja Adventure, Kenney | À produire selon notre fiche technique |
+| Qualité | Bonne, complète (sols, eaux, falaises, arbres) | Bonne, style « mignon » | La meilleure possible, selon l'auteur |
+| Cohérence avec nos personnages | Directe | Demande de refaire les personnages | Totale |
+| Identité propre | Faible : style très répandu | Faible : très répandu | Forte |
+| Coût | Gratuit | Gratuit | Ton temps, ou un pixel artiste rémunéré (avec ton accord) |
+| Licence | CC-BY-SA 3.0 ou GPL 3.0 : usage commercial permis, crédit obligatoire, tuiles modifiées à repartager sous la même licence | CC0 annoncée, sans obligation | Propriété du projet |
+| Délai pour la zone témoin | Court | Court, puis long (personnages) | Moyen à long |
+
+**État des licences vérifiées** (à confirmer dans les fichiers de licence avant toute intégration) :
+- **LPC.** Les fiches OpenGameArt indiquent CC-BY-SA 3.0 et GPL 3.0, parfois aussi CC-BY. Exemples : [LPC Modified base tiles](https://opengameart.org/content/lpc-modified-base-tiles), [jeu de base LPC](https://opengameart.org/node/14897).
+- **Ninja Adventure.** CC0 d'après une [réponse de l'auteur](https://itch.io/post/5390864) sur itch.io.
+- **Cainos, « Pixel Art Top Down – Basic ».** Pack en 32 px souvent cité comme gratuit et utilisable commercialement. Sa page n'a pas pu être lue (accès refusé à l'outil) : **licence non vérifiée**.
+
+Une remarque sur la voie C : je peux dessiner des tuiles pixel par pixel (à la main, pas par bruit procédural). Mais mon niveau n'égale pas celui d'un pixel artiste confirmé. Pour viser la qualité d'un jeu indépendant soigné, la voie C passe idéalement par toi ou par un artiste.
+
+## 4. Améliorations techniques nécessaires, quelle que soit la voie
+
+Elles ne changent que l'affichage. Les collisions restent celles de `TerrainBuilder`.
+
+1. **Grille double (dual grid).** Les tuiles sont posées décalées d'une demi-case et choisies d'après les 4 coins.
+   - Chaque paire de terrains (herbe/terre, herbe/eau, herbe/plateau) se dessine avec 16 tuiles aux bords organiques.
+   - Fini les marches d'escalier et les bords en bulles.
+2. **Couche de décalques au sol.** Touffes, fleurs, cailloux, feuilles mortes, posés en grappes, avec quelques variations de teinte de l'herbe. Le sol cesse d'être un tapis uniforme.
+3. **Lisières de forêt.** Arbres isolés, buissons et souches devant les blocs de forêt, pour casser les bords droits.
+4. **Eau.** Bande de hauts-fonds plus claire, écume animée le long des rives, rochers et plantes de berge.
+5. **Falaises.**
+   - Tuiles en strates de roche, avec une lèvre herbeuse irrégulière en haut.
+   - Angles arrondis, quelques variantes de hauteur apparente.
+   - Escalier taillé dans la roche.
+6. **Lumière.** Ombres portées douces des arbres et des huttes, légère teinte d'ambiance chaude.
+
+## 5. Zone témoin proposée
+
+- **Zone principale** : de la case (44, 44) à la case (82, 66). C'est le camp, ses chemins, la prairie fleurie, les lisières de forêt ouest, est et sud, la rivière avec ses roseaux et le pont. Cela fait environ deux écrans au zoom moyen.
+- **Échantillon de relief** : la falaise et l'escalier du grand plateau, de (96, 22) à (106, 30), puisqu'il n'y a pas de relief près du camp.
+
+**Méthode**
+1. Produire un jeu de tuiles minimal pour cette zone seulement :
+   - herbe, 3 variantes et des touffes ;
+   - terre ;
+   - eau, avec rives et écume ;
+   - pont ;
+   - lisière de forêt et 4 arbres ;
+   - une dizaine de décalques ;
+   - une falaise et son escalier.
+2. Afficher ce nouveau rendu **dans la zone témoin uniquement**, par un réglage activable. Le reste du monde ne change pas.
+3. Refaire les trois captures aux mêmes endroits et aux mêmes zooms, pour une comparaison avant/après côte à côte.
+4. T'arrêter pour validation avant toute extension au reste du monde.
+
+## 6. Recommandation
+
+1. **Pour mesurer vite le saut de qualité possible : la voie A (LPC en 32 px) dans la zone témoin.** C'est gratuit, à la même densité que nos personnages, et sous une licence compatible avec une vente, à condition de créditer les auteurs. Cet essai sert de banc de comparaison.
+2. **Pour l'identité à long terme : la voie C.** Un jeu de tuiles original, dessiné à la main, d'après une fiche technique qui reste à écrire : densité, palette, perspective, liste des tuiles, format pour la grille double. Il serait produit par toi ou par un artiste.
+
+   L'essai de la voie A garde son utilité : il montre précisément quel niveau viser.
+3. La voie B est déconseillée : elle obligerait à redessiner les personnages pour un style moins proche de notre direction.
+
+## 7. Décisions à prendre avant la suite
+
+1. Quelle voie pour la zone témoin : A, C, ou A puis C ?
+2. Si A ou B : ton accord pour télécharger le pack retenu, en précisant la source et la taille. Les fichiers de licence et de crédits seront lus avant tout usage, et les auteurs crédités dans un fichier dédié.
+3. Si C : qui dessine. De mon côté, je peux écrire la fiche technique et un premier essai de tuiles pixel par pixel, avec la limite de qualité indiquée plus haut.
+
+Idées gardées pour plus tard, sans changement :
+- amélioration VITESSE ;
+- troupes aux mouvements plus organiques ;
+- personnages plus aboutis ;
+- carte du monde consultable.

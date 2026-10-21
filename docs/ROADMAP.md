@@ -42,7 +42,7 @@ Demandée en mission secondaire « si raisonnable », reportée pour tenir dans 
 ## Ordre des prochaines sessions (revu le 22/10/2026)
 
 1. **Ambiance sonore** : bruitages et musique rétro originale, douce et entraînante (section 3).
-2. **Montée majeure en qualité artistique du monde jouable** : sols, végétation, eau, reliefs, transitions et composition des environnements.
+2. **Montée majeure en qualité artistique du monde jouable** : sols, végétation, eau, reliefs, transitions et composition des environnements. Étude du lot 2 : `docs/WORLD_ART_PLAN.md` (en attente de décision).
    - D'abord une **zone témoin soignée autour du campement**, à valider avant toute refonte globale.
    - Étudier de vrais assets pixel art cohérents (gratuits et utilisables commercialement, licence vérifiée), plutôt que multiplier indéfiniment les dessins programmatiques.
 3. **Comportement plus organique des troupes autour du héros** : placements moins géométriques, petites variations de rythme et de position, sans perdre la fiabilité du suivi.

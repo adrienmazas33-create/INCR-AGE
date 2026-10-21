@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : audio terminé et validé (tags `audio-a`, `audio-b`, `audio-b2`, `audio-c`, `audio-c2`). En cours : chantier artistique du monde, lot 2 (étude et zone témoin).**
+**État : chantier artistique du monde, lot 2 — étude faite (`docs/WORLD_ART_PLAN.md`), en commit local, en attente de tes décisions (voie de production, téléchargement éventuel d'un pack libre). Aucun graphisme modifié. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -243,6 +243,13 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
+- **Chantier artistique du monde, lot 2 : étude et zone témoin** (`docs/WORLD_ART_PLAN.md`), en attente de décision :
+  - constat des limites visuelles, avec trois captures de référence dans `docs/art/zone_temoin/` (dossier ignoré par Godot) ;
+  - point clé : garder la densité de 32 px par tuile de nos personnages ;
+  - trois voies comparées : pack libre en 32 px (LPC, CC-BY-SA ou GPL), pack libre en 16 px (CC0), jeu de tuiles original dessiné à la main ; améliorations techniques communes (grille double, décalques au sol, lisières, eau, falaises, lumière) ;
+  - zone témoin définie : de (44,44) à (82,66) autour du camp et de la rivière, plus la falaise de (96,22) à (106,30) ;
+  - recommandation : essai rapide avec LPC en 32 px dans la zone témoin, puis jeu de tuiles original pour l'identité ;
+  - **aucun graphisme, aucune carte ni aucune collision modifiés** ; aucun téléchargement fait (il demande ton accord).
 - **Rééquilibrage de la musique et panneau des volumes**, validés le 22/10/2026 et publiés (tag `audio-c2`) :
   - musique : mêmes notes, même rythme, même structure et mêmes instruments ; seuls les niveaux des voix changent (`LEVELS` dans `tools/generate_music.gd`) : marimba de tête 0,34 → 0,21 (doublée par la flûte un peu plus présente), arpège 0,13 → 0,105, kick 0,22 → 0,15, flûte 0,30 → 0,27, nappe 0,045 → 0,05 ; les notes aiguës de la flûte et de la marimba sont un peu adoucies et moins brillantes (jusqu'à -3 dB et moitié moins d'harmoniques vers mi6) ; niveau en jeu -7 → -8 dB ;
   - panneau des volumes (`scenes/ui/audio_panel.gd`) : touche V ou petit bouton à note de musique en bas à droite ; un curseur et une case de coupure pour MUSIQUE, EFFETS et NATURE ; réglages enregistrés dans `user://settings.cfg` (écrit au relâchement du curseur) ; un clic sur le panneau ne déplace pas le héros.
