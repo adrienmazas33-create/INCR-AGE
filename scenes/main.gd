@@ -36,6 +36,8 @@ func _ready() -> void:
 	ambience.name = "Ambience"
 	add_child(ambience)
 	ambience.setup(_hero, _world.map)
+	# Musique d'exploration : entrée en fondu lent, en boucle.
+	AudioManager.play_music(AudioManager.loop_stream(AudioManager.THEME), 5.0)
 	var compass := CampCompass.new()
 	compass.setup(_hero, _world.camp_position)
 	_hud.add_panel(compass)

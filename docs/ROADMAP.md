@@ -2,7 +2,7 @@
 
 Document de cadrage rédigé le 22/10/2026 à partir des retours de test du porteur du projet.
 
-> **Fait** : l'indicateur de direction du campement (section 0, validé, tag `camp-compass`), le déplacement à la souris (section 1, validé, tag `mouse-move`) et l'identification du héros (section 0 bis, validé, tag `hero-id`) ; audio, lots A (validé, tag `audio-a`) et B (validé, tag `audio-b`), section 3. **Tout le reste est PRÉVU, non développé.**
+> **Fait** : l'indicateur de direction du campement (section 0, validé, tag `camp-compass`), le déplacement à la souris (section 1, validé, tag `mouse-move`) et l'identification du héros (section 0 bis, validé, tag `hero-id`) ; audio, lots A et B et leurs ajustements (validés, tags `audio-a`, `audio-b`, `audio-b2`) et lot C, musique (en attente de validation), section 3. **Tout le reste est PRÉVU, non développé.**
 
 Priorités revues le 22/10/2026, après les tests du porteur du projet (voir « Ordre des prochaines sessions »).
 
@@ -99,7 +99,7 @@ Détail des tests : `PROGRESS.md`.
 - Le jeu peut continuer derrière la carte ou être mis en pause : à décider au début du lot.
 - Minicarte : optionnelle, plus tard, si le besoin se confirme.
 
-## 3. Audio — lot A validé (tag `audio-a`), lot B validé (tag `audio-b`), suite PRÉVUE
+## 3. Audio — lots A et B validés, lot C (musique) FAIT en attente de validation, suite PRÉVUE
 
 **Lot A, fait** : architecture (`AudioManager`, bus Music / SFX / Ambience, volumes enregistrés dans `user://settings.cfg`, `play_music()` prêt) et cinq bruitages originaux (coup sur un ennemi, butin, achat, grognement du sanglier, crépitement du feu). Détail dans `PROGRESS.md`.
 
@@ -107,7 +107,9 @@ Détail des tests : `PROGRESS.md`.
 
 **Ajustements après écoute (validés, tag `audio-b2`)** : oiseaux joués à part, à intervalles irréguliers (quatre chants) ; mixage baissé, limiteur sur la sortie.
 
-**Suite prévue, non développée** : menu des volumes (musique, effets, ambiance), puis la boucle musicale originale ; plus tard, ambiances propres aux forêts et aux plateaux.
+**Lot C, fait (en attente de validation)** : première musique d'exploration originale, 100 s en boucle, sol majeur à 96 BPM (`tools/generate_music.gd`, `assets/audio/music/theme_exploration.wav`). Motif signature ré-sol-la-si, à réarranger pour chaque époque.
+
+**Suite prévue, non développée** : menu des volumes (musique, effets, ambiance) ; variantes du thème par époque (âge des métaux, Moyen Âge, révolution industrielle, époque moderne, futur) ; plus tard, ambiances propres aux forêts et aux plateaux.
 
 **Contenu prévu**
 - Effets sonores :

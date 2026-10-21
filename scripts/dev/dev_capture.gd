@@ -107,6 +107,7 @@ func _run() -> void:
 	if ambience:
 		print("DevCapture : ambiances " + ambience.debug_summary())
 	print("DevCapture : sons joués %s" % AudioManager.counts)
+	print("DevCapture : musique %s" % AudioManager.music_summary())
 	if _capture_path != "":
 		for i in 3:
 			await get_tree().process_frame

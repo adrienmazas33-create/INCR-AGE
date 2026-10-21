@@ -30,6 +30,10 @@ const SOUNDS := {
 const FIRE_LOOP := "res://assets/audio/sfx/fire_loop.wav"
 const MEADOW_LOOP := "res://assets/audio/sfx/meadow_loop.wav"
 const WATER_LOOP := "res://assets/audio/sfx/water_loop.wav"
+## Musique d'exploration (tools/generate_music.gd), jouée en boucle sur le bus Music.
+const THEME := "res://assets/audio/music/theme_exploration.wav"
+## Niveau de la musique : sous les bruitages importants du jeu.
+const MUSIC_DB := -7.0
 const POOL_SIZE := 12
 ## Distance (pixels) au-delà de laquelle un bruitage placé dans le monde n'est plus entendu.
 const HEARING := 560.0
@@ -136,7 +140,7 @@ func play_music(stream: AudioStream, fade := 1.5) -> void:
 		_music.volume_db = -40.0
 		if stream:
 			_music.play())
-	tween.tween_property(_music, "volume_db", 0.0, fade)
+	tween.tween_property(_music, "volume_db", MUSIC_DB, fade)
 
 
 ## Volume d'une catégorie (0 à 1), enregistré.
@@ -175,3 +179,17 @@ func _save_settings() -> void:
 		cfg.set_value("audio", String(bus), _volumes[bus])
 		cfg.set_value("audio", String(bus) + "_muted", _muted.get(bus, false))
 	cfg.save(SETTINGS_PATH)
+
+
+## Bilan pour l'outil de test : état de la musique.
+func music_summary() -> String:
+	if not _music.playing:
+		return "arrêtée"
+	return "en cours, %.1f s, %.0f dB, boucle %s" % [_music.get_playback_position(), _music.volume_db,
+		"oui" if (_music.stream as AudioStreamWAV).loop_mode != AudioStreamWAV.LOOP_DISABLED else "non"]
+
+
+## Fermeture : la musique en cours est arrêtée et libérée (pas de ressource retenue à la sortie).
+func _exit_tree() -> void:
+	_music.stop()
+	_music.stream = null

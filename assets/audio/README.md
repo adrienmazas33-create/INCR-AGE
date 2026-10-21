@@ -11,10 +11,11 @@
 | `sfx/boar_down.wav`, `camp_stage.wav` | Idem (lot B) | Idem |
 | `sfx/meadow_loop.wav`, `water_loop.wav` | Idem (lot B) | Idem |
 | `sfx/bird_0.wav` à `bird_3.wav` | Idem (ajustements après le lot B) | Idem |
+| `music/theme_exploration.wav` | Composition originale (partition écrite note par note) et rendu par `tools/generate_music.gd` (lot C) | Idem |
 
 Aucun échantillon extérieur n'est utilisé : chaque son est calculé note par note (marimba, bruit filtré, ondes simples).
 
-Pour régénérer :
+Pour régénérer (la musique : `res://tools/generate_music.gd`, même principe) :
 ```
 godot --headless --path . --script res://tools/generate_sfx.gd
 godot --headless --path . --import

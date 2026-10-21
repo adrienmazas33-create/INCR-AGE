@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : audio, lots A et B et ajustements validés et publiés (tags `audio-a`, `audio-b`, `audio-b2`). Menu des volumes et musique : prévus, non commencés.**
+**État : audio, lot C (première musique d'exploration) fait, en commit local, en attente d'écoute et de validation (non poussé, pas de tag). Lots A, B et ajustements validés (tags `audio-a`, `audio-b`, `audio-b2`).**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -224,6 +224,12 @@ Voir les priorités 2 et 3 du plan artistique.
   - tour complet à 8 compagnons : 150 s, 60 FPS, 5 replacements forcés, résultat identique au lot A (aucun effet sur le jeu) ; 681 pas joués en 150 s (environ 4,5 par seconde de marche), 17 sons écartés ;
   - aucune erreur de script ; lot A inchangé à l'octet près ;
   - écoute : **validée** par le porteur du projet le 22/10/2026.
+- **Audio, lot C (musique)** :
+  - partition contrôlée par l'outil : chaque mesure fait exactement 4 temps (aucune erreur) ; hauteurs calculées en tempérament égal depuis le nom des notes ; harmonies vérifiées mesure par mesure (notes de la mélodie dans l'accord, ou notes de passage) ;
+  - niveaux moyens : intro -22,9, A -17,7, A' -17,2, pont -20,0, marimba -19,1, coda -20,4 dBFS (le pont et la coda respirent) ; crête du fichier -6 dBFS ;
+  - raccord de boucle : aucun saut entre la fin et le début ; en jeu, après 105 s, la lecture est repartie du début (position 5,5 s), en boucle ;
+  - 60 FPS au camp et en combat avec la musique ; rendu en 9 s par l'outil, une fois pour toutes ;
+  - **non vérifié** : l'écoute elle-même (je ne peux pas entendre) : beauté, charme et équilibre du mixage restent à ton jugement.
 - **Ajustements audio**, en jeu :
   - 45 s près de la rivière : 3 chants d'oiseaux, à intervalles différents ;
   - crête du bus Ambiance à -48 dB, contre -35 à -39 dB avant ;
@@ -233,6 +239,14 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
+- **Audio, lot C : première musique d'exploration**, en attente d'écoute et de validation :
+  - composition originale, écrite note par note dans `tools/generate_music.gd` et rendue en un fichier réutilisable (`assets/audio/music/theme_exploration.wav`, 100 s, 22 kHz mono) ; rien n'est calculé au lancement du jeu ;
+  - sol majeur, 96 BPM, 40 mesures : intro (nappe, arpège), thème A (flûte rétro), variation A' (plus aiguë, petit kick), pont B plus calme en mi mineur (notes longues, sans percussion), retour du thème à la marimba, coda qui finit sur l'accord de ré pour ramener à l'intro ;
+  - instruments doux par synthèse : flûte « chiptune » adoucie avec vibrato, marimba, nappe chaude, basse ronde, kick et shaker très discrets, légère réverbération ;
+  - motif signature ré-sol-la-si (quarte montante puis deux pas), à réarranger plus tard pour chaque époque ;
+  - boucle sans couture : queues des notes et réverbération repliées sur le début ;
+  - intégration : `AudioManager.play_music()` au lancement, fondu d'entrée de 5 s, bus Music, niveau -7 dB sous les bruitages ; musique libérée proprement à la fermeture.
+  - Commit local seulement. Après validation : tag `audio-c` et push.
 - **Ajustements audio après le lot B**, validés le 22/10/2026 et publiés (tag `audio-b2`) :
   - oiseaux séparés du vent : quatre chants distincts (trois notes montantes, trille, sifflement en deux notes, roulade), joués un à la fois, jamais deux fois le même de suite, à intervalles irréguliers (5 à 15 s, et une fois sur quatre un silence de 20 à 35 s), hauteur, volume et côté variés ; la boucle de prairie ne contient plus que le vent ;
   - mixage baissé et rééquilibré : impacts et récompenses -4 dB, pas -6 dB, vent -8 dB, eau -7 dB, feu -5 dB, bus Effets par défaut à 0,7 ; coups limités à 2 simultanés ; limiteur doux sur la sortie (plafond -1 dB) contre toute saturation ; marge d'environ 6 dB laissée à la future musique ;
@@ -286,7 +300,7 @@ Voir les priorités 2 et 3 du plan artistique.
 ## Prochaines étapes
 
 1. **Feuille de route `docs/ROADMAP.md`**, ordre revu le 22/10/2026 (rien de tout cela n'est développé) :
-   1. ambiance sonore : lot A validé (tag `audio-a`), lot B (pas, ambiances) validé (tag `audio-b`) ; ensuite menu des volumes et musique rétro originale ;
+   1. ambiance sonore : lot A validé (tag `audio-a`), lot B (pas, ambiances) validé (tag `audio-b`) ; lot C (première musique) fait, en attente de validation ; ensuite menu des volumes, puis variantes du thème par époque ;
    2. art du monde jouable : d'abord une zone témoin soignée autour du campement, en partant de vrais assets pixel art ;
    3. comportement plus organique des troupes ;
    4. carte du monde et mini-carte, plus tard.
@@ -309,7 +323,7 @@ Voir les priorités 2 et 3 du plan artistique.
 - Bible créative : `Bible_creative_Jeu_incremental_2D_V01.md` / `.docx`, dans les Téléchargements de l'utilisateur, **hors dépôt**.
 - **Chantier artistique** : étape 1 et passe visuelle 1 faites et validées (tag `art-pass-1`). Prochaine étape, sur demande : priorité 2 de `docs/ART_DIRECTION_PLAN.md`. Ne pas commencer d'autre phase sans demande explicite.
 - **Indicateur du campement** : validé et publié (tag `camp-compass`).
-- **Feuille de route** `docs/ROADMAP.md` : déplacement à la souris (**fait et validé**, tag `mouse-move`) ; identification du héros (**faite et validée**, tag `hero-id`). Audio : lot A **fait et validé** (tag `audio-a`), lot B **fait et validé** (tag `audio-b`). Ensuite, **prévus et non développés** : menu des volumes, musique, art du monde (zone témoin au camp), troupes organiques, carte du monde ; amélioration VITESSE reportée.
+- **Feuille de route** `docs/ROADMAP.md` : déplacement à la souris (**fait et validé**, tag `mouse-move`) ; identification du héros (**faite et validée**, tag `hero-id`). Audio : lot A **fait et validé** (tag `audio-a`), lot B **fait et validé** (tag `audio-b`). Lot C (musique) : **fait, commit local en attente de validation**. Ensuite, **prévus et non développés** : menu des volumes, variantes du thème par époque, art du monde (zone témoin au camp), troupes organiques, carte du monde ; amélioration VITESSE reportée.
 
 ### 2. Méthode de travail attendue
 
@@ -407,6 +421,7 @@ Depuis la racine du dépôt, `godot` désigne l'exécutable console.
 - Contrôle sans affichage : `godot --headless --path . --quit-after 300`, sans aucune ligne `ERROR` attendue.
 - Régénérer l'art : `godot --headless --path . --script res://tools/generate_art.gd`, puis `godot --headless --path . --import`.
 - Régénérer les bruitages : `godot --headless --path . --script res://tools/generate_sfx.gd`, puis `--import`.
+- Régénérer la musique : `godot --headless --path . --script res://tools/generate_music.gd`, puis `--import` (environ 10 s).
 - Vérifier la carte : `godot --headless --path . --script res://tools/check_map.gd -- --preview=apercu.png`.
 - Réesquisser la carte (**écrase les retouches manuelles**) : `godot --headless --path . --script res://tools/draft_map.gd`.
 - **Outil de test** : arguments placés après `--`, bilan affiché en console. Combinables :
