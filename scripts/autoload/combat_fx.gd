@@ -4,6 +4,7 @@ extends Node
 
 const ONE_SHOT := preload("res://scenes/fx/one_shot_fx.gd")
 const DAMAGE_NUMBER := preload("res://scenes/fx/damage_number.gd")
+const RING := preload("res://scenes/fx/ring_fx.gd")
 ## Chargées à la demande : un autoload est compilé avant l'import des images sur un clone neuf.
 const SLASH := "res://assets/art/fx/slash.png"
 const SPARK := "res://assets/art/fx/spark.png"
@@ -44,6 +45,30 @@ func party_hit(pos: Vector2, is_hero: bool) -> void:
 
 func puff(pos: Vector2) -> void:
 	_spawn(PUFF, 3, 14.0, pos)
+
+
+## Petite étincelle colorée (achat d'amélioration).
+func sparkle(pos: Vector2, color: Color) -> void:
+	var fx := _spawn(SPARK, 3, 12.0, pos)
+	if fx:
+		fx.modulate = color
+
+
+## Gerbe d'étincelles et poussière (apparition d'une recrue).
+func burst(pos: Vector2, color: Color) -> void:
+	puff(pos + Vector2(0, 8))
+	for i in 5:
+		sparkle(pos + Vector2.from_angle(TAU * i / 5.0) * 10.0, color)
+
+
+func ring(pos: Vector2, radius: float, color: Color) -> void:
+	if layer == null:
+		return
+	var fx := RING.new()
+	fx.position = pos
+	fx.radius = radius
+	fx.color = color
+	layer.add_child(fx)
 
 
 func damage_number(pos: Vector2, amount: float, taken_by_party: bool) -> void:

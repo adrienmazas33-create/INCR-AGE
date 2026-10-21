@@ -4,6 +4,7 @@ extends Node
 ## Exemples :
 ##   Godot --path . -- --at=58,40 --zoom=0 --walk=move_up:1.5,move_left:0.5 --capture=C:/tmp/shot.png
 ##   Godot --path . -- --route=58,52/57,46/55,41 --capture=C:/tmp/fin.png
+##   Godot --path . -- --give=food:30,materials:10 --buy=recruit,damage --capture=C:/tmp/camp.png
 ## --route conduit le héros d'une tuile à l'autre (comme au clavier) et signale les étapes non atteintes.
 ## Sans ces arguments, rien n'est ajouté au jeu.
 
@@ -16,12 +17,13 @@ var _capture_path := ""
 var _steps := []
 var _route: Array[Vector2] = []
 var _settle := 0.8
+var _buys := []
 
 
 static func attach_if_requested(parent: Node, hero: Node2D, camera: GameCamera) -> void:
 	var args := OS.get_cmdline_user_args()
 	if not Array(args).any(func(a: String) -> bool:
-			return a.begins_with("--capture") or a.begins_with("--walk") or a.begins_with("--at") or a.begins_with("--route")):
+			return a.begins_with("--capture") or a.begins_with("--walk") or a.begins_with("--at") or a.begins_with("--route") or a.begins_with("--buy")):
 		return
 	var dev := DevCapture.new()
 	dev._hero = hero
@@ -48,6 +50,12 @@ func _parse(args: PackedStringArray) -> void:
 					_route.append(_tile_center(wp))
 			"--hero-hp":
 				_hero.health.current = float(kv[1])
+			"--give":
+				for pair in kv[1].split(","):
+					var q := pair.split(":")
+					GameState.add(q[0], int(q[1]))
+			"--buy":
+				_buys = Array(kv[1].split(","))
 			"--settle":
 				_settle = float(kv[1])
 			"--capture":
@@ -61,6 +69,9 @@ func _ready() -> void:
 
 func _run() -> void:
 	await get_tree().create_timer(0.3).timeout
+	for id in _buys:
+		print("DevCapture : achat %s -> %s" % [id, "ok" if Upgrades.buy(id) else "refusé"])
+		await get_tree().create_timer(0.25).timeout
 	for step in _steps:
 		Input.action_press(step[0])
 		await get_tree().create_timer(step[1]).timeout

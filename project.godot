@@ -60,6 +60,22 @@ toggle_fullscreen={
 "deadzone": 0.2,
 "events": [Object(InputEventKey,"keycode":4194342)]
 }
+buy_1={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":49), Object(InputEventKey,"keycode":4194439)]
+}
+buy_2={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":50), Object(InputEventKey,"keycode":4194440)]
+}
+buy_3={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":51), Object(InputEventKey,"keycode":4194441)]
+}
+buy_4={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":52), Object(InputEventKey,"keycode":4194442)]
+}
 quit={
 "deadzone": 0.2,
 "events": [Object(InputEventKey,"keycode":4194305)]

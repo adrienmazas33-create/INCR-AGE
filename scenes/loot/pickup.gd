@@ -4,7 +4,6 @@ extends Node2D
 const TEXTURE := preload("res://assets/art/fx/pickups.png")
 ## Image de l'atlas par ressource (les matériaux alternent peau et os).
 const FRAMES := {"food": [0], "materials": [1, 2], "knowledge": [3]}
-const MAGNET_RADIUS := 96.0
 const MAGNET_DELAY := 0.45
 const GRAVITY := 520.0
 const MAX_SPEED := 340.0
@@ -70,7 +69,7 @@ func _process(delta: float) -> void:
 
 func _nearest_collector() -> Node2D:
 	var best: Node2D = null
-	var best_d := MAGNET_RADIUS
+	var best_d := Upgrades.magnet_radius()
 	for m in get_tree().get_nodes_in_group(&"party_members"):
 		var d := global_position.distance_to(m.global_position)
 		if d < best_d:

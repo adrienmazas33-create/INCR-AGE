@@ -1,9 +1,10 @@
 shader_type canvas_item;
-// Flash blanc d'impact : la silhouette devient blanche pendant quelques images.
+// Flash d'impact (blanc) ou lueur colorée (amélioration) : la silhouette tend vers flash_color.
 
 uniform float flash = 0.0;
+uniform vec3 flash_color = vec3(1.0);
 
 void fragment() {
 	vec4 c = texture(TEXTURE, UV) * COLOR;
-	COLOR = vec4(mix(c.rgb, vec3(1.0), flash), c.a);
+	COLOR = vec4(mix(c.rgb, flash_color, flash), c.a);
 }

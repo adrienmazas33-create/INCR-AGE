@@ -12,6 +12,9 @@ extends Combatant
 const ANIM_SPEED := 100.0
 const KO_DURATION := 8.0
 const REVIVE_HEALTH := 0.5
+## Retard sur sa place (le long de la trace) au-delà duquel il accélère, et facteur de vitesse.
+const SPRINT_LAG := 20.0
+const SPRINT := 1.25
 
 var party: Party
 var index := 0
@@ -19,7 +22,10 @@ var attack := AutoAttack.new()
 
 var _move := Vector2.ZERO
 var _foe: Combatant
-var _stuck_time := 0.0
+## Temps passé à forcer sans avancer (le groupe le recentre sur la trace, puis le replace si besoin).
+var stuck_time := 0.0
+## Retard sur sa place le long de la trace (renseigné par le groupe).
+var trail_lag := 0.0
 var _ko_time := 0.0
 
 
@@ -47,7 +53,9 @@ func _physics_process(delta: float) -> void:
 	var dist := to.length()
 	var desired := Vector2.ZERO
 	if dist > 2.0:
-		desired = to / dist * stats.move_speed * clampf(dist / arrive_radius, 0.0, 1.0)
+		# En retard sur sa place : il trottine franchement ; sinon arrivée douce.
+		var speed := stats.move_speed * SPRINT if trail_lag > SPRINT_LAG and not _foe else stats.move_speed * clampf(dist / arrive_radius, 0.0, 1.0)
+		desired = to / dist * speed
 	desired += party.separation(self)
 	_move = _move.move_toward(desired, acceleration * delta)
 	velocity = _move + consume_knockback(delta)
@@ -57,10 +65,10 @@ func _physics_process(delta: float) -> void:
 		attack.try_attack(_foe)
 	# Coincé : il veut avancer franchement mais ne progresse presque pas.
 	if desired.length() > 40.0 and global_position.distance_to(before) < desired.length() * delta * 0.25:
-		_stuck_time += delta
+		stuck_time += delta
 	else:
-		_stuck_time = maxf(_stuck_time - delta * 2.0, 0.0)
-	if party.should_regroup(self, _stuck_time):
+		stuck_time = maxf(stuck_time - delta * 2.0, 0.0)
+	if party.should_regroup(self, stuck_time):
 		party.regroup(self)
 
 
@@ -107,7 +115,7 @@ func revive_full() -> void:
 func teleport(to: Vector2) -> void:
 	global_position = to
 	_move = Vector2.ZERO
-	_stuck_time = 0.0
+	stuck_time = 0.0
 	reset_physics_interpolation()
 
 

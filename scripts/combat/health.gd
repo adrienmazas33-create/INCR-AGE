@@ -19,6 +19,15 @@ func setup(maximum: float, regen: float) -> void:
 	regen_per_second = regen
 
 
+## Change la vie maximale en gardant la proportion actuelle (ou en remettant au maximum).
+func set_maximum(maximum: float, fill := false) -> void:
+	var r := ratio()
+	max_health = maximum
+	if not is_dead():
+		current = maximum if fill else maximum * r
+	changed.emit()
+
+
 func is_dead() -> bool:
 	return current <= 0.0
 

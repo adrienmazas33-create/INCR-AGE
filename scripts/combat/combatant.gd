@@ -20,12 +20,15 @@ var health := Health.new()
 
 var _knock := Vector2.ZERO
 var _flash := 0.0
+var _glow := 0.0
+var _glow_duration := 0.0
+var _glow_color := Color.WHITE
 var _lunge := Vector2.ZERO
 var _sprite_rest := Vector2.ZERO
 
 
 func _ready() -> void:
-	health.setup(stats.max_health, stats.regen_per_second)
+	health.setup(_max_health(), stats.regen_per_second)
 	health.died.connect(_on_died)
 	add_child(health)
 	var mat := ShaderMaterial.new()
@@ -60,6 +63,23 @@ func receive_hit(amount: float, from: Vector2, knockback: float) -> void:
 	_on_hit(from)
 
 
+## Vie maximale : celle des caractéristiques, plus l'amélioration VIGUEUR pour le groupe.
+func _max_health() -> float:
+	return stats.max_health * (1.0 if is_in_group(&"enemies") else Upgrades.health_multiplier())
+
+
+## Applique une nouvelle vie maximale (amélioration achetée) ; `fill` remet la vie au maximum.
+func refresh_max_health(fill := false) -> void:
+	health.set_maximum(_max_health(), fill)
+
+
+## Lueur colorée qui s'estompe (retour visuel d'amélioration).
+func glow(color: Color, duration := 0.7) -> void:
+	_glow_color = color
+	_glow = duration
+	_glow_duration = duration
+
+
 ## Petit élan du corps vers la cible au moment du coup.
 func lunge(dir: Vector2) -> void:
 	_lunge = dir * LUNGE_PIXELS
@@ -74,7 +94,14 @@ func consume_knockback(delta: float) -> Vector2:
 
 func _process(delta: float) -> void:
 	_flash = maxf(_flash - delta, 0.0)
-	(sprite.material as ShaderMaterial).set_shader_parameter("flash", 1.0 if _flash > 0.0 else 0.0)
+	_glow = maxf(_glow - delta, 0.0)
+	var mat := sprite.material as ShaderMaterial
+	if _flash > 0.0:
+		mat.set_shader_parameter("flash", 1.0)
+		mat.set_shader_parameter("flash_color", Color.WHITE)
+	else:
+		mat.set_shader_parameter("flash", 0.65 * _glow / maxf(_glow_duration, 0.01))
+		mat.set_shader_parameter("flash_color", _glow_color)
 	_lunge = _lunge.move_toward(Vector2.ZERO, 30.0 * delta)
 	sprite.position = _sprite_rest + _lunge.round()
 	_animate(delta)

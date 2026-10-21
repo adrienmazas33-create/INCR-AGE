@@ -18,6 +18,8 @@ var map: MapData
 ## Limites du monde en pixels.
 var bounds := Rect2()
 var spawn_position := Vector2.ZERO
+## Position du feu de camp (panneau des améliorations, recrues).
+var camp_position := Vector2.ZERO
 
 
 func _ready() -> void:
@@ -26,6 +28,7 @@ func _ready() -> void:
 	PropSpawner.new(map).spawn(_entities)
 	bounds = Rect2(Vector2.ZERO, Vector2(map.width, map.height) * TileIds.SIZE)
 	spawn_position = Vector2(map.find_char(MapData.SPAWN) * TileIds.SIZE) + Vector2(TileIds.SIZE * 0.5, TileIds.SIZE * 0.75)
+	camp_position = Vector2(map.find_char("F") * TileIds.SIZE) + Vector2(TileIds.SIZE * 0.5, TileIds.SIZE * 0.75)
 	if not GameSettings.ambient_effects:
 		_water.material = null
 

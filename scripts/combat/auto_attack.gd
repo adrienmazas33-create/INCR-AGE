@@ -50,6 +50,7 @@ func _impact() -> void:
 		return
 	if unit.edge_distance(_target) > unit.stats.attack_range + IMPACT_TOLERANCE:
 		return
-	_target.receive_hit(unit.stats.damage, unit.global_position, unit.stats.knockback)
+	var damage := unit.stats.damage * (1.0 if unit.is_in_group(&"enemies") else Upgrades.damage_multiplier())
+	_target.receive_hit(damage, unit.global_position, unit.stats.knockback)
 	hits += 1
 	CombatFx.impact(_target.global_position + Vector2(0, -8), unit.is_in_group("hero"), not _target.is_alive())

@@ -605,6 +605,18 @@ const FOLLOWERS := [
 		"f": Color8(206, 166, 98), "F": Color8(150, 108, 58), "g": Color8(234, 202, 142)}, "beard": true, "band": true},
 	{"colors": {"h": Color8(126, 86, 52), "H": Color8(168, 118, 70),
 		"f": Color8(112, 72, 42), "F": Color8(80, 50, 30), "g": Color8(144, 98, 60)}, "beard": false, "band": false},
+	# Recrues (phase 3) : blond en peau grise, ancien aux cheveux gris, bandeau sur peau rousse,
+	# auburn en fourrure claire, cape de feuilles.
+	{"colors": {"h": Color8(206, 164, 86), "H": Color8(236, 202, 128),
+		"f": Color8(118, 124, 134), "F": Color8(84, 88, 98), "g": Color8(152, 158, 166)}, "beard": false, "band": false},
+	{"colors": {"h": Color8(146, 142, 136), "H": Color8(190, 186, 178),
+		"f": Color8(150, 96, 54), "F": Color8(108, 66, 36), "g": Color8(186, 130, 80)}, "beard": true, "band": false},
+	{"colors": {"h": Color8(48, 36, 34), "H": Color8(86, 66, 60),
+		"f": Color8(180, 98, 54), "F": Color8(132, 66, 34), "g": Color8(214, 136, 84)}, "beard": false, "band": true},
+	{"colors": {"h": Color8(122, 54, 36), "H": Color8(164, 84, 54),
+		"f": Color8(198, 192, 178), "F": Color8(150, 144, 132), "g": Color8(226, 222, 210)}, "beard": true, "band": false},
+	{"colors": {"h": Color8(90, 58, 36), "H": Color8(132, 88, 54),
+		"f": Color8(106, 128, 68), "F": Color8(76, 96, 48), "g": Color8(138, 162, 92)}, "beard": false, "band": true},
 ]
 const BAND := Color8(186, 58, 48)
 
@@ -1226,8 +1238,37 @@ const GLYPHS := {
 	"9": [".##.", "#..#", "#..#", ".###", "...#", ".##."],
 	"+": ["....", ".#..", "###.", ".#..", "....", "...."],
 	"-": ["....", "....", "###.", "....", "....", "...."],
+	"A": [".##.", "#..#", "#..#", "####", "#..#", "#..#"],
+	"B": ["###.", "#..#", "###.", "#..#", "#..#", "###."],
+	"C": [".###", "#...", "#...", "#...", "#...", ".###"],
+	"D": ["###.", "#..#", "#..#", "#..#", "#..#", "###."],
+	"E": ["####", "#...", "###.", "#...", "#...", "####"],
+	"F": ["####", "#...", "###.", "#...", "#...", "#..."],
+	"G": [".###", "#...", "#.##", "#..#", "#..#", ".###"],
+	"H": ["#..#", "#..#", "####", "#..#", "#..#", "#..#"],
+	"I": ["###.", ".#..", ".#..", ".#..", ".#..", "###."],
+	"J": ["..##", "...#", "...#", "...#", "#..#", ".##."],
+	"K": ["#..#", "#.#.", "##..", "#.#.", "#..#", "#..#"],
+	"L": ["#...", "#...", "#...", "#...", "#...", "####"],
+	"M": ["#..#", "####", "####", "#..#", "#..#", "#..#"],
+	"N": ["#..#", "##.#", "#.##", "#..#", "#..#", "#..#"],
+	"O": [".##.", "#..#", "#..#", "#..#", "#..#", ".##."],
+	"P": ["###.", "#..#", "#..#", "###.", "#...", "#..."],
+	"Q": [".##.", "#..#", "#..#", "#..#", "#.#.", ".#.#"],
+	"R": ["###.", "#..#", "#..#", "###.", "#.#.", "#..#"],
+	"S": [".###", "#...", ".##.", "...#", "...#", "###."],
+	"T": ["###.", ".#..", ".#..", ".#..", ".#..", ".#.."],
+	"U": ["#..#", "#..#", "#..#", "#..#", "#..#", ".##."],
+	"V": ["#..#", "#..#", "#..#", "#..#", ".##.", ".##."],
+	"W": ["#..#", "#..#", "#..#", "####", "####", "#..#"],
+	"X": ["#..#", "#..#", ".##.", ".##.", "#..#", "#..#"],
+	"Y": ["#..#", "#..#", ".##.", ".#..", ".#..", ".#.."],
+	"Z": ["####", "...#", "..#.", ".#..", "#...", "####"],
+	"%": ["#..#", "...#", "..#.", ".#..", "#...", "#..#"],
+	"/": ["...#", "..#.", "..#.", ".#..", ".#..", "#..."],
 }
-const GLYPH_ORDER := "0123456789+-"
+## Partagé avec PixelText.GLYPHS (même ordre).
+const GLYPH_ORDER := "0123456789+-ABCDEFGHIJKLMNOPQRSTUVWXYZ%/"
 
 
 func _gen_combat() -> void:
@@ -1238,6 +1279,74 @@ func _gen_combat() -> void:
 	_save(_puff(), "fx/puff.png")
 	_save(_pickups(), "fx/pickups.png")
 	_save(_digits(), "fx/digits.png")
+	_save(_upgrade_icons(), "fx/upgrade_icons.png")
+	_save(_marker(), "fx/marker.png")
+
+
+## Icônes d'amélioration, cases 16 x 16 : recrue, force (massue), aimant (sac), vigueur (cœur).
+func _upgrade_icons() -> Image:
+	var img := _img(64, 16)
+	var gold := Color8(255, 214, 90)
+	# Recrue : tête d'homme des cavernes et signe plus.
+	var head := _img(16, 16)
+	for y in range(3, 13):
+		for x in range(2, 11):
+			var d := Vector2((x + 0.5 - 6.5) / 4.5, (y + 0.5 - 8.0) / 5.0).length()
+			if d <= 1.0:
+				head.set_pixel(x, y, HERO_COLORS["h"] if y < 6 or x < 4 or x > 9 or y > 10 else HERO_COLORS["s"])
+	head.set_pixel(5, 7, OUTLINE)
+	head.set_pixel(8, 7, OUTLINE)
+	for k in range(-2, 3):
+		head.set_pixel(12 + k, 4, gold)
+		head.set_pixel(12, 4 + k, gold)
+	# Force : massue en diagonale.
+	var club := _img(16, 16)
+	for i in 9:
+		club.set_pixel(3 + i, 13 - i, WD_MID)
+		club.set_pixel(4 + i, 13 - i, WD_DARK)
+	for y in range(1, 7):
+		for x in range(9, 15):
+			if Vector2(x + 0.5 - 11.5, y + 0.5 - 4.0).length() <= 3.2:
+				club.set_pixel(x, y, WD_LIGHT if x + y < 15 else WD_MID)
+	club.set_pixel(11, 3, WD_HI)
+	# Aimant : sac de peau fermé par un lien.
+	var bag := _img(16, 16)
+	for y in range(5, 15):
+		for x in range(2, 14):
+			if Vector2((x + 0.5 - 8.0) / 5.5, (y + 0.5 - 10.0) / 4.8).length() <= 1.0:
+				bag.set_pixel(x, y, HERO_COLORS["g"] if x < 7 else HERO_COLORS["f"])
+	for x in range(5, 11):
+		bag.set_pixel(x, 4, HERO_COLORS["f"])
+		bag.set_pixel(x, 5, HERO_COLORS["r"])
+	for p in [Vector2i(6, 2), Vector2i(7, 3), Vector2i(9, 3), Vector2i(10, 2)]:
+		bag.set_pixelv(p, HERO_COLORS["F"])
+	# Vigueur : cœur.
+	var heart := _img(16, 16)
+	for y in 16:
+		for x in 16:
+			var px := (x + 0.5 - 8.0) / 6.0
+			var py := (y + 0.5 - 8.5) / 6.0
+			var v := pow(px * px + py * py - 0.45, 3.0) - px * px * pow(-py, 3.0) * 1.6
+			if v <= 0.0:
+				heart.set_pixel(x, y, Color8(236, 78, 74) if px < 0.0 or py > 0.1 else Color8(200, 50, 56))
+	heart.set_pixel(5, 6, Color8(255, 190, 180))
+	var icons := [head, club, bag, heart]
+	for i in icons.size():
+		_outline(icons[i], OUTLINE)
+		img.blit_rect(icons[i], Rect2i(0, 0, 16, 16), Vector2i(i * 16, 0))
+	return img
+
+
+## Repère doré au-dessus du feu quand un achat est possible.
+func _marker() -> Image:
+	var img := _img(9, 12)
+	var rows := ["..#####..", ".#######.", "..#####..", "...###...", "....#....", ".........", "...###...", "...###..."]
+	for y in rows.size():
+		for x in 9:
+			if rows[y][x] == "#":
+				img.set_pixel(x, y + 2, Color8(255, 214, 90) if y < 2 else Color8(240, 170, 60))
+	_outline(img, OUTLINE)
+	return img
 
 
 ## Planche de profil (vers la droite), cases 44 x 30 : repos 0-1, course 2-5, charge préparée 6, K.O. 7.

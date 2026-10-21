@@ -1,11 +1,12 @@
 class_name PixelText
 extends Node2D
-## Texte en chiffres pixel art (police générée assets/art/fx/digits.png), net à toute échelle entière.
+## Texte pixel art (chiffres, majuscules sans accent, + - % / ; police générée assets/art/fx/digits.png),
+## net à toute échelle entière. Les caractères inconnus (espace...) laissent un blanc.
 
 ## Chargée à la demande (voir CombatFx : un autoload en dépend avant l'import des images).
 const FONT_PATH := "res://assets/art/fx/digits.png"
 static var _font: Texture2D
-const GLYPHS := "0123456789+-"
+const GLYPHS := "0123456789+-ABCDEFGHIJKLMNOPQRSTUVWXYZ%/"
 const CELL := Vector2(6, 8)
 const ADVANCE := 5.0
 

@@ -1,6 +1,6 @@
 extends Node2D
-## Point d'entrée : assemble le monde, le groupe du héros, les ennemis, la caméra et l'interface ;
-## gère le retour au camp quand le héros tombe ; raccourcis de confort du prototype.
+## Point d'entrée : assemble le monde, le groupe du héros, les ennemis, la caméra, l'interface et les
+## améliorations du camp ; gère le retour au camp quand le héros tombe ; raccourcis du prototype.
 
 const HERO := preload("res://scenes/characters/hero.tscn")
 
@@ -19,13 +19,20 @@ func _ready() -> void:
 	_party = Party.new()
 	_party.name = "Party"
 	add_child(_party)
-	_party.setup(_hero, _world)
+	_party.setup(_hero, _world, Upgrades.companion_count())
 	var spawner := EnemySpawner.new()
 	spawner.name = "EnemySpawner"
 	add_child(spawner)
 	spawner.setup(_world, _hero)
 	_hud = Hud.new()
 	add_child(_hud)
+	var panel := CampPanel.new()
+	panel.setup(_hero, _world.camp_position)
+	_hud.add_panel(panel)
+	var effects := UpgradeEffects.new()
+	effects.name = "UpgradeEffects"
+	add_child(effects)
+	effects.setup(_party, _world.camp_position, _world.effects)
 	CombatFx.layer = _world.effects
 	CombatFx.camera = _camera
 	_camera.target = _hero
