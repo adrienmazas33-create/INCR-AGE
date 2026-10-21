@@ -32,6 +32,9 @@ func _ready() -> void:
 	var panel := CampPanel.new()
 	panel.setup(_hero, _world.camp_position)
 	_hud.add_panel(panel)
+	var compass := CampCompass.new()
+	compass.setup(_hero, _world.camp_position)
+	_hud.add_panel(compass)
 	var effects := UpgradeEffects.new()
 	effects.name = "UpgradeEffects"
 	add_child(effects)

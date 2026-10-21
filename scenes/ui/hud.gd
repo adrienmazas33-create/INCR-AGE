@@ -73,8 +73,8 @@ func announce(text: String) -> void:
 	tween.tween_callback(band.queue_free)
 
 
-## Ajoute un panneau sous le voile de transition.
-func add_panel(panel: Control) -> void:
+## Ajoute un élément d'interface (panneau, indicateur) sous le voile de transition.
+func add_panel(panel: CanvasItem) -> void:
 	add_child(panel)
 	move_child(panel, _veil.get_index())
 

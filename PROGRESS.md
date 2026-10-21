@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : chantier artistique, passe visuelle 1 validée et publiée (tag `art-pass-1`). Aucune opération en cours ; suite du chantier (priorité 2 de `docs/ART_DIRECTION_PLAN.md`) à lancer sur demande explicite.**
+**État : indicateur de direction du campement fait, en commit local, en attente de validation (non poussé, pas de tag). Prochaines améliorations prévues, non développées : `docs/ROADMAP.md`.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -182,11 +182,23 @@ Voir les priorités 2 et 3 du plan artistique.
   - tour complet de la carte : 2 replacements forcés (après combats), 60 FPS de moyenne ;
   - copie neuve des fichiers versionnés : import et lancement sans erreur.
   - **Validée** par le porteur du projet le 21/10/2026.
+- **Indicateur du campement**, nouvelle partie sur un fichier de test isolé, captures lues :
+  - prairie est (98,62), zoom 0 : flèche sur le bord gauche, 41 tuiles ;
+  - plateau nord-est (100,17), zoom 1 : coin bas gauche, 57 tuiles ;
+  - au nord du camp (58,63), zoom 1 : bord haut, 8 tuiles ;
+  - zoom 2 au camp : feu visible, indicateur masqué ;
+  - jamais sous le compteur, et le chiffre ne chevauche jamais la flèche ;
+  - aucune erreur de script.
 - **Non vérifié** : sensations de contrôle, de caméra et de combat par un humain, clic réel dans le panneau (achats testés par commande), toucher sur écran tactile, écran 120/144 Hz, plein écran.
 
 ## En cours
 
-- Rien. Passe visuelle 1 validée et publiée (tag `art-pass-1`) ; aucune opération en cours.
+- **Indicateur de direction du campement** (`scenes/ui/camp_compass.gd`), en attente de validation :
+  - quand le feu sort de l'écran, un médaillon à flamme longe le bord ;
+  - une flèche dorée (16 directions) pointe vers le camp, avec la distance en tuiles ;
+  - fondu dès que le camp est visible ; passe sous le compteur ;
+  - purement visuel.
+  - Commit local seulement. Après validation : tag `camp-compass` et push.
 
 ## Problèmes connus / limites
 
@@ -209,12 +221,18 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## Prochaines étapes
 
-1. **Chantier artistique** :
+1. **Feuille de route `docs/ROADMAP.md`** (tout y est prévu, rien n'est développé), dans cet ordre :
+   1. déplacement à la souris (A* sur `MapData`) ;
+   2. carte du monde sur `M` ;
+   3. audio (bus, effets, boucle musicale originale, volumes séparés) ;
+   4. méthode de production de vrais sprites de personnages.
+   Un lot à la fois, avec arrêt pour validation.
+2. **Chantier artistique** :
    - priorité 2 du plan (`docs/ART_DIRECTION_PLAN.md`), sur demande : animation d'attaque dédiée, diagonales du terrain, végétation proche du camp, éclairage d'ambiance, décors des stades TRIBU et VILLAGE.
-2. Ajustements d'équilibrage au fil des essais : `data/units/*.tres`, `scripts/progression/upgrades.gd`. À 8 compagnons, les sangliers deviennent trop faciles.
-3. Profilage des performances sur secteur ; pistes : forêt en MultiMesh ou en tuiles, calculs du groupe (`Party`).
-4. Plus tard, selon la bible : compétences actives du héros, classes militaires, nouvelles époques.
-5. Plus tard : manette et tactile. Les actions `move_*`, `zoom_*` et `buy_*` sont déjà abstraites, et les lignes du panneau acceptent clic et toucher.
+3. Ajustements d'équilibrage au fil des essais : `data/units/*.tres`, `scripts/progression/upgrades.gd`. À 8 compagnons, les sangliers deviennent trop faciles.
+4. Profilage des performances sur secteur ; pistes : forêt en MultiMesh ou en tuiles, calculs du groupe (`Party`).
+5. Plus tard, selon la bible : compétences actives du héros, classes militaires, nouvelles époques.
+6. Plus tard : manette et tactile. Les actions `move_*`, `zoom_*` et `buy_*` sont déjà abstraites, et les lignes du panneau acceptent clic et toucher.
 
 ## Reprendre le développement
 
@@ -226,6 +244,8 @@ Voir les priorités 2 et 3 du plan artistique.
 - Copie locale : `C:\Users\Adrien\OneDrive\Bureau\INCR-AGE`. Identité Git définie **uniquement pour ce dépôt** (`user.name` « Adrien »).
 - Bible créative : `Bible_creative_Jeu_incremental_2D_V01.md` / `.docx`, dans les Téléchargements de l'utilisateur, **hors dépôt**.
 - **Chantier artistique** : étape 1 et passe visuelle 1 faites et validées (tag `art-pass-1`). Prochaine étape, sur demande : priorité 2 de `docs/ART_DIRECTION_PLAN.md`. Ne pas commencer d'autre phase sans demande explicite.
+- **Indicateur du campement** : fait, commit local non poussé, en attente de validation.
+- **Feuille de route** `docs/ROADMAP.md` : déplacement à la souris, carte `M`, audio, sprites de personnages. Tout y est **prévu, rien n'est développé** ; prochain lot proposé : déplacement à la souris.
 
 ### 2. Méthode de travail attendue
 
