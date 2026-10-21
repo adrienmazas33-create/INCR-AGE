@@ -82,16 +82,8 @@ func _run() -> void:
 	# Moyenne d'images par seconde sur toute l'attente (plus fiable que le compteur instantané).
 	var frames_before := Engine.get_process_frames()
 	var t_before := Time.get_ticks_msec()
-	# Temps de calcul par image (logique + physique) : indépendant de la synchro et de l'affichage.
-	var cpu_ms := 0.0
-	var samples := 0
-	var end_ms := t_before + _settle * 1000.0
-	while Time.get_ticks_msec() < end_ms:
-		await get_tree().process_frame
-		cpu_ms += (Performance.get_monitor(Performance.TIME_PROCESS) + Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS)) * 1000.0
-		samples += 1
+	await get_tree().create_timer(_settle).timeout
 	_avg_fps = (Engine.get_process_frames() - frames_before) * 1000.0 / maxf(Time.get_ticks_msec() - t_before, 1.0)
-	print("DevCapture : calcul moyen %.2f ms par image (logique + physique)" % (cpu_ms / maxi(samples, 1)))
 	print("DevCapture : héros en %s (tuile %s), %d FPS (moyenne %.1f), %d nœuds" % [_hero.global_position, Vector2i(_hero.global_position / TileIds.SIZE),
 		Engine.get_frames_per_second(), _avg_fps, get_tree().get_node_count()])
 	var party := get_tree().get_first_node_in_group("party")
@@ -103,6 +95,8 @@ func _run() -> void:
 		for i in 3:
 			await get_tree().process_frame
 		get_viewport().get_texture().get_image().save_png(_capture_path)
+	# Fermeture réaliste : même notification qu'un clic sur la croix de la fenêtre (sauvegarde).
+	get_tree().root.propagate_notification(NOTIFICATION_WM_CLOSE_REQUEST)
 	get_tree().quit()
 
 
