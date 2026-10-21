@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : déplacement à la souris (lot 1 de `docs/ROADMAP.md`) validé et publié (tag `mouse-move`). Lots 2 à 4 de la feuille de route : prévus, non développés.**
+**État : identification du héros faite, en commit local, en attente de validation (non poussé, pas de tag). Amélioration VITESSE reportée. Priorités suivantes revues dans `docs/ROADMAP.md` : audio, art du monde (zone témoin au camp), troupes plus organiques, puis carte du monde.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -202,10 +202,23 @@ Voir les priorités 2 et 3 du plan artistique.
   - trajets au milieu des sangliers : combat automatique inchangé (coups portés, sanglier abattu) ;
   - groupe de 3 et 8 compagnons : 0 replacement forcé ; parcours au clavier (`--route`) inchangé ; 60 FPS ;
   - construction de la grille de chemins : environ 105 ms au lancement.
+  - **Validé** par le porteur du projet le 22/10/2026.
+- **Identification du héros**, captures lues au zoom 2 :
+  - au camp, avec 8 compagnons : anneau doré, bandeau et plume visibles, héros repérable aussitôt ;
+  - en mêlée contre un sanglier près du repaire est (107,69) : héros caché en partie par les compagnons, chevron doré visible au-dessus de lui ;
+  - avec 3 compagnons, hors combat : anneau net, pas de chevron ;
+  - seule la planche `hero.png` change à la régénération de l'art ;
+  - parcours au clavier inchangé (0 replacement forcé) ; aucune erreur de script.
 - **Non vérifié** : vrai clic de souris et toucher sur écran tactile (clics simulés seulement), sensation de contrôle à la souris ; sensations de contrôle, de caméra et de combat par un humain, clic réel dans le panneau (achats testés par commande), toucher sur écran tactile, écran 120/144 Hz, plein écran.
 
 ## En cours
 
+- **Identification du héros** (section 0 bis de `docs/ROADMAP.md`), en attente de validation :
+  - bandeau doré et plume à pointe d'or (`tools/generate_art.gd`, `_feather`) ;
+  - anneau doré au sol, plus net quand le héros est entouré ; petit chevron au-dessus de la tête en combat seulement (`scenes/characters/hero_marker.gd`, ajouté par `Hero._ready`) ;
+  - pas de lueur permanente ; collisions et mécaniques inchangées.
+  - Commit local seulement. Après validation : tag `hero-id` et push.
+- **Amélioration VITESSE** : reportée, détail de ce qu'elle demandera dans `docs/ROADMAP.md`.
 - **Déplacement à la souris** (lot 1 de `docs/ROADMAP.md`), validé le 22/10/2026 et publié (tag `mouse-move`) :
   - clic gauche sur le sol : le héros y va par un chemin praticable (escaliers, ponts, bâtiments du camp contournés) ;
   - un nouveau clic remplace le précédent ; une touche de déplacement l'interrompt (le clavier reste prioritaire) ;
@@ -235,12 +248,12 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## Prochaines étapes
 
-1. **Feuille de route `docs/ROADMAP.md`**, dans cet ordre :
-   1. déplacement à la souris : fait et validé (tag `mouse-move`) ;
-   2. carte du monde sur `M` (prévu, non développé, comme la suite) ;
-   3. audio (bus, effets, boucle musicale originale, volumes séparés) ;
-   4. méthode de production de vrais sprites de personnages.
-   Un lot à la fois, avec arrêt pour validation.
+1. **Feuille de route `docs/ROADMAP.md`**, ordre revu le 22/10/2026 (rien de tout cela n'est développé) :
+   1. ambiance sonore : bruitages et musique rétro originale ;
+   2. art du monde jouable : d'abord une zone témoin soignée autour du campement, en partant de vrais assets pixel art ;
+   3. comportement plus organique des troupes ;
+   4. carte du monde et mini-carte, plus tard.
+   Également reportée : l'amélioration VITESSE. Un lot à la fois, avec arrêt pour validation.
 2. **Chantier artistique** :
    - priorité 2 du plan (`docs/ART_DIRECTION_PLAN.md`), sur demande : animation d'attaque dédiée, diagonales du terrain, végétation proche du camp, éclairage d'ambiance, décors des stades TRIBU et VILLAGE.
 3. Ajustements d'équilibrage au fil des essais : `data/units/*.tres`, `scripts/progression/upgrades.gd`. À 8 compagnons, les sangliers deviennent trop faciles.
@@ -259,7 +272,7 @@ Voir les priorités 2 et 3 du plan artistique.
 - Bible créative : `Bible_creative_Jeu_incremental_2D_V01.md` / `.docx`, dans les Téléchargements de l'utilisateur, **hors dépôt**.
 - **Chantier artistique** : étape 1 et passe visuelle 1 faites et validées (tag `art-pass-1`). Prochaine étape, sur demande : priorité 2 de `docs/ART_DIRECTION_PLAN.md`. Ne pas commencer d'autre phase sans demande explicite.
 - **Indicateur du campement** : validé et publié (tag `camp-compass`).
-- **Feuille de route** `docs/ROADMAP.md` : déplacement à la souris (**fait et validé**, tag `mouse-move`), puis carte `M`, audio, sprites de personnages (**prévus, non développés**).
+- **Feuille de route** `docs/ROADMAP.md` : déplacement à la souris (**fait et validé**, tag `mouse-move`) ; identification du héros (**faite, commit local en attente de validation**). Ensuite, **prévus et non développés** : audio, art du monde (zone témoin au camp), troupes organiques, carte du monde ; amélioration VITESSE reportée.
 
 ### 2. Méthode de travail attendue
 

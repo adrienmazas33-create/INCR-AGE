@@ -616,7 +616,11 @@ const CAPE_SIDE := ["...ccc..........", "..ccC...........", "..cCq...........", 
 	"..ccC...........", "..cqC...........", "...cC...........", "...c............"]
 
 ## Peau de bête dorée : l'accent or réservé au héros.
-const HERO_CAPE := {"c": Color8(228, 178, 84), "C": Color8(176, 124, 52), "q": Color8(118, 78, 36)}
+## Le héros porte aussi un bandeau doré (« n ») et une plume blanche à pointe d'or : sa silhouette
+## dépasse d'une tête différente de celle des lances, et il se repère d'un coup d'œil dans la mêlée.
+const HERO_CAPE := {"c": Color8(228, 178, 84), "C": Color8(176, 124, 52), "q": Color8(118, 78, 36),
+	"n": Color8(240, 196, 80)}
+const FEATHER := [Color8(244, 238, 222), Color8(196, 186, 168), Color8(228, 178, 84)]
 
 ## Alliés : couleurs remplacées sur la palette du héros, sans barbe (« jeune ») ou avec bandeau.
 const FOLLOWERS := [
@@ -653,7 +657,7 @@ const SPEAR_TIP := [Color8(210, 214, 222), Color8(140, 146, 160)]
 func _gen_hero() -> void:
 	var hero := HERO_COLORS.duplicate()
 	hero.merge(HERO_CAPE, true)
-	_save(_character_sheet(hero, true, false, "club", true), "hero.png")
+	_save(_character_sheet(hero, true, true, "club", true), "hero.png")
 	for i in FOLLOWERS.size():
 		var v: Dictionary = FOLLOWERS[i]
 		var colors := HERO_COLORS.duplicate()
@@ -670,7 +674,7 @@ func _gen_hero() -> void:
 func _character_sheet(colors: Dictionary, beard: bool, band: bool, weapon: String, cape: bool) -> Image:
 	colors = colors.duplicate()
 	colors["d"] = colors["h"]
-	colors["n"] = BAND
+	colors["n"] = colors.get("n", BAND)
 	colors["m"] = Color8(120, 52, 46)
 	var img := _img(32 * 6, 32 * 3)
 	var bob := [0, 1, 0, -1, 0, -1]
@@ -700,6 +704,8 @@ func _character_sheet(colors: Dictionary, beard: bool, band: bool, weapon: Strin
 			_stamp(frame, [legs[0]], o + Vector2i(0, 17), colors)
 			_stamp(frame, legs, o + Vector2i(0, 18), colors)
 			_stamp(frame, body, up, colors)
+			if cape:
+				_feather(frame, up + Vector2i([5, 10, 4][row], 2))
 			if cape and row == 0:
 				_stamp(frame, CAPE_DOWN, up + Vector2i(0, 8), colors)
 			if cape and row == 1:
@@ -716,6 +722,16 @@ func _character_sheet(colors: Dictionary, beard: bool, band: bool, weapon: Strin
 			_outline_tinted(frame)
 			img.blit_rect(frame, Rect2i(0, 0, 32, 32), Vector2i(col * 32, row * 32))
 	return img
+
+
+## Plume du héros, plantée dans le bandeau en `base` : tige claire de 6 pixels, ombrée d'un côté,
+## légèrement penchée vers l'extérieur, pointe dorée.
+func _feather(img: Image, base: Vector2i) -> void:
+	for k in 7:
+		var p := base + Vector2i(-1 if k >= 5 else 0, -k)
+		_px(img, p, FEATHER[2] if k >= 5 else FEATHER[0])
+		if k >= 1 and k <= 4:
+			_px(img, p + Vector2i(1, 0), FEATHER[1])
 
 
 func _body_rows(view: int, beard: bool, band: bool) -> Array:

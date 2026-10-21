@@ -19,6 +19,11 @@ func _ready() -> void:
 	super()
 	attack.unit = self
 	add_child(attack)
+	# Marqueur au sol, dessiné sous le personnage (avant le sprite).
+	var marker := HeroMarker.new()
+	marker.position = Vector2(0, -1)
+	add_child(marker)
+	move_child(marker, sprite.get_index())
 
 
 func _physics_process(delta: float) -> void:

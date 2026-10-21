@@ -2,7 +2,9 @@
 
 Document de cadrage rédigé le 22/10/2026 à partir des retours de test du porteur du projet.
 
-> **Fait** : l'indicateur de direction du campement (section 0, validé, tag `camp-compass`) et le déplacement à la souris (section 1, validé, tag `mouse-move`). **Tout le reste est PRÉVU, non développé.**
+> **Fait** : l'indicateur de direction du campement (section 0, validé, tag `camp-compass`), le déplacement à la souris (section 1, validé, tag `mouse-move`) et l'identification du héros (section 0 bis, en attente de validation). **Tout le reste est PRÉVU, non développé.**
+
+Priorités revues le 22/10/2026, après les tests du porteur du projet (voir « Ordre des prochaines sessions »).
 
 Règles communes à chaque lot :
 - un lot indépendant, testable seul, avec arrêt pour validation ;
@@ -17,12 +19,36 @@ Règles communes à chaque lot :
 - La flèche suit 16 directions (rendu net en pixels). Le médaillon s'efface en fondu quand le camp redevient visible, et passe sous le compteur de ressources.
 - Purement visuel : aucune règle de jeu touchée.
 
-## Ordre proposé pour les prochaines sessions
+## 0 bis. Identification du héros — FAIT, en attente de validation
 
-1. Déplacement à la souris.
-2. Carte du monde et navigation.
-3. Audio.
-4. Qualité artistique des personnages et animations.
+- **Silhouette** : bandeau doré et plume blanche à pointe d'or plantée dedans, qui dépasse de la tête. Ils s'ajoutent à la cape dorée et à la massue. Les compagnons ont des lances et des bandeaux rouges : le héros se lit d'un coup d'œil.
+- **Anneau au sol** (`scenes/characters/hero_marker.gd`) :
+  - ovale doré de 23 × 9 pixels sous les pieds, dessiné sous le personnage ;
+  - à peine visible quand le héros est seul ;
+  - plus net dès que 2 unités l'entourent ou qu'un ennemi est proche.
+- **En combat seulement** : un petit chevron doré (5 × 3 pixels) au-dessus de la tête. Il passe par-dessus la mêlée, là où l'anneau peut être caché par les compagnons placés devant.
+- Pas de lueur, pas d'animation permanente. Collisions, déplacements et mécaniques inchangés.
+
+## Amélioration VITESSE — REPORTÉE
+
+Demandée en mission secondaire « si raisonnable », reportée pour tenir dans le quota de la session. Ce qu'elle demandera :
+- une entrée dans `Upgrades` (niveaux et coûts progressifs, par exemple +8 % par niveau sur 4 niveaux) ;
+- une 5e ligne du panneau du camp, avec sa touche `buy_5` et son icône ;
+- l'application à `stats.move_speed` du héros, par `UpgradeEffects` ;
+- des compagnons un peu plus rapides, pour qu'ils suivent : seuil de trot du module `Party` ;
+- la sauvegarde : les niveaux d'amélioration sont déjà enregistrés de façon générique, à vérifier ;
+- des tests au clavier, à la souris et sur le tour complet de la carte à 8 compagnons.
+
+## Ordre des prochaines sessions (revu le 22/10/2026)
+
+1. **Ambiance sonore** : bruitages et musique rétro originale, douce et entraînante (section 3).
+2. **Montée majeure en qualité artistique du monde jouable** : sols, végétation, eau, reliefs, transitions et composition des environnements.
+   - D'abord une **zone témoin soignée autour du campement**, à valider avant toute refonte globale.
+   - Étudier de vrais assets pixel art cohérents (gratuits et utilisables commercialement, licence vérifiée), plutôt que multiplier indéfiniment les dessins programmatiques.
+3. **Comportement plus organique des troupes autour du héros** : placements moins géométriques, petites variations de rythme et de position, sans perdre la fiabilité du suivi.
+4. **Carte du monde et mini-carte** : reportées à plus tard (section 2). La navigation actuelle (indicateur du camp et déplacement à la souris) suffit pour l'instant.
+
+La qualité artistique des personnages (section 4) suivra la même méthode que celle du monde : référence réelle d'abord, prototype à valider ensuite.
 
 ## 1. Déplacement à la souris — FAIT et validé (tag `mouse-move`)
 
@@ -55,7 +81,7 @@ Détail des tests : `PROGRESS.md`.
 
 **Tests prévus** : clics à travers ponts, escaliers, berges et autour des bâtiments ; clic sur l'eau, sur une falaise, sur l'interface ; interruption par le clavier ; trajet pendant un combat ; groupe de 8 compagnons ; aucun blocage sur un long parcours.
 
-## 2. Carte du monde et navigation
+## 2. Carte du monde et navigation — REPORTÉE (priorité 4)
 
 **Comportement attendu**
 - Touche `M` : ouvre et ferme une carte consultable en plein écran (de préférence à une minicarte permanente). Plus tard, une icône cliquable fera de même.
@@ -73,7 +99,7 @@ Détail des tests : `PROGRESS.md`.
 - Le jeu peut continuer derrière la carte ou être mis en pause : à décider au début du lot.
 - Minicarte : optionnelle, plus tard, si le besoin se confirme.
 
-## 3. Audio
+## 3. Audio — PROCHAINE PRIORITÉ
 
 **Contenu prévu**
 - Effets sonores :
