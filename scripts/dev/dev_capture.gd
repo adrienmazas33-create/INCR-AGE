@@ -103,6 +103,10 @@ func _run() -> void:
 		_hero.health.current, _hero.health.max_health, _hero.attack.hits, get_tree().get_nodes_in_group(&"enemies").size(), Engine.time_scale])
 	print("DevCapture : audio %d bruitage(s) joué(s), %d écarté(s) (anti-empilement) ; niveau ambiance %.0f dB" % [AudioManager.played, AudioManager.skipped,
 		AudioServer.get_bus_peak_volume_left_db(AudioServer.get_bus_index(AudioManager.AMBIENCE), 0)])
+	var ambience := get_tree().current_scene.get_node_or_null("Ambience")
+	if ambience:
+		print("DevCapture : ambiances " + ambience.debug_summary())
+	print("DevCapture : sons joués %s" % AudioManager.counts)
 	if _capture_path != "":
 		for i in 3:
 			await get_tree().process_frame

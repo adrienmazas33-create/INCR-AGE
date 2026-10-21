@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : audio, lot A (premiers bruitages) validé et publié (tag `audio-a`). Musique non commencée. Suite des priorités dans `docs/ROADMAP.md` : art du monde (zone témoin au camp), troupes plus organiques, puis carte du monde.**
+**État : audio, lot B (pas, ambiances de nature, deux bruitages) fait, en commit local, en attente de validation (non poussé, pas de tag). Lot A validé (tag `audio-a`). Musique et menu des volumes : non commencés.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -215,11 +215,27 @@ Voir les priorités 2 et 3 du plan artistique.
   - combat au repaire est : 17 bruitages joués (coups, grognements, butin), 9 écartés par l'anti-empilement ; loin du camp, ambiance muette (-200 dB) ;
   - tour complet à 8 compagnons : 150 s, 60 FPS, 19 bruitages joués, 5 replacements forcés (référence : 2 à 4) ; aucune erreur de script ;
   - un premier essai de tour, lancé depuis le camp, ne s'est pas terminé (processus arrêté à la main au bout de 20 min) ; cause non trouvée, non reproduite au second essai ;
-  - **non vérifié** : l'écoute elle-même (qualité, volumes relatifs) : je ne peux pas entendre, validée à l'écoute par le porteur du projet le 22/10/2026.
+  - écoute (qualité, volumes relatifs) : **validée** par le porteur du projet le 22/10/2026.
+- **Audio, lot B**, en jeu :
+  - traversée du pont (75,34 → 84,34) : pas dans l'herbe (12), sur la terre (5), sur les planches (4) ; murmure de l'eau à -34 dB près de la rivière, prairie à -21 dB ;
+  - montée sur le plateau : pas sur la roche (12) ; eau muette (-50 dB) loin de la rivière ;
+  - achats menant au stade TRIBU : tambours et accord du camp joués une fois, avec l'arpège d'achat ;
+  - combat au repaire est : coups (10), grognements (6), sanglier abattu (1), butin (2), pas (7), 9 sons écartés par l'anti-empilement ;
+  - tour complet à 8 compagnons : 150 s, 60 FPS, 5 replacements forcés, résultat identique au lot A (aucun effet sur le jeu) ; 681 pas joués en 150 s (environ 4,5 par seconde de marche), 17 sons écartés ;
+  - aucune erreur de script ; lot A inchangé à l'octet près ;
+  - **non vérifié** : l'écoute (je ne peux pas entendre), c'est à ton test.
 - **Non vérifié** : vrai clic de souris et toucher sur écran tactile (clics simulés seulement), sensation de contrôle à la souris ; sensations de contrôle, de caméra et de combat par un humain, clic réel dans le panneau (achats testés par commande), toucher sur écran tactile, écran 120/144 Hz, plein écran.
 
 ## En cours
 
+- **Audio, lot B : pas et ambiances** (section 3 de `docs/ROADMAP.md`), en attente de validation :
+  - pas du héros selon le sol (herbe, terre, planches du pont, roche du plateau et des escaliers), un tous les 21 pixels parcourus, discrets ;
+  - ambiance de prairie (vent doux et oiseaux épars, boucle de 12 s) partout, en fondu au lancement ;
+  - murmure de l'eau (boucle de 6 s) qui monte à moins de 5 cases d'une rivière ou du lac ;
+  - sanglier abattu (dernier grognement et chute) ; évolution du camp (trois coups de tambour et un accord) ;
+  - fichiers : `scripts/world/ambience.gd` (ajouté par `main.gd`), sons ajoutés à `tools/generate_sfx.gd` (licences : `assets/audio/README.md`) ;
+  - aucun changement de gameplay.
+  - Commit local seulement. Après validation : tag `audio-b` et push.
 - **Audio, lot A : premiers bruitages** (section 3 de `docs/ROADMAP.md`), validé le 22/10/2026 et publié (tag `audio-a`) :
   - autoload `AudioManager` (`scripts/autoload/audio_manager.gd`) : bus Music, SFX et Ambience créés au lancement, volumes séparés (0 à 1) et coupure par catégorie, enregistrés dans `user://settings.cfg`, à part de la sauvegarde ; pas encore de menu pour les régler ;
   - bruitages originaux synthétisés par `tools/generate_sfx.gd` (licences : `assets/audio/README.md`) : coup sur un ennemi, ramassage du butin, achat d'amélioration (arpège de marimba), grognement du sanglier avant sa charge, crépitement du feu en boucle (bus Ambiance, audible près du camp) ;
@@ -262,7 +278,7 @@ Voir les priorités 2 et 3 du plan artistique.
 ## Prochaines étapes
 
 1. **Feuille de route `docs/ROADMAP.md`**, ordre revu le 22/10/2026 (rien de tout cela n'est développé) :
-   1. ambiance sonore : lot A (bruitages) fait et validé (tag `audio-a`) ; ensuite autres bruitages (pas, ambiances de nature), puis musique rétro originale ;
+   1. ambiance sonore : lot A validé (tag `audio-a`), lot B (pas, ambiances) fait, en attente de validation ; ensuite menu des volumes et musique rétro originale ;
    2. art du monde jouable : d'abord une zone témoin soignée autour du campement, en partant de vrais assets pixel art ;
    3. comportement plus organique des troupes ;
    4. carte du monde et mini-carte, plus tard.
@@ -285,7 +301,7 @@ Voir les priorités 2 et 3 du plan artistique.
 - Bible créative : `Bible_creative_Jeu_incremental_2D_V01.md` / `.docx`, dans les Téléchargements de l'utilisateur, **hors dépôt**.
 - **Chantier artistique** : étape 1 et passe visuelle 1 faites et validées (tag `art-pass-1`). Prochaine étape, sur demande : priorité 2 de `docs/ART_DIRECTION_PLAN.md`. Ne pas commencer d'autre phase sans demande explicite.
 - **Indicateur du campement** : validé et publié (tag `camp-compass`).
-- **Feuille de route** `docs/ROADMAP.md` : déplacement à la souris (**fait et validé**, tag `mouse-move`) ; identification du héros (**faite et validée**, tag `hero-id`). Audio lot A : **fait et validé** (tag `audio-a`). Ensuite, **prévus et non développés** : musique et autres sons, art du monde (zone témoin au camp), troupes organiques, carte du monde ; amélioration VITESSE reportée.
+- **Feuille de route** `docs/ROADMAP.md` : déplacement à la souris (**fait et validé**, tag `mouse-move`) ; identification du héros (**faite et validée**, tag `hero-id`). Audio : lot A **fait et validé** (tag `audio-a`), lot B **fait, commit local en attente de validation**. Ensuite, **prévus et non développés** : menu des volumes, musique, art du monde (zone témoin au camp), troupes organiques, carte du monde ; amélioration VITESSE reportée.
 
 ### 2. Méthode de travail attendue
 

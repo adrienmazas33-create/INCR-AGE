@@ -32,6 +32,10 @@ func _ready() -> void:
 	var panel := CampPanel.new()
 	panel.setup(_hero, _world.camp_position)
 	_hud.add_panel(panel)
+	var ambience := Ambience.new()
+	ambience.name = "Ambience"
+	add_child(ambience)
+	ambience.setup(_hero, _world.map)
 	var compass := CampCompass.new()
 	compass.setup(_hero, _world.camp_position)
 	_hud.add_panel(compass)

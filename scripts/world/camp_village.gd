@@ -61,6 +61,7 @@ func _on_upgrade_bought(_id: String, _level: int) -> void:
 func _build(s: int, animated: bool) -> void:
 	if animated:
 		_hud.announce(ANNOUNCES[s])
+		AudioManager.play(&"camp_stage")
 		# Moment fort : grands rayons au-dessus du feu et bref éclat de l'écran.
 		var at := _fire.global_position if _fire else _world.camp_position
 		CombatFx.rays(at + Vector2(0, -14), 1.6)

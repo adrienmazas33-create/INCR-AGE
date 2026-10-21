@@ -2,7 +2,7 @@
 
 Document de cadrage rédigé le 22/10/2026 à partir des retours de test du porteur du projet.
 
-> **Fait** : l'indicateur de direction du campement (section 0, validé, tag `camp-compass`), le déplacement à la souris (section 1, validé, tag `mouse-move`) et l'identification du héros (section 0 bis, validé, tag `hero-id`) ; audio, lot A (section 3, validé, tag `audio-a`). **Tout le reste est PRÉVU, non développé.**
+> **Fait** : l'indicateur de direction du campement (section 0, validé, tag `camp-compass`), le déplacement à la souris (section 1, validé, tag `mouse-move`) et l'identification du héros (section 0 bis, validé, tag `hero-id`) ; audio, lots A (validé, tag `audio-a`) et B (en attente de validation), section 3. **Tout le reste est PRÉVU, non développé.**
 
 Priorités revues le 22/10/2026, après les tests du porteur du projet (voir « Ordre des prochaines sessions »).
 
@@ -99,11 +99,13 @@ Détail des tests : `PROGRESS.md`.
 - Le jeu peut continuer derrière la carte ou être mis en pause : à décider au début du lot.
 - Minicarte : optionnelle, plus tard, si le besoin se confirme.
 
-## 3. Audio — lot A FAIT et validé (tag `audio-a`), suite PRÉVUE
+## 3. Audio — lot A validé (tag `audio-a`), lot B FAIT (en attente de validation), suite PRÉVUE
 
 **Lot A, fait** : architecture (`AudioManager`, bus Music / SFX / Ambience, volumes enregistrés dans `user://settings.cfg`, `play_music()` prêt) et cinq bruitages originaux (coup sur un ennemi, butin, achat, grognement du sanglier, crépitement du feu). Détail dans `PROGRESS.md`.
 
-**Suite prévue, non développée** : pas selon le terrain, ambiances de nature, autres bruitages (recrue, évolution du camp, mort d'un ennemi), menu des volumes, puis la boucle musicale originale.
+**Lot B, fait** : pas du héros selon le sol, ambiance de prairie (vent, oiseaux), murmure de l'eau près des rivières, sanglier abattu, évolution du camp (`scripts/world/ambience.gd`).
+
+**Suite prévue, non développée** : menu des volumes (musique, effets, ambiance), puis la boucle musicale originale ; plus tard, ambiances propres aux forêts et aux plateaux.
 
 **Contenu prévu**
 - Effets sonores :

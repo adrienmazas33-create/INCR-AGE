@@ -18,9 +18,18 @@ const SOUNDS := {
 	&"pickup": ["res://assets/audio/sfx/pickup.wav", -11.0, 0.05, 2, 0.06],
 	&"buy": ["res://assets/audio/sfx/buy.wav", -9.0, 0.0, 1, 0.25],
 	&"boar_grunt": ["res://assets/audio/sfx/boar_grunt.wav", -9.0, 0.1, 2, 0.4],
+	&"boar_down": ["res://assets/audio/sfx/boar_down.wav", -8.0, 0.08, 2, 0.1],
+	&"camp_stage": ["res://assets/audio/sfx/camp_stage.wav", -6.0, 0.0, 1, 1.0],
+	# Pas du héros : discrets, sous les autres bruitages.
+	&"step_grass": ["res://assets/audio/sfx/step_grass.wav", -19.0, 0.1, 2, 0.08],
+	&"step_dirt": ["res://assets/audio/sfx/step_dirt.wav", -19.0, 0.1, 2, 0.08],
+	&"step_wood": ["res://assets/audio/sfx/step_wood.wav", -17.0, 0.08, 2, 0.08],
+	&"step_stone": ["res://assets/audio/sfx/step_stone.wav", -20.0, 0.1, 2, 0.08],
 }
 const FIRE_LOOP := "res://assets/audio/sfx/fire_loop.wav"
-const POOL_SIZE := 10
+const MEADOW_LOOP := "res://assets/audio/sfx/meadow_loop.wav"
+const WATER_LOOP := "res://assets/audio/sfx/water_loop.wav"
+const POOL_SIZE := 12
 ## Distance (pixels) au-delà de laquelle un bruitage placé dans le monde n'est plus entendu.
 const HEARING := 560.0
 
@@ -34,6 +43,7 @@ var _muted := {}
 ## Nombre de bruitages joués et refusés (anti-empilement) : bilan de l'outil de test.
 var played := 0
 var skipped := 0
+var counts := {}
 
 
 func _ready() -> void:
@@ -82,6 +92,7 @@ func play(id: StringName, at: Variant = null) -> void:
 		return
 	_last_start[id] = now
 	played += 1
+	counts[id] = counts.get(id, 0) + 1
 	free_player.stream = stream
 	free_player.volume_db = def[1]
 	free_player.pitch_scale = 1.0 + randf_range(-def[2], def[2])
@@ -92,17 +103,22 @@ func play(id: StringName, at: Variant = null) -> void:
 
 ## Lecteur d'ambiance en boucle (crépitement du feu), à placer dans le monde par l'appelant.
 func make_fire_crackle() -> AudioStreamPlayer2D:
-	var stream := load(FIRE_LOOP) as AudioStreamWAV
-	stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
-	stream.loop_begin = 0
-	stream.loop_end = roundi(stream.get_length() * stream.mix_rate)
 	var p := AudioStreamPlayer2D.new()
-	p.stream = stream
+	p.stream = loop_stream(FIRE_LOOP)
 	p.bus = AMBIENCE
 	p.volume_db = -12.0
 	p.max_distance = 300.0
 	p.autoplay = true
 	return p
+
+
+## Son en boucle sans couture (ambiances) ; les fichiers sont générés pour boucler exactement.
+func loop_stream(path: String) -> AudioStreamWAV:
+	var stream := load(path) as AudioStreamWAV
+	stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
+	stream.loop_begin = 0
+	stream.loop_end = roundi(stream.get_length() * stream.mix_rate)
+	return stream
 
 
 ## Musique (prévue : boucle d'exploration originale). Fondu sortant de l'ancienne, entrant de la nouvelle.

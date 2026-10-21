@@ -167,6 +167,7 @@ func _on_died() -> void:
 	remove_from_group(&"enemies")
 	_drop_loot()
 	CombatFx.poof(global_position + Vector2(0, -8))
+	AudioManager.play(&"boar_down", global_position)
 	var tween := create_tween()
 	tween.tween_interval(0.6)
 	tween.tween_property(self, "modulate:a", 0.0, 0.5)

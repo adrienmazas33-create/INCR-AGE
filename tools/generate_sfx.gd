@@ -18,7 +18,165 @@ func _init() -> void:
 	_save(_buy(), "buy.wav", 0.6)
 	_save(_grunt(), "boar_grunt.wav", 0.8)
 	_save(_fire_loop(), "fire_loop.wav", 0.5)
+	# Lot B (ajoutés après le lot A pour ne pas changer ses sons).
+	_save(_step_grass(), "step_grass.wav", 0.5)
+	_save(_step_dirt(), "step_dirt.wav", 0.5)
+	_save(_step_wood(), "step_wood.wav", 0.55)
+	_save(_step_stone(), "step_stone.wav", 0.45)
+	_save(_boar_down(), "boar_down.wav", 0.75)
+	_save(_camp_stage(), "camp_stage.wav", 0.6)
+	_save(_meadow_loop(), "meadow_loop.wav", 0.5)
+	_save(_water_loop(), "water_loop.wav", 0.5)
 	quit()
+
+
+## Pas dans l'herbe : froissement doux, sans claquement.
+func _step_grass() -> PackedFloat32Array:
+	var out := _buffer(0.1)
+	var lp := 0.0
+	var lp2 := 0.0
+	for i in out.size():
+		var t := float(i) / RATE
+		lp += 0.35 * (_rng.randf_range(-1.0, 1.0) - lp)
+		lp2 += 0.04 * (lp - lp2)
+		out[i] = (lp - lp2) * minf(t / 0.008, 1.0) * exp(-t * 38.0)
+	return out
+
+
+## Pas sur la terre battue : petit crissement granuleux et appui sourd.
+func _step_dirt() -> PackedFloat32Array:
+	var out := _buffer(0.09)
+	var lp := 0.0
+	var grain := 1.0
+	for i in out.size():
+		var t := float(i) / RATE
+		if i % 40 == 0:
+			grain = _rng.randf_range(0.2, 1.0)
+		lp += 0.45 * (_rng.randf_range(-1.0, 1.0) - lp)
+		out[i] = (lp * grain + 0.5 * sin(TAU * 95.0 * t)) * minf(t / 0.003, 1.0) * exp(-t * 48.0)
+	return out
+
+
+## Pas sur un pont : planche creuse.
+func _step_wood() -> PackedFloat32Array:
+	var out := _buffer(0.14)
+	for i in out.size():
+		var t := float(i) / RATE
+		var knock := sin(TAU * 210.0 * t) * exp(-t * 32.0) + 0.5 * sin(TAU * 455.0 * t) * exp(-t * 55.0)
+		out[i] = (knock + _rng.randf_range(-1.0, 1.0) * exp(-t * 400.0) * 0.4) * minf(t / 0.002, 1.0)
+	return out
+
+
+## Pas sur la roche du plateau : tapotement sec et bref.
+func _step_stone() -> PackedFloat32Array:
+	var out := _buffer(0.07)
+	var lp := 0.0
+	for i in out.size():
+		var t := float(i) / RATE
+		var x := _rng.randf_range(-1.0, 1.0)
+		lp += 0.2 * (x - lp)
+		out[i] = ((x - lp) * exp(-t * 90.0) + 0.3 * sin(TAU * 820.0 * t) * exp(-t * 110.0)) * minf(t / 0.002, 1.0)
+	return out
+
+
+## Sanglier abattu : dernier grognement qui retombe, puis la masse qui touche le sol.
+func _boar_down() -> PackedFloat32Array:
+	var out := _buffer(0.55)
+	var phase := 0.0
+	var lp := 0.0
+	var puff := 0.0
+	for i in out.size():
+		var t := float(i) / RATE
+		phase = fmod(phase + (125.0 - 70.0 * minf(t / 0.3, 1.0)) / RATE, 1.0)
+		lp += 0.18 * (phase * 2.0 - 1.0 - lp)
+		var groan := lp * 1.4 * minf(t / 0.02, 1.0) * clampf((0.3 - t) / 0.12, 0.0, 1.0)
+		var land := 0.0
+		if t >= 0.2:
+			var u := t - 0.2
+			puff += 0.1 * (_rng.randf_range(-1.0, 1.0) - puff)
+			land = sin(TAU * 70.0 * u) * exp(-u * 16.0) + puff * exp(-u * 12.0) * 1.5
+		out[i] = groan + land
+	return out
+
+
+## Le camp grandit : trois coups de tambour de peau, puis un accord de marimba qui résonne.
+func _camp_stage() -> PackedFloat32Array:
+	var out := _buffer(2.0)
+	for k in 3:
+		var start := int(k * 0.18 * RATE)
+		var phase := 0.0
+		for i in range(start, int(start + 0.4 * RATE)):
+			var t := float(i - start) / RATE
+			phase += TAU * (78.0 + 70.0 * exp(-t * 25.0)) / RATE
+			out[i] += (sin(phase) + _rng.randf_range(-1.0, 1.0) * exp(-t * 200.0) * 0.3) * exp(-t * 10.0) * (0.7 if k < 2 else 1.0)
+	for f in [261.63, 329.63, 392.0, 523.25]:
+		_marimba(out, 0.56, f, 0.45, 3.2)
+	return _echo(out, 0.16, 0.25)
+
+
+## Prairie, en boucle de 12 s : vent très doux qui respire, quelques oiseaux épars.
+func _meadow_loop() -> PackedFloat32Array:
+	var n := 12 * RATE
+	var out := _loop_bed(n, 0.012, 1.0)
+	for i in n:
+		# Souffle qui monte et descend deux fois par boucle (période qui tombe juste).
+		out[i] *= 0.65 + 0.35 * sin(TAU * 2.0 * i / n)
+	for k in 7:
+		var phrase := _rng.randi_range(0, n - 1)
+		var base := _rng.randf_range(2600.0, 3600.0)
+		for c in _rng.randi_range(2, 4):
+			var length := _rng.randf_range(0.05, 0.09)
+			var sweep := _rng.randf_range(-900.0, 900.0)
+			var amp := _rng.randf_range(0.18, 0.32)
+			var start := phrase + int(c * (length + 0.05) * RATE)
+			var phase := 0.0
+			for j in int(length * RATE):
+				var u := float(j) / (length * RATE)
+				phase += TAU * (base + sweep * u) / RATE
+				out[(start + j) % n] += sin(phase) * sin(PI * u) * amp
+	return out
+
+
+## Eau vive, en boucle de 6 s : murmure clair et petites bulles.
+func _water_loop() -> PackedFloat32Array:
+	var n := 6 * RATE
+	var low := _loop_bed(n, 0.03, 1.0)
+	var out := _loop_bed(n, 0.3, 0.35)
+	for i in n:
+		out[i] -= low[i] * 0.3
+	for k in 50:
+		var start := _rng.randi_range(0, n - 1)
+		var length := _rng.randf_range(0.02, 0.05)
+		var f0 := _rng.randf_range(380.0, 820.0)
+		var amp := _rng.randf_range(0.12, 0.3)
+		var phase := 0.0
+		for j in int(length * RATE):
+			var u := float(j) / (length * RATE)
+			phase += TAU * f0 * (1.0 + 1.4 * u) / RATE
+			out[(start + j) % n] += sin(phase) * sin(PI * u) * amp
+	return out
+
+
+## Bruit filtré (passe-bas `a`) de `n` échantillons dont la fin est fondue sur le début (boucle).
+func _loop_bed(n: int, a: float, gain: float) -> PackedFloat32Array:
+	var fade := int(0.3 * RATE)
+	var raw := PackedFloat32Array()
+	raw.resize(n + fade)
+	var lp := 0.0
+	for i in raw.size():
+		lp += a * (_rng.randf_range(-1.0, 1.0) - lp)
+		raw[i] = lp
+	var top := 0.0001
+	for v in raw:
+		top = maxf(top, absf(v))
+	var out := PackedFloat32Array()
+	out.resize(n)
+	for i in n:
+		out[i] = raw[i] / top * gain
+	for i in fade:
+		var w := float(i) / fade
+		out[i] = (raw[i] * w + raw[n + i] * (1.0 - w)) / top * gain
+	return out
 
 
 ## Coup de massue sur une bête : bruit sourd qui descend, petit claquement de bois, attaque feutrée.
@@ -136,7 +294,7 @@ func _save(samples: PackedFloat32Array, file: String, peak: float) -> void:
 	var tail := int(0.005 * RATE)
 	for i in samples.size():
 		var v := samples[i] / top * peak
-		if file != "fire_loop.wav" and i > samples.size() - tail:
+		if not file.ends_with("_loop.wav") and i > samples.size() - tail:
 			v *= float(samples.size() - i) / tail
 		data.encode_s16(i * 2, clampi(roundi(v * 32767.0), -32768, 32767))
 	var wav := AudioStreamWAV.new()
