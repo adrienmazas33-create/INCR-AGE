@@ -20,6 +20,14 @@ const BPM := 96.0
 const BEAT := 60.0 / BPM
 ## Durée prise en compte après la fin pour les queues des notes, repliée sur le début.
 const TAIL := 4.0
+## Mixage des voix (rééquilibré après écoute : marimba de tête et arpège moins saillants,
+## kick plus discret, nappe un peu plus présente pour lier l'ensemble).
+## Valeurs d'origine : flûte 0.30, flûte douce 0.22, marimba de tête 0.34, doublure 0.10,
+## arpège 0.13, nappe 0.045, kick 0.22.
+const LEVELS := {
+	"flute": 0.27, "flute_soft": 0.21, "marimba_lead": 0.21, "flute_double": 0.12,
+	"arpeggio": 0.105, "pad": 0.05, "kick": 0.15,
+}
 
 const CHORDS := {
 	"G": [43, 55, 59, 62], "D": [38, 50, 54, 57], "Em": [40, 52, 55, 59],
@@ -112,13 +120,13 @@ func _melody_note(t: float, midi: int, dur: float, voice: String) -> void:
 	var vel := _rng.randf_range(0.92, 1.05)
 	match voice:
 		"flute":
-			_flute(t, midi, dur, 0.30 * vel)
+			_flute(t, midi, dur, LEVELS["flute"] * vel)
 		"flute_soft":
-			_flute(t, midi, dur, 0.22 * vel)
+			_flute(t, midi, dur, LEVELS["flute_soft"] * vel)
 		"marimba":
 			# Retour du thème : marimba en tête, flûte très douce une octave plus bas.
-			_marimba(t, midi, 0.34 * vel, 3.5)
-			_flute(t, midi - 12, dur, 0.1 * vel)
+			_marimba(t, midi, LEVELS["marimba_lead"] * vel, 3.5)
+			_flute(t, midi - 12, dur, LEVELS["flute_double"] * vel)
 
 
 ## Basse ronde : fondamentale à la blanche (et quinte au 3e temps), ou à la ronde.
@@ -138,7 +146,7 @@ func _arpeggio(t: float, chord: Array, beats: float, density: int) -> void:
 	var count := int(beats / step)
 	for i in count:
 		var accent := 1.0 if i % int(2.0 / step) == 0 else 0.8
-		_marimba(t + i * step * BEAT, tones[pattern[i % 8]], 0.13 * accent * _rng.randf_range(0.9, 1.05), 6.0)
+		_marimba(t + i * step * BEAT, tones[pattern[i % 8]], LEVELS["arpeggio"] * accent * _rng.randf_range(0.9, 1.05), 6.0)
 
 
 ## 0 : aucune ; 1 : shaker léger sur les contretemps ; 2 : shaker et petit kick au 1er temps.
@@ -148,15 +156,18 @@ func _percussion(t: float, level: int) -> void:
 	for k in 4:
 		_shaker(t + (k + 0.5) * BEAT, 0.05 if k % 2 == 1 else 0.035)
 	if level == 2:
-		_kick(t, 0.22)
+		_kick(t, LEVELS["kick"])
 
 
 # --- Instruments -------------------------------------------------------------
 
 ## Flûte rétro : sinus et quelques harmoniques impaires (couleur « chiptune » adoucie),
-## attaque souple, vibrato qui arrive après le début de la note.
+## attaque souple, vibrato qui arrive après le début de la note. Dans l'aigu, la note est un peu
+## plus douce et moins brillante (l'oreille y est plus sensible).
 func _flute(t: float, midi: int, dur: float, amp: float) -> void:
 	var f := _freq(midi)
+	var gain := _tame(midi, 74, 88, 0.72)
+	var bright := _tame(midi, 72, 88, 0.55)
 	var start := int(t * RATE)
 	var hold := int(dur * 0.94 * RATE)
 	var rel := int(0.12 * RATE)
@@ -168,18 +179,21 @@ func _flute(t: float, midi: int, dur: float, amp: float) -> void:
 		var env := minf(u / 0.025, 1.0) * (0.8 + 0.2 * exp(-u * 4.0))
 		if j > hold:
 			env *= 1.0 - float(j - hold) / rel
-		var w := sin(phase) + 0.08 * sin(2.0 * phase) + 0.16 * sin(3.0 * phase) + 0.05 * sin(5.0 * phase)
-		_add(start + j, w * env * amp)
+		var w := sin(phase) + (0.08 * sin(2.0 * phase) + 0.16 * sin(3.0 * phase) + 0.05 * sin(5.0 * phase)) * bright
+		_add(start + j, w * env * amp * gain)
 
 
+## Marimba : attaque boisée (harmonique 4 qui s'éteint vite), adoucie dans l'aigu.
 func _marimba(t: float, midi: int, amp: float, decay: float) -> void:
 	var f := _freq(midi)
+	var gain := _tame(midi, 74, 88, 0.75)
+	var bright := _tame(midi, 67, 86, 0.5)
 	var start := int(t * RATE)
 	var length := int(minf(5.0 / decay, 1.6) * RATE)
 	for j in length:
 		var u := float(j) / RATE
-		var v := sin(TAU * f * u) * exp(-u * decay) + 0.25 * sin(TAU * f * 4.0 * u) * exp(-u * decay * 5.0)
-		_add(start + j, v * amp * minf(u / 0.003, 1.0))
+		var v := sin(TAU * f * u) * exp(-u * decay) + 0.25 * bright * sin(TAU * f * 4.0 * u) * exp(-u * decay * 5.0)
+		_add(start + j, v * amp * gain * minf(u / 0.003, 1.0))
 
 
 ## Nappe chaude : trois voix (accord sans la basse), deux oscillateurs légèrement désaccordés,
@@ -194,7 +208,7 @@ func _pad(t: float, chord: Array, dur: float) -> void:
 			var u := float(j) / RATE
 			var env := minf(u / 0.6, 1.0) * (1.0 - clampf(float(j - hold) / rel, 0.0, 1.0))
 			var v := sin(TAU * f * u) + 0.3 * sin(TAU * f * 2.003 * u) + 0.12 * sin(TAU * f * 3.0 * u)
-			_add(start + j, v * env * 0.045)
+			_add(start + j, v * env * LEVELS["pad"])
 
 
 ## Basse ronde, avec une 2e harmonique pour rester audible sur de petits haut-parleurs.
@@ -232,6 +246,11 @@ func _shaker(t: float, amp: float) -> void:
 
 
 # --- Outils --------------------------------------------------------------------
+
+## Facteur 1 jusqu'à la note `from`, puis décroissant jusqu'à `floor` à la note `to` (en MIDI).
+func _tame(midi: int, from: int, to: int, floor: float) -> float:
+	return lerpf(1.0, floor, clampf(float(midi - from) / (to - from), 0.0, 1.0))
+
 
 func _add(i: int, v: float) -> void:
 	if i < _buf.size():
@@ -326,10 +345,14 @@ func _report(mix: PackedFloat32Array, starts: Array[int]) -> void:
 	var names := ["intro", "A", "A'", "B (pont)", "A'' (marimba)", "coda"]
 	for k in names.size():
 		var acc := 0.0
+		var top := 0.0
 		for i in range(starts[k], starts[k + 1]):
 			acc += mix[i] * mix[i]
+			top = maxf(top, absf(mix[i]))
 		var rms := sqrt(acc / (starts[k + 1] - starts[k])) * _scale
-		print("  %-14s niveau moyen %.1f dBFS" % [names[k], linear_to_db(rms)])
+		# Écart crête / moyenne : plus il est grand, plus des notes isolées « dépassent ».
+		print("  %-14s niveau moyen %.1f dBFS, crête %.1f dBFS (écart %.1f dB)" % [names[k], linear_to_db(rms),
+			linear_to_db(top * _scale), linear_to_db(top * _scale) - linear_to_db(rms)])
 	var jump := absf(mix[0] - mix[n - 1]) * _scale
 	var typical := 0.0
 	for i in range(1, n):

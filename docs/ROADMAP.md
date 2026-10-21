@@ -109,7 +109,9 @@ Détail des tests : `PROGRESS.md`.
 
 **Lot C, fait et validé (tag `audio-c`)** : première musique d'exploration originale, 100 s en boucle, sol majeur à 96 BPM (`tools/generate_music.gd`, `assets/audio/music/theme_exploration.wav`). Motif signature ré-sol-la-si, à réarranger pour chaque époque.
 
-**Suite prévue, non développée** : menu des volumes (musique, effets, ambiance) ; variantes du thème par époque (âge des métaux, Moyen Âge, révolution industrielle, époque moderne, futur) ; plus tard, ambiances propres aux forêts et aux plateaux.
+**Rééquilibrage et panneau des volumes, faits (en attente de validation)** : niveaux des voix de la musique harmonisés sans rien recomposer ; panneau MUSIQUE / EFFETS / NATURE (touche V ou bouton), curseurs, coupure, réglages conservés.
+
+**Suite prévue, non développée** : variantes du thème par époque (âge des métaux, Moyen Âge, révolution industrielle, époque moderne, futur) ; plus tard, ambiances propres aux forêts et aux plateaux.
 
 **Contenu prévu**
 - Effets sonores :

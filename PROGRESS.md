@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : audio, lots A, B, ajustements et C (première musique d'exploration) validés et publiés (tags `audio-a`, `audio-b`, `audio-b2`, `audio-c`). Menu des volumes et variantes du thème par époque : prévus, non commencés.**
+**État : rééquilibrage de la musique et panneau des volumes faits, en commit local, en attente d'écoute et de validation (non poussé, pas de tag). Audio lots A, B, ajustements et C validés. Ensuite : chantier artistique du monde (zone témoin au camp), après validation.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -9,7 +9,7 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 - Jeu : double-clic sur `lancer_jeu.bat`. Éditeur : `lancer_jeu.bat editeur`.
 - Ou à la main : Godot 4.7.2 → Importer → `project.godot` → F5.
 - Godot a été installé par `winget install GodotEngine.GodotEngine` (4.7.2 stable).
-- Contrôles : ZQSD, WASD ou flèches pour se déplacer ; molette pour zoomer ; F11 pour le plein écran ; Échap pour quitter.
+- Contrôles : ZQSD, WASD ou flèches pour se déplacer, ou clic gauche sur le sol ; molette pour zoomer ; V (ou le bouton à note de musique en bas à droite) pour les volumes ; F11 pour le plein écran ; Échap pour quitter.
 - Couper les effets d'ambiance : lancer avec `-- --no-fx`, ou passer `ambient_effects` à `false` dans `scripts/autoload/game_settings.gd`.
 - Combat : rien à presser. Le héros et ses compagnons frappent seuls les ennemis à portée ; le joueur choisit où se battre par ses déplacements. `-- --no-hitstop` coupe la micro-pause d'impact.
 - Améliorations : s'approcher du feu de camp ouvre le panneau ; cliquer (ou toucher) une ligne, ou touches 1 à 4. Un repère doré flotte au-dessus du feu quand un achat est possible.
@@ -224,6 +224,10 @@ Voir les priorités 2 et 3 du plan artistique.
   - tour complet à 8 compagnons : 150 s, 60 FPS, 5 replacements forcés, résultat identique au lot A (aucun effet sur le jeu) ; 681 pas joués en 150 s (environ 4,5 par seconde de marche), 17 sons écartés ;
   - aucune erreur de script ; lot A inchangé à l'octet près ;
   - écoute : **validée** par le porteur du projet le 22/10/2026.
+- **Rééquilibrage de la musique et panneau des volumes** :
+  - écart crête / moyenne par section : avant 10,5 à 13,1 dB (pic de la marimba de tête), après 10,6 à 11,8 dB, régulier sur tout le morceau ; écart de niveau entre sections ramené de 5,7 à 4,2 dB (intro et pont restent plus calmes) ; boucle toujours sans saut ;
+  - panneau, par de vrais clics simulés : ouverture par le bouton, musique réglée à 0,3, nature coupée, réglages écrits ; au relancement, la nature reste coupée (bus Ambiance muet au camp) ; héros immobile pendant les clics ; ton fichier de réglages remis dans son état d'origine après l'essai ;
+  - **non vérifié** : l'écoute, à ton test.
 - **Audio, lot C (musique)** :
   - partition contrôlée par l'outil : chaque mesure fait exactement 4 temps (aucune erreur) ; hauteurs calculées en tempérament égal depuis le nom des notes ; harmonies vérifiées mesure par mesure (notes de la mélodie dans l'accord, ou notes de passage) ;
   - niveaux moyens : intro -22,9, A -17,7, A' -17,2, pont -20,0, marimba -19,1, coda -20,4 dBFS (le pont et la coda respirent) ; crête du fichier -6 dBFS ;
@@ -239,6 +243,10 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
+- **Rééquilibrage de la musique et panneau des volumes**, en attente d'écoute et de validation :
+  - musique : mêmes notes, même rythme, même structure et mêmes instruments ; seuls les niveaux des voix changent (`LEVELS` dans `tools/generate_music.gd`) : marimba de tête 0,34 → 0,21 (doublée par la flûte un peu plus présente), arpège 0,13 → 0,105, kick 0,22 → 0,15, flûte 0,30 → 0,27, nappe 0,045 → 0,05 ; les notes aiguës de la flûte et de la marimba sont un peu adoucies et moins brillantes (jusqu'à -3 dB et moitié moins d'harmoniques vers mi6) ; niveau en jeu -7 → -8 dB ;
+  - panneau des volumes (`scenes/ui/audio_panel.gd`) : touche V ou petit bouton à note de musique en bas à droite ; un curseur et une case de coupure pour MUSIQUE, EFFETS et NATURE ; réglages enregistrés dans `user://settings.cfg` (écrit au relâchement du curseur) ; un clic sur le panneau ne déplace pas le héros.
+  - Commit local seulement. Après validation : tag `audio-c2` et push.
 - **Audio, lot C : première musique d'exploration**, validé à l'écoute le 22/10/2026 et publié (tag `audio-c`) :
   - composition originale, écrite note par note dans `tools/generate_music.gd` et rendue en un fichier réutilisable (`assets/audio/music/theme_exploration.wav`, 100 s, 22 kHz mono) ; rien n'est calculé au lancement du jeu ;
   - sol majeur, 96 BPM, 40 mesures : intro (nappe, arpège), thème A (flûte rétro), variation A' (plus aiguë, petit kick), pont B plus calme en mi mineur (notes longues, sans percussion), retour du thème à la marimba, coda qui finit sur l'accord de ré pour ramener à l'intro ;
@@ -299,7 +307,7 @@ Voir les priorités 2 et 3 du plan artistique.
 ## Prochaines étapes
 
 1. **Feuille de route `docs/ROADMAP.md`**, ordre revu le 22/10/2026 (rien de tout cela n'est développé) :
-   1. ambiance sonore : lot A validé (tag `audio-a`), lot B (pas, ambiances) validé (tag `audio-b`) ; lot C (première musique) validé (tag `audio-c`) ; ensuite menu des volumes, puis variantes du thème par époque ;
+   1. ambiance sonore : lot A validé (tag `audio-a`), lot B (pas, ambiances) validé (tag `audio-b`) ; lot C (première musique) validé (tag `audio-c`) ; rééquilibrage de la musique et panneau des volumes faits, en attente de validation ; plus tard, variantes du thème par époque ;
    2. art du monde jouable : d'abord une zone témoin soignée autour du campement, en partant de vrais assets pixel art ;
    3. comportement plus organique des troupes ;
    4. carte du monde et mini-carte, plus tard.
@@ -322,7 +330,7 @@ Voir les priorités 2 et 3 du plan artistique.
 - Bible créative : `Bible_creative_Jeu_incremental_2D_V01.md` / `.docx`, dans les Téléchargements de l'utilisateur, **hors dépôt**.
 - **Chantier artistique** : étape 1 et passe visuelle 1 faites et validées (tag `art-pass-1`). Prochaine étape, sur demande : priorité 2 de `docs/ART_DIRECTION_PLAN.md`. Ne pas commencer d'autre phase sans demande explicite.
 - **Indicateur du campement** : validé et publié (tag `camp-compass`).
-- **Feuille de route** `docs/ROADMAP.md` : déplacement à la souris (**fait et validé**, tag `mouse-move`) ; identification du héros (**faite et validée**, tag `hero-id`). Audio : lot A **fait et validé** (tag `audio-a`), lot B **fait et validé** (tag `audio-b`). Lot C (musique) : **fait et validé** (tag `audio-c`). Ensuite, **prévus et non développés** : menu des volumes, variantes du thème par époque, art du monde (zone témoin au camp), troupes organiques, carte du monde ; amélioration VITESSE reportée.
+- **Feuille de route** `docs/ROADMAP.md` : déplacement à la souris (**fait et validé**, tag `mouse-move`) ; identification du héros (**faite et validée**, tag `hero-id`). Audio : lot A **fait et validé** (tag `audio-a`), lot B **fait et validé** (tag `audio-b`). Lot C (musique) : **fait et validé** (tag `audio-c`). Rééquilibrage musical et panneau des volumes : **faits, commit local en attente de validation**. Ensuite, **prévus et non développés** : variantes du thème par époque, art du monde (zone témoin au camp), troupes organiques, carte du monde ; amélioration VITESSE reportée.
 
 ### 2. Méthode de travail attendue
 

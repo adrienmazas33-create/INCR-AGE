@@ -41,6 +41,7 @@ func _ready() -> void:
 	var compass := CampCompass.new()
 	compass.setup(_hero, _world.camp_position)
 	_hud.add_panel(compass)
+	_hud.add_panel(AudioPanel.new())
 	var effects := UpgradeEffects.new()
 	effects.name = "UpgradeEffects"
 	add_child(effects)

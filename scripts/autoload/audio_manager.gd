@@ -33,7 +33,7 @@ const WATER_LOOP := "res://assets/audio/sfx/water_loop.wav"
 ## Musique d'exploration (tools/generate_music.gd), jouée en boucle sur le bus Music.
 const THEME := "res://assets/audio/music/theme_exploration.wav"
 ## Niveau de la musique : sous les bruitages importants du jeu.
-const MUSIC_DB := -7.0
+const MUSIC_DB := -8.0
 const POOL_SIZE := 12
 ## Distance (pixels) au-delà de laquelle un bruitage placé dans le monde n'est plus entendu.
 const HEARING := 560.0
@@ -143,11 +143,22 @@ func play_music(stream: AudioStream, fade := 1.5) -> void:
 	tween.tween_property(_music, "volume_db", MUSIC_DB, fade)
 
 
+## Volume d'une catégorie (0 à 1) et coupure, tels que réglés par le joueur.
+func get_volume(bus: StringName) -> float:
+	return _volumes[bus]
+
+
+func is_muted(bus: StringName) -> bool:
+	return _muted.get(bus, false)
+
+
 ## Volume d'une catégorie (0 à 1), enregistré.
-func set_volume(bus: StringName, linear: float) -> void:
+## `persist` faux : appliqué sans écrire le fichier (pendant qu'on fait glisser un curseur).
+func set_volume(bus: StringName, linear: float, persist := true) -> void:
 	_volumes[bus] = clampf(linear, 0.0, 1.0)
 	_apply(bus)
-	_save_settings()
+	if persist:
+		_save_settings()
 
 
 func set_muted(bus: StringName, muted: bool) -> void:
