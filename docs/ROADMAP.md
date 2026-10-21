@@ -2,7 +2,7 @@
 
 Document de cadrage rédigé le 22/10/2026 à partir des retours de test du porteur du projet.
 
-> **Tout ce qui suit est PRÉVU, rien n'est développé.** Seul l'indicateur de direction du campement (section 0) a été fait ; il attend la validation.
+> **Tout ce qui suit est PRÉVU, rien n'est développé.** Seul l'indicateur de direction du campement (section 0) a été fait ; il est validé (tag `camp-compass`).
 
 Règles communes à chaque lot :
 - un lot indépendant, testable seul, avec arrêt pour validation ;
@@ -10,7 +10,7 @@ Règles communes à chaque lot :
 - aucune dépendance ni service payant ; ressources libres de droits pour un usage commercial, licence vérifiée fichier par fichier ;
 - pas de refonte technique générale.
 
-## 0. Indicateur de direction du campement — FAIT, en attente de validation
+## 0. Indicateur de direction du campement — FAIT et validé
 
 - `scenes/ui/camp_compass.gd`, ajouté à l'interface par `scenes/main.gd`.
 - Quand le feu de camp sort de l'écran : un médaillon (flamme) glisse le long du bord, une flèche dorée pointe vers le camp, la distance s'affiche en tuiles du côté opposé à la flèche.
