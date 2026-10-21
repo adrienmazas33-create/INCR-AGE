@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : ajustements audio après le lot B (oiseaux et mixage) faits, en commit local, en attente de validation (non poussé, pas de tag). Lots A et B validés (tags `audio-a`, `audio-b`). Menu des volumes et musique : prévus, non commencés.**
+**État : audio, lots A et B et ajustements validés et publiés (tags `audio-a`, `audio-b`, `audio-b2`). Menu des volumes et musique : prévus, non commencés.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -228,16 +228,15 @@ Voir les priorités 2 et 3 du plan artistique.
   - 45 s près de la rivière : 3 chants d'oiseaux, à intervalles différents ;
   - crête du bus Ambiance à -48 dB, contre -35 à -39 dB avant ;
   - combat : 10 coups, 9 sons écartés, aucune erreur ;
-  - **non vérifié** : l'écoute, à ton test.
+  - écoute : **validée** par le porteur du projet le 22/10/2026.
 - **Non vérifié** : vrai clic de souris et toucher sur écran tactile (clics simulés seulement), sensation de contrôle à la souris ; sensations de contrôle, de caméra et de combat par un humain, clic réel dans le panneau (achats testés par commande), toucher sur écran tactile, écran 120/144 Hz, plein écran.
 
 ## En cours
 
-- **Ajustements audio après le lot B**, en attente de validation :
+- **Ajustements audio après le lot B**, validés le 22/10/2026 et publiés (tag `audio-b2`) :
   - oiseaux séparés du vent : quatre chants distincts (trois notes montantes, trille, sifflement en deux notes, roulade), joués un à la fois, jamais deux fois le même de suite, à intervalles irréguliers (5 à 15 s, et une fois sur quatre un silence de 20 à 35 s), hauteur, volume et côté variés ; la boucle de prairie ne contient plus que le vent ;
   - mixage baissé et rééquilibré : impacts et récompenses -4 dB, pas -6 dB, vent -8 dB, eau -7 dB, feu -5 dB, bus Effets par défaut à 0,7 ; coups limités à 2 simultanés ; limiteur doux sur la sortie (plafond -1 dB) contre toute saturation ; marge d'environ 6 dB laissée à la future musique ;
   - `water_loop.wav` régénéré : même recette, autre tirage aléatoire (conséquence de la séparation des oiseaux) ; les autres sons sont inchangés.
-  - Commit local seulement. Après validation : tag `audio-b2` et push.
 - **Audio, lot B : pas et ambiances** (section 3 de `docs/ROADMAP.md`), validé le 22/10/2026 et publié (tag `audio-b`) :
   - pas du héros selon le sol (herbe, terre, planches du pont, roche du plateau et des escaliers), un tous les 21 pixels parcourus, discrets ;
   - ambiance de prairie (vent doux et oiseaux épars, boucle de 12 s) partout, en fondu au lancement ;
@@ -305,7 +304,7 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ### 1. Où en est-on
 
-- Dépôt : https://github.com/adrienmazas33-create/INCR-AGE, branche `main`. Chaque lot validé porte un tag : `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`, `art-pass-1`, `camp-compass`, `mouse-move`, `hero-id`, `audio-a`, `audio-b`.
+- Dépôt : https://github.com/adrienmazas33-create/INCR-AGE, branche `main`. Chaque lot validé porte un tag : `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`, `art-pass-1`, `camp-compass`, `mouse-move`, `hero-id`, `audio-a`, `audio-b`, `audio-b2`.
 - Copie locale : `C:\Users\Adrien\OneDrive\Bureau\INCR-AGE`. Identité Git définie **uniquement pour ce dépôt** (`user.name` « Adrien »).
 - Bible créative : `Bible_creative_Jeu_incremental_2D_V01.md` / `.docx`, dans les Téléchargements de l'utilisateur, **hors dépôt**.
 - **Chantier artistique** : étape 1 et passe visuelle 1 faites et validées (tag `art-pass-1`). Prochaine étape, sur demande : priorité 2 de `docs/ART_DIRECTION_PLAN.md`. Ne pas commencer d'autre phase sans demande explicite.

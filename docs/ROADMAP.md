@@ -105,7 +105,7 @@ Détail des tests : `PROGRESS.md`.
 
 **Lot B, fait** : pas du héros selon le sol, ambiance de prairie (vent, oiseaux), murmure de l'eau près des rivières, sanglier abattu, évolution du camp (`scripts/world/ambience.gd`).
 
-**Ajustements après écoute (en attente de validation)** : oiseaux joués à part, à intervalles irréguliers (quatre chants) ; mixage baissé, limiteur sur la sortie.
+**Ajustements après écoute (validés, tag `audio-b2`)** : oiseaux joués à part, à intervalles irréguliers (quatre chants) ; mixage baissé, limiteur sur la sortie.
 
 **Suite prévue, non développée** : menu des volumes (musique, effets, ambiance), puis la boucle musicale originale ; plus tard, ambiances propres aux forêts et aux plateaux.
 
