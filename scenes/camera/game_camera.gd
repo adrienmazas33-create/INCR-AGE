@@ -19,6 +19,9 @@ var _levels: Array[float] = []
 var _level := 0
 var _zoom := 1.0
 var _look := Vector2.ZERO
+var _shake := 0.0
+
+const SHAKE_DECAY := 14.0
 
 
 func _ready() -> void:
@@ -68,6 +71,16 @@ func _physics_process(delta: float) -> void:
 	_look = _look.lerp(heading * look_ahead, 1.0 - exp(-look_rate * delta))
 	var desired := target.global_position + _look
 	global_position = _clamp(global_position.lerp(desired, 1.0 - exp(-follow_rate * delta)))
+	if _shake > 0.0:
+		offset = (Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)) * _shake).round()
+		_shake = move_toward(_shake, 0.0, SHAKE_DECAY * delta)
+	else:
+		offset = Vector2.ZERO
+
+
+## Secousse brève (coups forts) ; elle s'amortit d'elle-même.
+func shake(amount: float) -> void:
+	_shake = maxf(_shake, amount)
 
 
 func _clamp(p: Vector2) -> Vector2:

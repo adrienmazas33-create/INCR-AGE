@@ -11,6 +11,8 @@ extends Node2D
 @onready var _overlay: TileMapLayer = $Overlay
 @onready var _collision: StaticBody2D = $Collision
 @onready var _entities: Node2D = $Entities
+## Couche des effets de combat, au-dessus des personnages.
+@onready var effects: Node2D = $Effects
 
 var map: MapData
 ## Limites du monde en pixels.

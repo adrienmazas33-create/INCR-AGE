@@ -56,6 +56,16 @@ func find_char(ch: String) -> Vector2i:
 	return Vector2i(-1, -1)
 
 
+func find_all(ch: String) -> Array[Vector2i]:
+	var out: Array[Vector2i] = []
+	for y in height:
+		var x := _rows[y].find(ch)
+		while x >= 0:
+			out.append(Vector2i(x, y))
+			x = _rows[y].find(ch, x + 1)
+	return out
+
+
 ## Masque 8 bits (voir TileIds) des voisins dont le sol appartient à `kinds`. Hors carte = identique.
 func neighbor_mask(c: Vector2i, kinds: Array) -> int:
 	var mask := 0

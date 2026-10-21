@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : phase 1 validée (tag `phase-1`) ; phase 2, lot A (trois alliés qui suivent) validé (tag `phase-2a`). Prochaine étape : lot B. Plan : `docs/PHASE_2_PLAN.md`.**
+**État : phase 1 validée (tag `phase-1`) ; phase 2, lot A validé (tag `phase-2a`) ; lot B (premier combat et butin) terminé côté développement, en attente de validation. Plan : `docs/PHASE_2_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
 ## Lancer et tester
@@ -10,6 +10,7 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 - Godot a été installé par `winget install GodotEngine.GodotEngine` (4.7.2 stable).
 - Contrôles : ZQSD, WASD ou flèches pour se déplacer ; molette pour zoomer ; F11 pour le plein écran ; Échap pour quitter.
 - Couper les effets d'ambiance : lancer avec `-- --no-fx`, ou passer `ambient_effects` à `false` dans `scripts/autoload/game_settings.gd`.
+- Combat : rien à presser. Le héros et ses compagnons frappent seuls les ennemis à portée ; le joueur choisit où se battre par ses déplacements. `-- --no-hitstop` coupe la micro-pause d'impact.
 
 ## Choix techniques
 
@@ -26,6 +27,9 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 | Profondeur | Conteneur `Entities` trié en Y ; arbres de forêt regroupés par rangée | Le héros passe derrière les arbres, huttes et rochers. |
 | Art | 100 % procédural et original (`tools/generate_art.gd`), déterministe | Aucun asset externe ni payant ; remplaçable plus tard par de vrais sprites. |
 | Alliés | Suivi de la **trace de pas** du héros (pas de pathfinding), place mémorisée sur la trace, point visé 16 px en avant ; regroupement derrière le héros à l'arrêt | Passent toujours par un chemin valide (escaliers, ponts) ; simple et robuste. Pathfinding (`AStarGrid2D`) gardé pour de futurs ordres. |
+| Combat | Attaque automatique (`AutoAttack`) : cible la plus proche à portée et en vue, geste visible puis impact différé (une cible qui s'écarte esquive) ; base `Combatant` commune (vie, recul, flash, barre de vie) | Commandes inchangées ; le placement compte. Les compétences actives futures seront des composants voisins d'`AutoAttack` utilisant `receive_hit()`. |
+| Laisses | Alliés : n'engagent qu'un ennemi à moins de 110 px du héros, le lâchent au-delà de 150 px. Sangliers : jamais à plus de 7 tuiles de leur repaire | Aucune poursuite sans fin ; le joueur n'est jamais entraîné loin malgré lui. |
+| Données | Caractéristiques des unités dans `data/units/*.tres` (`UnitStats`), ressources dans l'autoload `GameState` | Réglables sans code ; base de la future sauvegarde. |
 
 ## Terminé (phase 1)
 
@@ -50,6 +54,14 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 - À l'arrêt : petit groupe derrière le héros, tourné vers lui ; une place derrière un mur ou au-dessus de l'eau est écartée.
 - Filet de sécurité : un allié coincé ou distancé (> 12 tuiles) est replacé sur la trace, hors du champ de la caméra si possible.
 
+## Terminé (phase 2, lot B)
+
+- Sangliers (jeune / grand), 11 repaires (`g` / `G` sur la carte), réapparition après 45 s hors de vue et loin du héros.
+- Comportement : errance, détection, charge préparée bien lisible (tête basse, œil rouge, poussière, visée figée avant le départ : on peut l'esquiver), arrêt net à l'impact puis étourdissement (moment pour riposter), fuite quand il faiblit, retour au repaire.
+- Héros et alliés : attaque automatique (arc de coup, élan, étincelle, recul, flash blanc, chiffres de dégâts, micro-pause et secousse légère sur les coups forts) ; alliés répartis en éventail autour de l'ennemi, du côté du héros.
+- Vie : barres au-dessus des unités blessées (or pour le héros), régénération après 4 s sans coup. Allié K.O. : à terre 8 s puis relevé à 50 %. Héros K.O. : fondu et retour de tout le groupe au campement, sans perte.
+- Butin : viande (vivres), peau et os (matériaux), dent gravée rare (savoir) ; jaillit, rebondit, puis aimanté vers le membre du groupe le plus proche (96 px) ; compteur discret en haut à droite.
+
 ## Vérifications réellement effectuées
 
 - Lancement sans erreur de script ; captures d'écran en jeu de chaque région (campement, ponts, lac, plateaux, prairies, étang).
@@ -57,11 +69,12 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 - Mode sans effets (`--no-fx`) : lancement sans erreur.
 - 60 FPS (synchro verticale) en vue large au-dessus de la forêt, environ 7 600 nœuds.
 - Lot A : tour complet piloté (colline nord, pont nord, grand plateau est, pont est, étang, lac, éperon sud-ouest, retour au camp, 150 s) : héros jamais bloqué, **0 replacement forcé** des alliés, écart maximal 81 px. Captures : groupe au camp, en file sur le pont et dans l'escalier, arrêt sur le pont.
-- **Non vérifié** : sensations de contrôle et de caméra par un humain, comportement sur écran 120/144 Hz, plein écran, lisibilité du héros dans le groupe à juger en jeu.
+- Lot B : combats en jeu près des repaires de la prairie est (charge, coups du héros et des alliés, mort, butin aimanté et compté), K.O. du héros et retour au camp (groupe replacé autour de lui), tour complet de la carte avec ennemis (héros jamais bloqué ; deux alliés mis K.O. par le grand sanglier puis replacés comme prévu), retour de l'échelle de temps à 1 après les micro-pauses, 60 FPS. Captures : mêlée, éventail des alliés, butin, compteur.
+- **Non vérifié** : sensations de contrôle, de caméra et de combat par un humain (rythme, dureté, impact), comportement sur écran 120/144 Hz, plein écran.
 
 ## En cours
 
-- Rien. Lot A validé ; lot B à lancer sur demande.
+- Rien. Attente de validation du lot B.
 
 ## Problèmes connus / limites
 
@@ -71,10 +84,12 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 - La carte `.txt` et `props.json` ne sont pas des ressources Godot. À l'export, ajouter `*.txt, *.json` aux filtres de fichiers non-ressources.
 - Pas d'exécutable exporté : les modèles d'export Godot ne sont pas installés.
 - Alliés en file indienne pendant la marche : fidèle à « ils suivent », mais moins « troupe » qu'un groupe en formation (à juger).
+- Équilibrage provisoire (vie, dégâts, cadences) : à ajuster après tes essais, directement dans `data/units/*.tres`.
+- Le butin non ramassé reste au sol indéfiniment (pas encore de disparition).
 
 ## Prochaines étapes
 
-1. Phase 2, lot B (après validation du lot A) : sangliers, combat automatique, butin magnétique, ressources (étape 1, sans recrutement).
+1. Ajuster le lot B selon tes retours (rythme des combats, dégâts, lisibilité).
 2. Phase 3 pressentie : village qui évolue, recrutement, premières améliorations, sauvegarde.
 3. Plus tard : manette (les actions `move_*` et `zoom_*` sont déjà abstraites).
 
@@ -82,9 +97,10 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
 1. Lire ce fichier et `git log --oneline`. Dépôt GitHub : https://github.com/adrienmazas33-create/INCR-AGE (branche `main`, tags `phase-1`, `phase-2a`). Pousser après chaque étape validée.
 2. Architecture :
-   - `scenes/main.tscn` : assemble `World`, `Hero`, `Party` (créé en code) et `GameCamera`.
+   - `scenes/main.tscn` : assemble `World`, `Hero`, `Party`, `EnemySpawner`, `Hud` (créés en code) et `GameCamera` ; gère le retour au camp.
    - `scenes/world/` : `world.gd` charge la carte. `scripts/world/` contient `MapData` (lecture et requêtes), `TerrainBuilder` (tuiles et collisions), `PropSpawner` (décors) et `TileIds` (disposition des atlas).
    - `scenes/characters/` : `hero.*`, `follower.*`, `party.gd` (trace et places du groupe), `character_sprite.gd` (animation commune). `scenes/camera/game_camera.*`, `scenes/props/` (feu, papillon).
+   - Combat : `scripts/combat/` (`UnitStats`, `Health`, `Combatant`, `AutoAttack`, `Targeting`, `HealthBar`), `scenes/enemies/boar.*`, `scripts/world/enemy_spawner.gd`, `scenes/loot/pickup.gd`, `scenes/fx/`, `scenes/ui/hud.gd`, `scripts/ui/pixel_text.gd`. Autoloads : `GameSettings`, `GameState`, `CombatFx`.
    - Les futurs PNJ s'ajoutent au monde par `World.add_entity()` pour être triés en profondeur.
 3. Commandes utiles (depuis la racine, `godot` = exécutable console de Godot) :
    - Régénérer l'art : `godot --headless --path . --script res://tools/generate_art.gd`, puis `godot --headless --path . --import`.
@@ -92,3 +108,4 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
    - Réesquisser la carte (**écrase les retouches manuelles**) : `godot --headless --path . --script res://tools/draft_map.gd`.
    - Capture ou déplacement scripté : `godot --path . -- --at=58,40 --zoom=0 --walk=move_up:1.5 --capture=C:/chemin/shot.png`.
    - Parcours piloté (plus court chemin case par case) avec bilan du groupe : `godot --path . -- --route=58,17/79,30/99,20/80,56/58,58`.
+   - Tests de combat : `--hero-hp=6` (forcer un K.O.) ; le bilan affiche ressources, PV et coups portés par le héros.

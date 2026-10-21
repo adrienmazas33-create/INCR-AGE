@@ -31,6 +31,12 @@ const REGROUP_DISTANCE := 12.0 * TileIds.SIZE
 const STUCK_REGROUP_OFFSCREEN := 1.0
 const STUCK_REGROUP_ANYWAY := 4.0
 const WORLD_MASK := 1
+## Un ennemi n'est attaqué par les alliés que s'il est à cette distance du héros...
+const ENGAGE_RADIUS := 110.0
+## ...et ils le lâchent s'il s'en éloigne au-delà : pas de poursuite sans fin.
+const LEASH_RADIUS := 150.0
+## Angle (radians) de chaque allié autour de l'ennemi, par rapport à la direction du héros.
+const COMBAT_FAN := [-0.9, 0.9, 0.0]
 
 var hero: Hero
 var followers: Array[Follower] = []
@@ -46,7 +52,7 @@ var _base := 0
 var _cursor := {}
 var _idle_time := 0.0
 var _heading := Vector2.DOWN
-## Places à l'arrêt ; Vector2.INF = place inaccessible.
+## Places à l'arrêt, relatives au héros ; Vector2.INF = place inaccessible.
 var _slots: Array[Vector2] = []
 
 
@@ -68,12 +74,13 @@ func _physics_process(delta: float) -> void:
 	var p := hero.global_position
 	var last := _trail[_trail.size() - 1]
 	if p.distance_to(last) > 64.0:
-		# Le héros a été déplacé d'un bloc (outil de dev, futur retour au camp) : le groupe le suit.
+		# Le héros a été déplacé d'un bloc (retour au camp, outil de dev) : le groupe le suit.
 		_base += _trail.size()
 		_trail = PackedVector2Array([p])
 		for f in followers:
 			f.teleport(p + _slot_offset(f.index))
 			_cursor[f.index] = _base
+		_slots = _compute_idle_slots()
 	elif p.distance_to(last) >= TRAIL_STEP:
 		_trail.append(p)
 		if _trail.size() > TRAIL_MAX:
@@ -95,8 +102,8 @@ func _physics_process(delta: float) -> void:
 func target_for(f: Follower) -> Vector2:
 	if hero_idle and f.index < _slots.size() and _slots[f.index] != Vector2.INF \
 			and f.global_position.distance_to(hero.global_position) < IDLE_REACH \
-			and _clear(f.global_position, _slots[f.index]):
-		return _slots[f.index]
+			and _clear(f.global_position, hero.global_position + _slots[f.index]):
+		return hero.global_position + _slots[f.index]
 	var gap := _gap(f.index)
 	# Suivi de trajectoire : viser un point de la trace un peu en avant de sa propre position,
 	# jamais en ligne droite vers sa place (sinon il coupe les virages et bute sur les falaises).
@@ -104,6 +111,39 @@ func target_for(f: Follower) -> Vector2:
 	if ahead <= gap:
 		return point_behind(gap)
 	return point_behind(maxf(gap, ahead - LOOKAHEAD))
+
+
+## Ennemi que l'allié doit combattre : seulement un ennemi proche du héros (le joueur décide où l'on se bat
+## par sa position), et l'allié lâche prise dès que l'ennemi s'éloigne trop du héros.
+func foe_for(f: Follower, current: Combatant) -> Combatant:
+	var anchor := hero.global_position
+	if is_instance_valid(current) and current.is_alive() and current.global_position.distance_to(anchor) <= LEASH_RADIUS:
+		return current
+	var best: Combatant = null
+	var best_d := INF
+	for node in get_tree().get_nodes_in_group(&"enemies"):
+		var e := node as Combatant
+		if e == null or not e.is_alive() or e.global_position.distance_to(anchor) > ENGAGE_RADIUS:
+			continue
+		var d := f.global_position.distance_to(e.global_position)
+		if d < best_d and Targeting.has_sight(f, f.global_position, e.global_position):
+			best = e
+			best_d = d
+	return best
+
+
+## Place de combat autour de l'ennemi : du côté du héros, chaque allié sur son propre angle
+## (éventail de ±50°), pour qu'ils ne s'empilent pas et restent lisibles.
+func combat_spot(f: Follower, foe: Combatant) -> Vector2:
+	var toward_hero := hero.global_position - foe.global_position
+	var dir := toward_hero.normalized() if toward_hero.length() > 0.1 else Vector2.LEFT
+	dir = dir.rotated(COMBAT_FAN[f.index % COMBAT_FAN.size()])
+	return foe.global_position + dir * (foe.stats.body_radius + f.stats.body_radius + f.stats.attack_range * 0.6)
+
+
+## Après un combat ou une relève, l'allié reprend la trace là où il se trouve.
+func rejoin_trail(f: Follower) -> void:
+	_cursor[f.index] = _base + _nearest_index(f.global_position, 0, _trail.size())
 
 
 ## Poussée qui écarte un allié de ses voisins et du héros.
@@ -205,7 +245,7 @@ func _compute_idle_slots() -> Array[Vector2]:
 		var from := hero.global_position + Vector2(0, -3)
 		var to := from + _slot_offset(f.index)
 		var query := PhysicsRayQueryParameters2D.create(from, to + (to - from).normalized() * 6.0, WORLD_MASK)
-		out.append(Vector2.INF if not space.intersect_ray(query).is_empty() else to + Vector2(0, 3))
+		out.append(Vector2.INF if not space.intersect_ray(query).is_empty() else _slot_offset(f.index))
 	return out
 
 

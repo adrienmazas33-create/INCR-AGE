@@ -46,6 +46,8 @@ func _parse(args: PackedStringArray) -> void:
 			"--route":
 				for wp in kv[1].split("/"):
 					_route.append(_tile_center(wp))
+			"--hero-hp":
+				_hero.health.current = float(kv[1])
 			"--settle":
 				_settle = float(kv[1])
 			"--capture":
@@ -71,6 +73,8 @@ func _run() -> void:
 	var party := get_tree().get_first_node_in_group("party")
 	if party:
 		print("DevCapture : " + party.debug_summary())
+	print("DevCapture : ressources %s ; héros %d/%d PV, %d coup(s) porté(s) ; %d ennemi(s) debout ; échelle de temps %.2f" % [GameState.summary(),
+		_hero.health.current, _hero.health.max_health, _hero.attack.hits, get_tree().get_nodes_in_group(&"enemies").size(), Engine.time_scale])
 	if _capture_path != "":
 		for i in 3:
 			await get_tree().process_frame

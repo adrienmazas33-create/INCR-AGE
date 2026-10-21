@@ -1,0 +1,24 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/enemies/boar.gd" id="1_boar"]
+[ext_resource type="Texture2D" path="res://assets/art/boar_0.png" id="2_sheet"]
+[ext_resource type="Resource" path="res://data/units/boar_young.tres" id="3_stats"]
+
+[sub_resource type="CircleShape2D" id="feet"]
+radius = 7.0
+
+[node name="Boar" type="CharacterBody2D" groups=["enemies"]]
+collision_layer = 4
+motion_mode = 1
+script = ExtResource("1_boar")
+stats = ExtResource("3_stats")
+bar_height = 28.0
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_sheet")
+offset = Vector2(2, -12)
+hframes = 8
+
+[node name="Feet" type="CollisionShape2D" parent="."]
+position = Vector2(0, -3)
+shape = SubResource("feet")

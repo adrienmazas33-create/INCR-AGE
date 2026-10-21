@@ -78,6 +78,7 @@ func _init() -> void:
 	_gen_hero()
 	_gen_props()
 	_gen_fx()
+	_gen_combat()
 	print("generate_art: OK")
 	quit()
 
@@ -1200,3 +1201,225 @@ func _stone(img: Image, c: Vector2) -> void:
 			if x * x / 9.0 + y * y / 4.0 > 1.0:
 				continue
 			img.set_pixel(int(c.x) + x, int(c.y) + y, R_HI if y < 0 else (R_MID if y == 0 else R_DARK))
+
+
+# --- Combat : sangliers, impacts, butin, chiffres -------------------------
+
+const BOARS := [
+	# Jeune sanglier : brun chaud. Grand sanglier : gris-brun sombre, défenses longues, plus massif.
+	{"fur": [Color8(92, 58, 38), Color8(128, 84, 52), Color8(158, 108, 68)], "mane": Color8(64, 40, 28),
+		"snout": Color8(176, 128, 112), "size": 1.0, "tusk": 2},
+	{"fur": [Color8(62, 52, 50), Color8(92, 78, 72), Color8(120, 104, 94)], "mane": Color8(176, 168, 150),
+		"snout": Color8(150, 118, 108), "size": 1.18, "tusk": 4},
+]
+## Chiffres et signes, glyphes 4 x 6 (contour ajouté : cases de 6 x 8).
+const GLYPHS := {
+	"0": [".##.", "#..#", "#..#", "#..#", "#..#", ".##."],
+	"1": [".#..", "##..", ".#..", ".#..", ".#..", "###."],
+	"2": [".##.", "#..#", "..#.", ".#..", "#...", "####"],
+	"3": ["###.", "...#", ".##.", "...#", "...#", "###."],
+	"4": ["#..#", "#..#", "####", "...#", "...#", "...#"],
+	"5": ["####", "#...", "###.", "...#", "...#", "###."],
+	"6": [".##.", "#...", "###.", "#..#", "#..#", ".##."],
+	"7": ["####", "...#", "..#.", ".#..", ".#..", ".#.."],
+	"8": [".##.", "#..#", ".##.", "#..#", "#..#", ".##."],
+	"9": [".##.", "#..#", "#..#", ".###", "...#", ".##."],
+	"+": ["....", ".#..", "###.", ".#..", "....", "...."],
+	"-": ["....", "....", "###.", "....", "....", "...."],
+}
+const GLYPH_ORDER := "0123456789+-"
+
+
+func _gen_combat() -> void:
+	for i in BOARS.size():
+		_save(_boar_sheet(BOARS[i]), "boar_%d.png" % i)
+	_save(_slash(), "fx/slash.png")
+	_save(_spark(), "fx/spark.png")
+	_save(_puff(), "fx/puff.png")
+	_save(_pickups(), "fx/pickups.png")
+	_save(_digits(), "fx/digits.png")
+
+
+## Planche de profil (vers la droite), cases 44 x 30 : repos 0-1, course 2-5, charge préparée 6, K.O. 7.
+func _boar_sheet(v: Dictionary) -> Image:
+	var img := _img(44 * 8, 30)
+	var fur: Array = v["fur"]
+	var s: float = v["size"]
+	for f in 8:
+		var fr := _img(44, 30)
+		var bob: int = [0, 1, 0, -1, 0, -1, 0, 0][f]
+		var down := f == 6
+		var ko := f == 7
+		var body := Vector2(20, 17 + bob) if not ko else Vector2(20, 21)
+		var rx := 12.0 * s
+		var ry := 7.0 * s
+		# Pattes (dessinées d'abord, le corps les recouvre).
+		var legs := [-8.0, -4.0, 5.0, 9.0]
+		var swing: Array = [[0, 0, 0, 0], [0, 0, 0, 0], [2, -2, -2, 2], [0, 0, 0, 0], [-2, 2, 2, -2], [0, 0, 0, 0], [-1, -2, 2, 3], [0, 0, 0, 0]][f]
+		for k in 4:
+			var lx: int = int(body.x + legs[k] * s) + swing[k]
+			if ko:
+				for y in range(int(body.y - ry) - 4, int(body.y - ry) + 1):
+					fr.set_pixel(lx, y, fur[0])
+					fr.set_pixel(lx + 1, y, fur[0])
+			else:
+				for y in range(int(body.y + ry * 0.5), 27):
+					fr.set_pixel(lx, y, fur[0])
+					fr.set_pixel(lx + 1, y, fur[0] if y < 26 else OUTLINE)
+		# Corps : dos clair (lumière en haut), ventre sombre.
+		for y in fr.get_height():
+			for x in fr.get_width():
+				var dx := (x + 0.5 - body.x) / rx
+				var dy := (y + 0.5 - body.y) / ry
+				if dx * dx + dy * dy > 1.0:
+					continue
+				var c: Color = fur[1]
+				if dy < -0.35:
+					c = fur[2]
+				elif dy > 0.45:
+					c = fur[0]
+				if _h(x >> 1, y, 95) < 0.12:
+					c = c.lerp(fur[0], 0.6)
+				fr.set_pixel(x, y, c)
+		# Crinière en pics le long du dos.
+		if not ko:
+			for x in range(int(body.x - rx * 0.6), int(body.x + rx * 0.7)):
+				var spike := 2 + int(_h(x, 0, 96) * 2.0)
+				var y0 := int(body.y - ry * sqrt(maxf(1.0 - pow((x + 0.5 - body.x) / rx, 2.0), 0.0)))
+				for k in spike:
+					fr.set_pixel(x, y0 - k + 1, v["mane"])
+		# Tête, groin, défense, œil, oreille.
+		var head := body + Vector2(rx + 1.0, 1.0 + (2.0 if down else 0.0))
+		for y in fr.get_height():
+			for x in fr.get_width():
+				var dx := (x + 0.5 - head.x) / (6.0 * s)
+				var dy := (y + 0.5 - head.y) / (5.0 * s)
+				if dx * dx + dy * dy <= 1.0:
+					fr.set_pixel(x, y, fur[2] if dy < -0.3 else fur[1])
+		var snout := Vector2i(int(head.x + 5.0 * s), int(head.y))
+		for y in range(-1, 2):
+			for x in 3:
+				fr.set_pixel(snout.x + x, snout.y + y, v["snout"])
+		fr.set_pixel(snout.x + 2, snout.y, OUTLINE)
+		for k in int(v["tusk"]):
+			fr.set_pixel(snout.x - 1 + k / 2, snout.y + 2 - k, Color8(244, 236, 214))
+		var eye := Vector2i(int(head.x + 1), int(head.y - 2))
+		if ko:
+			for d in [Vector2i(-1, -1), Vector2i(1, 1), Vector2i(1, -1), Vector2i(-1, 1)]:
+				fr.set_pixelv(eye + d, OUTLINE)
+		else:
+			fr.set_pixelv(eye, Color8(200, 40, 30) if down else OUTLINE)
+		for k in 3:
+			fr.set_pixel(int(head.x - 3) + k / 2, int(head.y - 5 * s) - k + 1, fur[0])
+		# Queue en tire-bouchon.
+		for p in [Vector2i(-1, -2), Vector2i(-2, -3), Vector2i(-3, -2)]:
+			fr.set_pixelv(Vector2i(int(body.x - rx), int(body.y)) + p, fur[0])
+		_outline(fr, OUTLINE)
+		_ground_shadow(fr, body.x, 27.5, rx + 2.0, 2.5)
+		img.blit_rect(fr, Rect2i(0, 0, 44, 30), Vector2i(f * 44, 0))
+	return img
+
+
+## Arc de coup de massue, 3 images 32 x 32, orienté vers la droite.
+func _slash() -> Image:
+	var img := _img(96, 32)
+	var arcs := [[-80.0, -10.0, 1.0], [-60.0, 60.0, 1.0], [10.0, 80.0, 0.55]]
+	for f in 3:
+		var a0: float = arcs[f][0]
+		var a1: float = arcs[f][1]
+		var alpha: float = arcs[f][2]
+		for y in 32:
+			for x in 32:
+				var d := Vector2(x + 0.5 - 10.0, y + 0.5 - 16.0)
+				var ang := rad_to_deg(d.angle())
+				var r := d.length()
+				if ang < a0 or ang > a1 or r < 9.0 or r > 15.0:
+					continue
+				var thick := 2.0 + 3.0 * sin((ang - a0) / (a1 - a0) * PI)
+				if r > 9.0 + thick + 1.5:
+					continue
+				var c := Color8(255, 252, 230) if r > 9.0 + thick * 0.4 else Color8(255, 214, 120)
+				img.set_pixel(f * 32 + x, y, Color(c, alpha))
+	return img
+
+
+## Étincelle d'impact, 3 images 16 x 16.
+func _spark() -> Image:
+	var img := _img(48, 16)
+	var white := Color8(255, 252, 236)
+	var gold := Color8(255, 206, 90)
+	for f in 3:
+		var o := Vector2i(f * 16 + 8, 8)
+		var arm: int = [2, 5, 6][f]
+		for k in range(-arm, arm + 1):
+			if f == 2 and absi(k) < 4:
+				continue
+			var c := white if absi(k) < arm - 1 else gold
+			img.set_pixelv(o + Vector2i(k, 0), c)
+			img.set_pixelv(o + Vector2i(0, k), c)
+		if f == 1:
+			for d in [Vector2i(-2, -2), Vector2i(2, -2), Vector2i(-2, 2), Vector2i(2, 2)]:
+				img.set_pixelv(o + d, gold)
+	return img
+
+
+## Petit nuage de poussière, 3 images 12 x 10.
+func _puff() -> Image:
+	var img := _img(36, 10)
+	for f in 3:
+		var r := 2.5 + f * 1.3
+		for y in 10:
+			for x in 12:
+				var d := Vector2(x + 0.5 - 6.0, (y + 0.5 - 6.0) * 1.3).length()
+				if d <= r and (f < 2 or (x + y) % 2 == 0):
+					img.set_pixel(f * 12 + x, y, Color8(214, 200, 170) if d < r - 1.2 else Color8(176, 160, 132))
+	return img
+
+
+## Butin, cases 12 x 12 : viande (vivres), peau, os (matériaux), dent gravée (savoir).
+func _pickups() -> Image:
+	var img := _img(48, 12)
+	var meat := _img(12, 12)
+	for y in 12:
+		for x in 12:
+			var d := Vector2((x + 0.5 - 5.0) / 4.0, (y + 0.5 - 5.5) / 3.2)
+			if d.length() <= 1.0:
+				meat.set_pixel(x, y, Color8(214, 92, 84) if d.y > 0.2 or d.x > 0.3 else Color8(240, 140, 128))
+	for p in [Vector2i(8, 7), Vector2i(9, 8), Vector2i(10, 9), Vector2i(10, 8), Vector2i(9, 9)]:
+		meat.set_pixelv(p, Color8(244, 236, 214))
+	var hide := _img(12, 12)
+	for y in range(2, 10):
+		var inset := absi(y - 6) / 2
+		for x in range(1 + inset, 11 - inset):
+			hide.set_pixel(x, y, Color8(186, 128, 74) if _h(x, y, 97) > 0.25 else Color8(124, 78, 44))
+	var bone := _img(12, 12)
+	for i in 7:
+		bone.set_pixel(3 + i, 8 - i, Color8(244, 236, 214))
+	for p in [Vector2i(2, 8), Vector2i(3, 9), Vector2i(9, 1), Vector2i(10, 2)]:
+		bone.set_pixelv(p, Color8(222, 210, 184))
+	var tooth := _img(12, 12)
+	for y in range(1, 11):
+		var half := 3 - absi(y - 4) / 3 if y < 8 else 1
+		for x in range(6 - half, 6 + half):
+			tooth.set_pixel(x, y, Color8(150, 128, 236) if x < 6 else Color8(104, 86, 200))
+	tooth.set_pixel(5, 3, Color8(236, 228, 255))
+	tooth.set_pixel(5, 4, Color8(236, 228, 255))
+	var sprites := [meat, hide, bone, tooth]
+	for i in sprites.size():
+		_outline(sprites[i], OUTLINE)
+		img.blit_rect(sprites[i], Rect2i(0, 0, 12, 12), Vector2i(i * 12, 0))
+	return img
+
+
+func _digits() -> Image:
+	var img := _img(6 * GLYPH_ORDER.length(), 8)
+	for i in GLYPH_ORDER.length():
+		var cell := _img(6, 8)
+		var rows: Array = GLYPHS[GLYPH_ORDER[i]]
+		for y in rows.size():
+			for x in 4:
+				if rows[y][x] == "#":
+					cell.set_pixel(1 + x, 1 + y, Color.WHITE)
+		_outline(cell, OUTLINE)
+		img.blit_rect(cell, Rect2i(0, 0, 6, 8), Vector2i(i * 6, 0))
+	return img

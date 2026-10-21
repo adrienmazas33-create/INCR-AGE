@@ -117,6 +117,13 @@ func _paint() -> void:
 		put(p.x, p.y, "p")
 	put(98, 90, "R"); put(100, 86, "r"); put(110, 66, "R")
 
+	# Repaires de sangliers (g : jeune, G : grand), loin du campement, plus forts en s'éloignant.
+	for p in [Vector2i(95, 58), Vector2i(102, 61), Vector2i(107, 67), Vector2i(99, 73), Vector2i(97, 47),
+			Vector2i(24, 43), Vector2i(94, 87), Vector2i(60, 89)]:
+		_den(p, "g")
+	for p in [Vector2i(108, 70), Vector2i(88, 91), Vector2i(29, 19)]:
+		_den(p, "G")
+
 	_decorate()
 	for y in H:
 		for x in W:
@@ -216,6 +223,13 @@ func stroke(points: Array, width: float, ch: String, only := "", bridge := false
 					g[y][x] = "="
 				else:
 					put(x, y, ch, only)
+
+
+func _den(p: Vector2i, ch: String) -> void:
+	if g[p.y][p.x] in ".\"":
+		g[p.y][p.x] = ch
+	else:
+		push_warning("Repaire %s en %s refusé : case '%s'" % [ch, p, g[p.y][p.x]])
 
 
 func _pts(flat: Array) -> Array:

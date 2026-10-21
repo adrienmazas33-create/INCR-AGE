@@ -1,6 +1,8 @@
 # Phase 2 — Compagnons et premiers affrontements (proposition)
 
-**Statut : décisions validées le 21/10/2026 (recommandations retenues). Lot A réalisé et validé ; lot B à venir.**
+**Statut : décisions validées le 21/10/2026 (recommandations retenues). Lot A réalisé et validé ; lot B réalisé, en attente de validation.**
+
+Écart assumé pour le lot B : les coups se résolvent par mesure de distance de bord à bord au moment de l'impact, et non par des zones `Area2D` : plus simple, aussi précis pour de la mêlée, et facile à étendre aux compétences.
 
 Source : bible créative V0.1, « Prototype prioritaire ».
 - Étape 0 : il reste « trois alliés qui suivent ».

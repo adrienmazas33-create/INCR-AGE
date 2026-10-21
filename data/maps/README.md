@@ -29,6 +29,7 @@ Relancer `draft_map.gd` écrase les retouches manuelles.
 | `I` | totem | non |
 | `n` | roseaux | oui |
 | `@` | apparition du héros | oui |
+| `g` / `G` | repaire de sanglier / de grand sanglier (réapparition lente) | oui |
 
 Sous un objet, le sol reprend le type majoritaire des cases voisines.
 

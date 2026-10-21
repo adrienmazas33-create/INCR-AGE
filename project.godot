@@ -18,6 +18,8 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 [autoload]
 
 GameSettings="*res://scripts/autoload/game_settings.gd"
+GameState="*res://scripts/autoload/game_state.gd"
+CombatFx="*res://scripts/autoload/combat_fx.gd"
 
 [display]
 
@@ -67,6 +69,7 @@ quit={
 
 2d_physics/layer_1="monde"
 2d_physics/layer_2="personnages"
+2d_physics/layer_3="ennemis"
 
 [physics]
 

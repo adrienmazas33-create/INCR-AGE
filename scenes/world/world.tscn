@@ -20,3 +20,5 @@ material = SubResource("water_mat")
 
 [node name="Entities" type="Node2D" parent="."]
 y_sort_enabled = true
+
+[node name="Effects" type="Node2D" parent="."]
