@@ -1,7 +1,9 @@
 class_name Ambience
 extends Node
 ## Ambiances de nature et pas du héros (audio, lot B).
-## - Prairie : vent doux et oiseaux épars, en fond partout.
+## - Prairie : vent doux en boucle, en fond partout.
+## - Oiseaux : un chant de temps en temps, tiré parmi quatre motifs, à intervalles irréguliers
+##   (souvent 5 à 15 s, parfois un long silence), hauteur, volume et côté variés : aucune boucle reconnaissable.
 ## - Eau : murmure qui monte quand le héros approche d'une rivière ou du lac.
 ## - Pas : un son tous les STRIDE pixels parcourus, selon le sol sous le héros.
 ## Purement sonore : aucune règle de jeu.
@@ -10,8 +12,12 @@ const STRIDE := 21.0
 const CHECK_EVERY := 0.3
 ## Rayon (en cases) dans lequel l'eau proche est entendue.
 const WATER_RADIUS := 5
-const MEADOW_DB := -21.0
-const WATER_MAX_DB := -15.0
+## Niveaux revus à la baisse (nature en arrière-plan, marge pour la future musique).
+const MEADOW_DB := -29.0
+const WATER_MAX_DB := -22.0
+const BIRD_DB := -27.0
+const BIRDS := ["res://assets/audio/sfx/bird_0.wav", "res://assets/audio/sfx/bird_1.wav",
+	"res://assets/audio/sfx/bird_2.wav", "res://assets/audio/sfx/bird_3.wav"]
 const SILENT_DB := -50.0
 ## Vitesse des fondus de volume (dB par seconde).
 const FADE := 12.0
@@ -31,6 +37,12 @@ var _water_db := SILENT_DB
 var _check := 0.0
 var _last := Vector2.ZERO
 var _walked := 0.0
+var _bird := AudioStreamPlayer2D.new()
+var _bird_streams: Array[AudioStream] = []
+var _last_bird := -1
+var _next_bird := 3.0
+## Chants joués (bilan de l'outil de test).
+var birds_sung := 0
 
 
 func setup(hero: Hero, map: MapData) -> void:
@@ -45,12 +57,20 @@ func setup(hero: Hero, map: MapData) -> void:
 	_water.stream = AudioManager.loop_stream(AudioManager.WATER_LOOP)
 	_meadow.play()
 	_water.play()
+	for path in BIRDS:
+		_bird_streams.append(load(path))
+	_bird.bus = AudioManager.AMBIENCE
+	_bird.max_distance = 600.0
+	add_child(_bird)
 
 
 func _process(delta: float) -> void:
 	if _hero == null:
 		return
 	_steps()
+	_next_bird -= delta
+	if _next_bird <= 0.0:
+		_sing()
 	_check -= delta
 	if _check <= 0.0:
 		_check = CHECK_EVERY
@@ -60,6 +80,22 @@ func _process(delta: float) -> void:
 	# Fondus progressifs : rien ne s'allume ni ne se coupe d'un coup (ni au lancement).
 	_meadow.volume_db = move_toward(_meadow.volume_db, _meadow_db, FADE * 0.5 * delta)
 	_water.volume_db = move_toward(_water.volume_db, _water_db, FADE * delta)
+
+
+func _sing() -> void:
+	# Un motif différent du précédent, placé à gauche ou à droite, plus ou moins loin.
+	var k := randi_range(0, BIRDS.size() - 2)
+	if k >= _last_bird:
+		k += 1
+	_last_bird = k
+	_bird.stream = _bird_streams[k]
+	_bird.pitch_scale = randf_range(0.9, 1.12)
+	_bird.volume_db = BIRD_DB + randf_range(-4.0, 2.0)
+	_bird.global_position = _hero.global_position + Vector2(randf_range(-260.0, 260.0), randf_range(-160.0, 80.0))
+	_bird.play()
+	birds_sung += 1
+	# Intervalle irrégulier, avec de temps en temps un vrai silence.
+	_next_bird = randf_range(20.0, 35.0) if randf() < 0.25 else randf_range(5.0, 15.0)
 
 
 func _steps() -> void:
@@ -91,4 +127,4 @@ func _water_closeness() -> float:
 
 ## Bilan pour l'outil de test : volumes courants des ambiances.
 func debug_summary() -> String:
-	return "prairie %.0f dB, eau %.0f dB" % [_meadow.volume_db, _water.volume_db]
+	return "prairie %.0f dB, eau %.0f dB, %d chant(s) d'oiseau" % [_meadow.volume_db, _water.volume_db, birds_sung]

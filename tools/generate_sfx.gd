@@ -27,6 +27,8 @@ func _init() -> void:
 	_save(_camp_stage(), "camp_stage.wav", 0.6)
 	_save(_meadow_loop(), "meadow_loop.wav", 0.5)
 	_save(_water_loop(), "water_loop.wav", 0.5)
+	for k in 4:
+		_save(_bird(k), "bird_%d.wav" % k, 0.5)
 	quit()
 
 
@@ -114,27 +116,46 @@ func _camp_stage() -> PackedFloat32Array:
 	return _echo(out, 0.16, 0.25)
 
 
-## Prairie, en boucle de 12 s : vent très doux qui respire, quelques oiseaux épars.
+## Prairie, en boucle de 12 s : vent très doux qui respire, sans oiseaux (ils sont joués à part,
+## à intervalles irréguliers, pour qu'aucune répétition ne s'entende).
 func _meadow_loop() -> PackedFloat32Array:
 	var n := 12 * RATE
 	var out := _loop_bed(n, 0.012, 1.0)
 	for i in n:
 		# Souffle qui monte et descend deux fois par boucle (période qui tombe juste).
 		out[i] *= 0.65 + 0.35 * sin(TAU * 2.0 * i / n)
-	for k in 7:
-		var phrase := _rng.randi_range(0, n - 1)
-		var base := _rng.randf_range(2600.0, 3600.0)
-		for c in _rng.randi_range(2, 4):
-			var length := _rng.randf_range(0.05, 0.09)
-			var sweep := _rng.randf_range(-900.0, 900.0)
-			var amp := _rng.randf_range(0.18, 0.32)
-			var start := phrase + int(c * (length + 0.05) * RATE)
-			var phase := 0.0
-			for j in int(length * RATE):
-				var u := float(j) / (length * RATE)
-				phase += TAU * (base + sweep * u) / RATE
-				out[(start + j) % n] += sin(phase) * sin(PI * u) * amp
 	return out
+
+
+## Chants d'oiseaux, quatre motifs distincts : 0 trois notes montantes, 1 trille rapide,
+## 2 sifflement en deux notes descendantes, 3 roulade avec vibrato.
+func _bird(kind: int) -> PackedFloat32Array:
+	var out := _buffer([0.5, 0.6, 0.55, 0.5][kind])
+	match kind:
+		0:
+			for c in 3:
+				_chirp(out, c * 0.11, 2700.0 + c * 260.0, 700.0, 0.06, 0.0)
+		1:
+			for c in 9:
+				_chirp(out, c * 0.055, 3500.0 if c % 2 == 0 else 3150.0, 150.0, 0.035, 0.0)
+		2:
+			_chirp(out, 0.0, 2550.0, -300.0, 0.17, 0.0)
+			_chirp(out, 0.24, 2050.0, -200.0, 0.2, 0.0)
+		3:
+			_chirp(out, 0.0, 3000.0, 250.0, 0.42, 18.0)
+	return out
+
+
+## Note d'oiseau : sinus qui glisse de `sweep` Hz, enveloppe en cloche, vibrato facultatif.
+func _chirp(out: PackedFloat32Array, at: float, freq: float, sweep: float, length: float, vibrato: float) -> void:
+	var start := int(at * RATE)
+	var phase := 0.0
+	for j in int(length * RATE):
+		var u := float(j) / (length * RATE)
+		var f := freq + sweep * u + (sin(TAU * vibrato * u * length) * 220.0 if vibrato > 0.0 else 0.0)
+		phase += TAU * f / RATE
+		if start + j < out.size():
+			out[start + j] += sin(phase) * sin(PI * u)
 
 
 ## Eau vive, en boucle de 6 s : murmure clair et petites bulles.

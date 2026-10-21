@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : audio, lots A et B validés et publiés (tags `audio-a`, `audio-b`). Menu des volumes et musique : prévus, non commencés.**
+**État : ajustements audio après le lot B (oiseaux et mixage) faits, en commit local, en attente de validation (non poussé, pas de tag). Lots A et B validés (tags `audio-a`, `audio-b`). Menu des volumes et musique : prévus, non commencés.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -224,10 +224,20 @@ Voir les priorités 2 et 3 du plan artistique.
   - tour complet à 8 compagnons : 150 s, 60 FPS, 5 replacements forcés, résultat identique au lot A (aucun effet sur le jeu) ; 681 pas joués en 150 s (environ 4,5 par seconde de marche), 17 sons écartés ;
   - aucune erreur de script ; lot A inchangé à l'octet près ;
   - écoute : **validée** par le porteur du projet le 22/10/2026.
+- **Ajustements audio**, en jeu :
+  - 45 s près de la rivière : 3 chants d'oiseaux, à intervalles différents ;
+  - crête du bus Ambiance à -48 dB, contre -35 à -39 dB avant ;
+  - combat : 10 coups, 9 sons écartés, aucune erreur ;
+  - **non vérifié** : l'écoute, à ton test.
 - **Non vérifié** : vrai clic de souris et toucher sur écran tactile (clics simulés seulement), sensation de contrôle à la souris ; sensations de contrôle, de caméra et de combat par un humain, clic réel dans le panneau (achats testés par commande), toucher sur écran tactile, écran 120/144 Hz, plein écran.
 
 ## En cours
 
+- **Ajustements audio après le lot B**, en attente de validation :
+  - oiseaux séparés du vent : quatre chants distincts (trois notes montantes, trille, sifflement en deux notes, roulade), joués un à la fois, jamais deux fois le même de suite, à intervalles irréguliers (5 à 15 s, et une fois sur quatre un silence de 20 à 35 s), hauteur, volume et côté variés ; la boucle de prairie ne contient plus que le vent ;
+  - mixage baissé et rééquilibré : impacts et récompenses -4 dB, pas -6 dB, vent -8 dB, eau -7 dB, feu -5 dB, bus Effets par défaut à 0,7 ; coups limités à 2 simultanés ; limiteur doux sur la sortie (plafond -1 dB) contre toute saturation ; marge d'environ 6 dB laissée à la future musique ;
+  - `water_loop.wav` régénéré : même recette, autre tirage aléatoire (conséquence de la séparation des oiseaux) ; les autres sons sont inchangés.
+  - Commit local seulement. Après validation : tag `audio-b2` et push.
 - **Audio, lot B : pas et ambiances** (section 3 de `docs/ROADMAP.md`), validé le 22/10/2026 et publié (tag `audio-b`) :
   - pas du héros selon le sol (herbe, terre, planches du pont, roche du plateau et des escaliers), un tous les 21 pixels parcourus, discrets ;
   - ambiance de prairie (vent doux et oiseaux épars, boucle de 12 s) partout, en fondu au lancement ;

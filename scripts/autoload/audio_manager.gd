@@ -9,22 +9,23 @@ const SFX := &"SFX"
 const AMBIENCE := &"Ambience"
 const SETTINGS_PATH := "user://settings.cfg"
 ## Volumes par défaut (0 à 1) ; enregistrés dans settings.cfg, à part de la sauvegarde de partie.
-const DEFAULT_VOLUMES := {MUSIC: 0.6, SFX: 0.8, AMBIENCE: 0.7}
+const DEFAULT_VOLUMES := {MUSIC: 0.6, SFX: 0.7, AMBIENCE: 0.7}
 
 ## Bruitages : [fichier, volume en dB, variation de hauteur (±), lectures simultanées max,
-## intervalle minimal entre deux départs en secondes]. Les deux derniers évitent les empilements.
+## intervalle minimal entre deux départs en secondes]. Les deux derniers évitent les empilements. Niveaux revus
+## à la baisse après écoute (nature discrète, pas subtils, marge d'environ 6 dB pour la future musique).
 const SOUNDS := {
-	&"hit": ["res://assets/audio/sfx/hit.wav", -7.0, 0.12, 3, 0.05],
-	&"pickup": ["res://assets/audio/sfx/pickup.wav", -11.0, 0.05, 2, 0.06],
-	&"buy": ["res://assets/audio/sfx/buy.wav", -9.0, 0.0, 1, 0.25],
-	&"boar_grunt": ["res://assets/audio/sfx/boar_grunt.wav", -9.0, 0.1, 2, 0.4],
-	&"boar_down": ["res://assets/audio/sfx/boar_down.wav", -8.0, 0.08, 2, 0.1],
-	&"camp_stage": ["res://assets/audio/sfx/camp_stage.wav", -6.0, 0.0, 1, 1.0],
+	&"hit": ["res://assets/audio/sfx/hit.wav", -11.0, 0.12, 2, 0.06],
+	&"pickup": ["res://assets/audio/sfx/pickup.wav", -15.0, 0.05, 2, 0.08],
+	&"buy": ["res://assets/audio/sfx/buy.wav", -13.0, 0.0, 1, 0.25],
+	&"boar_grunt": ["res://assets/audio/sfx/boar_grunt.wav", -13.0, 0.1, 2, 0.4],
+	&"boar_down": ["res://assets/audio/sfx/boar_down.wav", -12.0, 0.08, 2, 0.1],
+	&"camp_stage": ["res://assets/audio/sfx/camp_stage.wav", -10.0, 0.0, 1, 1.0],
 	# Pas du héros : discrets, sous les autres bruitages.
-	&"step_grass": ["res://assets/audio/sfx/step_grass.wav", -19.0, 0.1, 2, 0.08],
-	&"step_dirt": ["res://assets/audio/sfx/step_dirt.wav", -19.0, 0.1, 2, 0.08],
-	&"step_wood": ["res://assets/audio/sfx/step_wood.wav", -17.0, 0.08, 2, 0.08],
-	&"step_stone": ["res://assets/audio/sfx/step_stone.wav", -20.0, 0.1, 2, 0.08],
+	&"step_grass": ["res://assets/audio/sfx/step_grass.wav", -25.0, 0.1, 2, 0.08],
+	&"step_dirt": ["res://assets/audio/sfx/step_dirt.wav", -25.0, 0.1, 2, 0.08],
+	&"step_wood": ["res://assets/audio/sfx/step_wood.wav", -23.0, 0.08, 2, 0.08],
+	&"step_stone": ["res://assets/audio/sfx/step_stone.wav", -26.0, 0.1, 2, 0.08],
 }
 const FIRE_LOOP := "res://assets/audio/sfx/fire_loop.wav"
 const MEADOW_LOOP := "res://assets/audio/sfx/meadow_loop.wav"
@@ -69,6 +70,10 @@ func _ready() -> void:
 		_ui_players.append(p)
 	_music.bus = MUSIC
 	add_child(_music)
+	# Sécurité : un limiteur doux sur la sortie empêche toute saturation si plusieurs sons coïncident.
+	var limiter := AudioEffectHardLimiter.new()
+	limiter.ceiling_db = -1.0
+	AudioServer.add_bus_effect(0, limiter)
 	_load_settings()
 	GameState.upgrade_bought.connect(func(_id: String, _level: int) -> void: play(&"buy"))
 
@@ -106,7 +111,7 @@ func make_fire_crackle() -> AudioStreamPlayer2D:
 	var p := AudioStreamPlayer2D.new()
 	p.stream = loop_stream(FIRE_LOOP)
 	p.bus = AMBIENCE
-	p.volume_db = -12.0
+	p.volume_db = -17.0
 	p.max_distance = 300.0
 	p.autoplay = true
 	return p

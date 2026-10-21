@@ -10,6 +10,7 @@
 | `sfx/step_grass.wav`, `step_dirt.wav`, `step_wood.wav`, `step_stone.wav` | Idem (lot B) | Idem |
 | `sfx/boar_down.wav`, `camp_stage.wav` | Idem (lot B) | Idem |
 | `sfx/meadow_loop.wav`, `water_loop.wav` | Idem (lot B) | Idem |
+| `sfx/bird_0.wav` à `bird_3.wav` | Idem (ajustements après le lot B) | Idem |
 
 Aucun échantillon extérieur n'est utilisé : chaque son est calculé note par note (marimba, bruit filtré, ondes simples).
 
