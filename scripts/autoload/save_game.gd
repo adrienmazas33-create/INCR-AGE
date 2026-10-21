@@ -10,7 +10,7 @@ extends Node
 ## Rien ne progresse jeu fermé : la date d'enregistrement est purement informative.
 ##
 ## Arguments : « -- --save=<chemin> » pour un autre fichier, « -- --no-save » pour ne rien écrire.
-## Les lancements de l'outil de test (--give, --buy, --at, --route...) n'écrivent pas dans la vraie
+## Les lancements de l'outil de test (--give, --buy, --at, --route, --click...) n'écrivent pas dans la vraie
 ## sauvegarde, sauf si --save est indiqué.
 
 signal saved(path: String)
@@ -43,7 +43,8 @@ func _init() -> void:
 			path = arg.trim_prefix("--save=")
 		elif arg == "--no-save":
 			enabled = false
-		elif arg.begins_with("--give") or arg.begins_with("--buy") or arg.begins_with("--at") or arg.begins_with("--route"):
+		elif arg.begins_with("--give") or arg.begins_with("--buy") or arg.begins_with("--at") or arg.begins_with("--route") \
+				or arg.begins_with("--click"):
 			test_run = true
 	if test_run and path == DEFAULT_PATH:
 		enabled = false

@@ -2,7 +2,7 @@
 
 Document de cadrage rédigé le 22/10/2026 à partir des retours de test du porteur du projet.
 
-> **Tout ce qui suit est PRÉVU, rien n'est développé.** Seul l'indicateur de direction du campement (section 0) a été fait ; il est validé (tag `camp-compass`).
+> **Fait** : l'indicateur de direction du campement (section 0, validé, tag `camp-compass`) et le déplacement à la souris (section 1, en attente de validation). **Tout le reste est PRÉVU, non développé.**
 
 Règles communes à chaque lot :
 - un lot indépendant, testable seul, avec arrêt pour validation ;
@@ -24,7 +24,13 @@ Règles communes à chaque lot :
 3. Audio.
 4. Qualité artistique des personnages et animations.
 
-## 1. Déplacement à la souris (lot suivant)
+## 1. Déplacement à la souris — FAIT, en attente de validation
+
+Réalisé comme prévu ci-dessous, à deux nuances près :
+- les éléments interactifs n'existent pas encore : un clic sur le feu ou sur un bâtiment conduit à la case libre la plus proche ;
+- un clic à moins d'une case et demie d'un endroit praticable y conduit ; au-delà (milieu de l'eau), croix rouge.
+
+Détail des tests : `PROGRESS.md`.
 
 **Comportement attendu**
 - Clic gauche sur le sol : le héros va à l'endroit cliqué.

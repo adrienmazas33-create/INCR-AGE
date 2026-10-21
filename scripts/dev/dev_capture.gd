@@ -5,6 +5,9 @@ extends Node
 ##   Godot --path . -- --at=58,40 --zoom=0 --walk=move_up:1.5,move_left:0.5 --capture=C:/tmp/shot.png
 ##   Godot --path . -- --route=58,52/57,46/55,41 --capture=C:/tmp/fin.png
 ##   Godot --path . -- --give=food:30,materials:10 --buy=recruit,damage --capture=C:/tmp/camp.png
+##   Godot --path . -- --at=58,52 --click=70,60/s600,30:0.5 --capture=C:/tmp/clic.png
+## --click simule de vrais clics de souris : tuile « x,y » ou point d'écran « sx,y » (pixels logiques),
+## « :s » pour n'attendre que s secondes avant l'étape suivante (sinon jusqu'à l'arrêt du héros).
 ## --route conduit le héros d'une tuile à l'autre (comme au clavier) et signale les étapes non atteintes.
 ## Sans ces arguments, rien n'est ajouté au jeu.
 
@@ -19,16 +22,19 @@ var _route: Array[Vector2] = []
 var _settle := 0.8
 var _buys := []
 var _avg_fps := 0.0
+var _mover: ClickMover
+var _clicks := []
 
 
-static func attach_if_requested(parent: Node, hero: Node2D, camera: GameCamera) -> void:
+static func attach_if_requested(parent: Node, hero: Node2D, camera: GameCamera, mover: ClickMover = null) -> void:
 	var args := OS.get_cmdline_user_args()
 	if not Array(args).any(func(a: String) -> bool:
-			return a.begins_with("--capture") or a.begins_with("--walk") or a.begins_with("--at") or a.begins_with("--route") or a.begins_with("--buy")):
+			return a.begins_with("--capture") or a.begins_with("--walk") or a.begins_with("--at") or a.begins_with("--route") or a.begins_with("--buy") or a.begins_with("--click")):
 		return
 	var dev := DevCapture.new()
 	dev._hero = hero
 	dev._camera = camera
+	dev._mover = mover
 	dev._parse(args)
 	parent.add_child(dev)
 
@@ -49,6 +55,8 @@ func _parse(args: PackedStringArray) -> void:
 			"--route":
 				for wp in kv[1].split("/"):
 					_route.append(_tile_center(wp))
+			"--click":
+				_clicks = Array(kv[1].split("/"))
 			"--hero-hp":
 				_hero.health.current = float(kv[1])
 			"--give":
@@ -73,6 +81,8 @@ func _run() -> void:
 	for id in _buys:
 		print("DevCapture : achat %s -> %s" % [id, "ok" if Upgrades.buy(id) else "refusé"])
 		await get_tree().create_timer(0.25).timeout
+	for c in _clicks:
+		await _click(c)
 	for step in _steps:
 		Input.action_press(step[0])
 		await get_tree().create_timer(step[1]).timeout
@@ -144,6 +154,37 @@ func _path(map: MapData, from: Vector2i, to: Vector2i) -> Array[Vector2i]:
 		out.push_front(c)
 		c = prev[c]
 	return out
+
+
+## Clic gauche (mouvement, appui, relâche) envoyé à la fenêtre de jeu, interface comprise.
+func _click(entry: String) -> void:
+	var parts := entry.split(":")
+	var vp := get_viewport()
+	var screen: Vector2
+	if parts[0].begins_with("s"):
+		var q := parts[0].substr(1).split(",")
+		screen = Vector2(float(q[0]), float(q[1]))
+	else:
+		screen = vp.get_canvas_transform() * _tile_center(parts[0])
+	var motion := InputEventMouseMotion.new()
+	motion.position = screen
+	motion.global_position = screen
+	vp.push_input(motion, true)
+	await get_tree().process_frame
+	for pressed in [true, false]:
+		var button := InputEventMouseButton.new()
+		button.button_index = MOUSE_BUTTON_LEFT
+		button.pressed = pressed
+		button.position = screen
+		button.global_position = screen
+		vp.push_input(button, true)
+		await get_tree().process_frame
+	var start := Time.get_ticks_msec()
+	var limit := float(parts[1]) if parts.size() > 1 else 25.0
+	while Time.get_ticks_msec() - start < limit * 1000.0 and (parts.size() > 1 or _mover.is_moving()):
+		await get_tree().physics_frame
+	print("DevCapture : clic %s -> %s ; héros en %s (tuile %s) après %.1f s" % [entry, "en route" if _mover.is_moving() else "arrêté",
+		_hero.global_position.round(), Vector2i(_hero.global_position / TileIds.SIZE), (Time.get_ticks_msec() - start) / 1000.0])
 
 
 func _press_towards(v: Vector2) -> void:

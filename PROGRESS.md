@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : indicateur de direction du campement validé et publié (tag `camp-compass`). Prochaines améliorations prévues, non développées : `docs/ROADMAP.md`.**
+**État : déplacement à la souris (lot 1 de `docs/ROADMAP.md`) fait, en commit local, en attente de validation (non poussé, pas de tag). Lots 2 à 4 de la feuille de route : prévus, non développés.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -189,15 +189,31 @@ Voir les priorités 2 et 3 du plan artistique.
   - zoom 2 au camp : feu visible, indicateur masqué ;
   - jamais sous le compteur, et le chiffre ne chevauche jamais la flèche ;
   - aucune erreur de script.
-- **Non vérifié** : sensations de contrôle, de caméra et de combat par un humain, clic réel dans le panneau (achats testés par commande), toucher sur écran tactile, écran 120/144 Hz, plein écran.
+  - **Validé** par le porteur du projet le 22/10/2026.
+- **Déplacement à la souris**, clics réels simulés (`--click`), fichier de test isolé :
+  - montée sur le grand plateau par l'escalier (95,28 → 100,18) et redescente : arrivée à 2 px du clic, en 4,3 s et 4,7 s ;
+  - traversée de la rivière par le pont (75,34 → 84,34) ;
+  - camp au stade VILLAGE : contournement de la palissade et d'une hutte ajoutées par l'évolution du camp ;
+  - clic au milieu de la rivière : refusé, croix rouge, héros immobile ;
+  - clic sur une case de forêt en lisière : héros conduit à la case libre voisine ;
+  - clic sur le panneau du camp, hors des boutons : aucun déplacement ;
+  - nouveau clic en cours de route : la nouvelle destination remplace l'ancienne ;
+  - touche de déplacement en cours de route : arrêt immédiat, sans reprise ;
+  - trajets au milieu des sangliers : combat automatique inchangé (coups portés, sanglier abattu) ;
+  - groupe de 3 et 8 compagnons : 0 replacement forcé ; parcours au clavier (`--route`) inchangé ; 60 FPS ;
+  - construction de la grille de chemins : environ 105 ms au lancement.
+- **Non vérifié** : vrai clic de souris et toucher sur écran tactile (clics simulés seulement), sensation de contrôle à la souris ; sensations de contrôle, de caméra et de combat par un humain, clic réel dans le panneau (achats testés par commande), toucher sur écran tactile, écran 120/144 Hz, plein écran.
 
 ## En cours
 
-- **Indicateur de direction du campement** (`scenes/ui/camp_compass.gd`), validé le 22/10/2026 et publié (tag `camp-compass`) :
-  - quand le feu sort de l'écran, un médaillon à flamme longe le bord ;
-  - une flèche dorée (16 directions) pointe vers le camp, avec la distance en tuiles ;
-  - fondu dès que le camp est visible ; passe sous le compteur ;
-  - purement visuel.
+- **Déplacement à la souris** (lot 1 de `docs/ROADMAP.md`), en attente de validation :
+  - clic gauche sur le sol : le héros y va par un chemin praticable (escaliers, ponts, bâtiments du camp contournés) ;
+  - un nouveau clic remplace le précédent ; une touche de déplacement l'interrompt (le clavier reste prioritaire) ;
+  - repère bref au point cliqué : losange doré, ou croix rouge si l'endroit est inaccessible ;
+  - un clic sur l'interface ne déplace jamais le héros ; compagnons, combat automatique et caméra inchangés ;
+  - fichiers : `scripts/world/path_grid.gd` (A* sur `MapData`), `scenes/characters/click_mover.gd`, `scenes/fx/click_marker.gd` ; le héros reçoit une direction (`Hero.steer`), comme du clavier.
+  - Commit local seulement. Après validation : tag `mouse-move` et push.
+- Indicateur de direction du campement (`scenes/ui/camp_compass.gd`) : validé le 22/10/2026 et publié (tag `camp-compass`).
 
 ## Problèmes connus / limites
 
@@ -220,9 +236,9 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## Prochaines étapes
 
-1. **Feuille de route `docs/ROADMAP.md`** (tout y est prévu, rien n'est développé), dans cet ordre :
-   1. déplacement à la souris (A* sur `MapData`) ;
-   2. carte du monde sur `M` ;
+1. **Feuille de route `docs/ROADMAP.md`**, dans cet ordre :
+   1. déplacement à la souris : fait, en attente de validation ;
+   2. carte du monde sur `M` (prévu, non développé, comme la suite) ;
    3. audio (bus, effets, boucle musicale originale, volumes séparés) ;
    4. méthode de production de vrais sprites de personnages.
    Un lot à la fois, avec arrêt pour validation.
@@ -244,7 +260,7 @@ Voir les priorités 2 et 3 du plan artistique.
 - Bible créative : `Bible_creative_Jeu_incremental_2D_V01.md` / `.docx`, dans les Téléchargements de l'utilisateur, **hors dépôt**.
 - **Chantier artistique** : étape 1 et passe visuelle 1 faites et validées (tag `art-pass-1`). Prochaine étape, sur demande : priorité 2 de `docs/ART_DIRECTION_PLAN.md`. Ne pas commencer d'autre phase sans demande explicite.
 - **Indicateur du campement** : validé et publié (tag `camp-compass`).
-- **Feuille de route** `docs/ROADMAP.md` : déplacement à la souris, carte `M`, audio, sprites de personnages. Tout y est **prévu, rien n'est développé** ; prochain lot proposé : déplacement à la souris.
+- **Feuille de route** `docs/ROADMAP.md` : déplacement à la souris (**fait, commit local en attente de validation**), puis carte `M`, audio, sprites de personnages (**prévus, non développés**).
 
 ### 2. Méthode de travail attendue
 
@@ -348,6 +364,7 @@ Depuis la racine du dépôt, `godot` désigne l'exécutable console.
   - `--zoom=n` : choisir le palier de zoom ;
   - `--walk=move_up:1.5` : déplacement au clavier simulé ;
   - `--route=58,17/79,30/58,58` : parcours piloté par plus court chemin ;
+  - `--click=100,18/s60,120:0.5` : vrais clics de souris, sur une case (`x,y`) ou un point d'écran en pixels logiques (`sx,y`) ; `:s` n'attend que s secondes, sinon l'outil attend l'arrêt du héros. La case doit être visible à l'écran ;
   - `--give=food:30,materials:10,knowledge:2` : donner des ressources ;
   - `--buy=recruit,damage` : acheter au lancement ;
   - `--hero-hp=6` : forcer un K.O. ;

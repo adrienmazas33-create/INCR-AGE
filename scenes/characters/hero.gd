@@ -9,6 +9,9 @@ extends Combatant
 
 var attack := AutoAttack.new()
 
+## Direction voulue par le déplacement à la souris (ClickMover), zéro sinon ; le clavier reste prioritaire.
+var steer := Vector2.ZERO
+
 var _move := Vector2.ZERO
 
 
@@ -20,6 +23,8 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	var input := Input.get_vector("move_left", "move_right", "move_up", "move_down") if is_alive() else Vector2.ZERO
+	if input == Vector2.ZERO and is_alive():
+		input = steer
 	if input != Vector2.ZERO:
 		# Virage franc : on ne conserve que la composante de vitesse dans la nouvelle direction.
 		if _move.dot(input) < 0.0:
@@ -49,6 +54,7 @@ func _on_hit(from: Vector2) -> void:
 func _on_died() -> void:
 	remove_from_group(&"party_members")
 	_move = Vector2.ZERO
+	steer = Vector2.ZERO
 	sprite.rotation_degrees = 90.0
 	sprite.modulate = Color(0.75, 0.7, 0.7)
 	super()

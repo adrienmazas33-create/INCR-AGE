@@ -43,6 +43,10 @@ func _ready() -> void:
 	village.name = "CampVillage"
 	add_child(village)
 	village.setup(_world, _hud)
+	var mover := ClickMover.new()
+	mover.name = "ClickMover"
+	add_child(mover)
+	mover.setup(_hero, PathGrid.new(_world.map, _world.camp_position), _world.effects)
 	CombatFx.layer = _world.effects
 	CombatFx.camera = _camera
 	_camera.target = _hero
@@ -52,7 +56,7 @@ func _ready() -> void:
 	SaveGame.hero_position_provider = func() -> Variant: return _hero.global_position if _hero.is_alive() else null
 	SaveGame.start()
 	_check_hero_not_stuck.call_deferred()
-	DevCapture.attach_if_requested(self, _hero, _camera)
+	DevCapture.attach_if_requested(self, _hero, _camera, mover)
 
 
 ## Position enregistrée acceptée seulement dans la carte, sur une case praticable.
