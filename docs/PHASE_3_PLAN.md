@@ -1,6 +1,6 @@
 # Phase 3 — Première progression incrémentale
 
-**Statut : lot 3A réalisé et validé ; lot 3B réalisé, en attente de validation ; lot 3C (sauvegarde) attend une validation explicite.**
+**Statut : lots 3A et 3B réalisés et validés (tags `phase-3a`, `phase-3b`) ; développement en pause ; lot 3C (sauvegarde) non commencé, à lancer sur demande explicite.**
 
 Écart par rapport au plan : ajout d'un trot de rattrapage des compagnons et d'un décalage latéral conditionnel, nécessaires pour que 8 compagnons suivent sans être replacés de force.
 

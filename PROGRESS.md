@@ -1,6 +1,7 @@
 # INCR-AGE — Suivi du projet
 
-**État : phases 1 et 2 validées (tags `phase-1`, `phase-2a`, `phase-2b`) ; phase 3 : lot 3A validé (tag `phase-3a`), lot 3B (évolution du campement) terminé côté développement, en attente de validation ; lot 3C non commencé. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
+**État au 21/10/2026 : développement EN PAUSE, aucune opération en cours.**
+**Validé : phases 1, 2 (lots A et B), 3 (lots 3A et 3B) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`. Prochaine étape prévue : lot 3C (sauvegarde), non commencé. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
 ## Lancer et tester
@@ -34,6 +35,18 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 | Données | Caractéristiques des unités dans `data/units/*.tres` (`UnitStats`), ressources dans l'autoload `GameState` | Réglables sans code ; base de la future sauvegarde. |
 | Progression | Catalogue `Upgrades` (coûts exponentiels doux, effets calculés), niveaux dans `GameState.upgrades`, effets appliqués par `UpgradeEffects` | Achats accessibles dès 2 ou 3 combats ; stockage prêt pour la sauvegarde 3C. |
 | Campement | Trois stades (CAMPEMENT, TRIBU à 3 niveaux achetés, VILLAGE à 8) décrits en données dans `CampVillage` ; stade calculé à partir des améliorations | Aucun placement par le joueur ; rien ne progresse hors du jeu ; la sauvegarde 3C reconstruira le camp sans donnée en plus. |
+
+## Direction artistique : graphismes PROVISOIRES
+
+- Tout le pixel art actuel (terrain, personnages, ennemis, décors, effets, interface, police) est **provisoire**. Il est généré par code (`tools/generate_art.gd`) pour prototyper vite, sans asset externe.
+- Une **refonte artistique est prévue plus tard**, pour atteindre le rendu d'un jeu indépendant professionnel (références : When Chests Rain Tons of Loot, Pikmin, illustrations de la bible créative).
+- La refonte **ne remet pas en cause les mécaniques validées** : déplacements, caméra, suivi du groupe, combat automatique, butin, améliorations, évolution du camp.
+- Points d'appui pour remplacer l'art sans toucher au gameplay :
+  - même découpage des planches (personnages 6 x 3 images de 32 px, sangliers 8 images de 44 x 30) ;
+  - atlas `props.png` + `props.json` (rectangle et point d'ancrage par nom) ;
+  - tuiles 32 px et dispositions décrites dans `scripts/world/tile_ids.gd` ;
+  - auto-tuiles indexées par masque de 8 voisins (256 variantes).
+- Aucune refonte graphique n'est engagée à ce jour.
 
 ## Terminé (phase 1)
 
@@ -92,14 +105,17 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 - Lot 3A : panneau capturé au camp (achats possibles, puis après achats) ; achats simulés de toutes les améliorations (coûts déduits, effets visibles) ; tour complet de la carte à 8 compagnons : 4 replacements forcés, tous après les combats du couloir ouest (contre 67 avant le correctif de rattrapage) ; tour à 3 compagnons sans régression (1 replacement) ; combat à 8 avec FORCE 2 : sanglier abattu en moins d'une seconde, butin ramassé ; 60 FPS, environ 7 780 nœuds.
 - Lot 3B : captures du passage au stade 2 (bandeau, éléments) et du stade 3 installé (village, villageois, grand feu, pied du panneau) ; tour complet de la carte au stade 3 avec 8 compagnons : héros jamais bloqué, 2 replacements forcés (après combats). Coût de calcul comparé sans affichage, en alternant les passages : stade 3 avec 8 compagnons pas plus coûteux que le stade 1 (10 à 18 ms contre 14 à 24 ms par image).
 - **Performances absolues non fiables pendant ce lot** : l'ordinateur était sur batterie (processeur bridé) ; la version 3A, à 60 FPS lors de sa validation, ne tenait plus que 29 à 50 FPS dans les mêmes conditions. À revérifier sur secteur.
+- **Validations humaines** : phase 1, lots 2A, 2B, 3A et 3B testés en jeu et validés par le porteur du projet (le 21/10/2026).
 - **Non vérifié** : sensations de contrôle, de caméra et de combat par un humain, clic réel dans le panneau (achats testés par commande), toucher sur écran tactile, écran 120/144 Hz, plein écran.
 
 ## En cours
 
-- Rien. Attente de validation du lot 3B avant le lot 3C.
+- Rien. Développement en pause ; aucune opération en cours, rien de commencé pour le lot 3C.
 
 ## Problèmes connus / limites
 
+- **Pas encore de sauvegarde en jeu** (lot 3C non fait) : ressources, améliorations et stade du camp repartent de zéro à chaque lancement. Le code et l'historique du projet, eux, sont intégralement sauvegardés (Git et GitHub).
+- Performances absolues à revérifier sur secteur : les derniers relevés ont été faits sur batterie (processeur bridé ; 26 à 50 FPS au lieu de 60).
 - Les diagonales (chemins, rivière, flancs des grands plateaux) gardent un aspect « en marches » dû à la grille de 32 px. Pistes : tuiles diagonales, ou forme du terrain sur une sous-grille de 16 px.
 - Petites faces de falaise en gradins aux coins des plateaux arrondis.
 - Environ 5 500 arbres en sprites : correct sur PC. Pour le Web ou le mobile, prévoir MultiMesh ou des arbres en tuiles.
@@ -114,26 +130,123 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
 ## Prochaines étapes
 
-1. Lot 3C (après validation du 3B) : sauvegarde locale fiable.
-2. Ajustements d'équilibrage au fil des essais (`data/units/*.tres`, `scripts/progression/upgrades.gd`).
-3. Plus tard : manette (les actions `move_*` et `zoom_*` sont déjà abstraites).
+1. **Lot 3C — Sauvegarde locale** (cahier des charges déjà donné, voir « Reprendre le développement »).
+2. Ajustements d'équilibrage au fil des essais : `data/units/*.tres`, `scripts/progression/upgrades.gd`. À 8 compagnons, les sangliers deviennent trop faciles.
+3. Profilage des performances sur secteur ; pistes : forêt en MultiMesh ou en tuiles, calculs du groupe (`Party`).
+4. Plus tard : refonte artistique (voir « Direction artistique »), compétences actives du héros, classes militaires, nouvelles époques, selon la bible.
+5. Plus tard : manette et tactile. Les actions `move_*`, `zoom_*` et `buy_*` sont déjà abstraites, et les lignes du panneau acceptent clic et toucher.
 
-## Reprendre le travail (session suivante)
+## Reprendre le développement
 
-1. Lire ce fichier et `git log --oneline`. Dépôt GitHub : https://github.com/adrienmazas33-create/INCR-AGE (branche `main`, tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`). Pousser après chaque étape validée.
-2. Architecture :
-   - `scenes/main.tscn` : assemble `World`, `Hero`, `Party`, `EnemySpawner`, `Hud` (avec `CampPanel`), `UpgradeEffects` (créés en code) et `GameCamera` ; gère le retour au camp.
-   - `scenes/world/` : `world.gd` charge la carte. `scripts/world/` contient `MapData` (lecture et requêtes), `TerrainBuilder` (tuiles et collisions), `PropSpawner` (décors) et `TileIds` (disposition des atlas).
-   - `scenes/characters/` : `hero.*`, `follower.*`, `party.gd` (trace et places du groupe), `character_sprite.gd` (animation commune). `scenes/camera/game_camera.*`, `scenes/props/` (feu, papillon).
-   - Combat : `scripts/combat/` (`UnitStats`, `Health`, `Combatant`, `AutoAttack`, `Targeting`, `HealthBar`), `scenes/enemies/boar.*`, `scripts/world/enemy_spawner.gd`, `scenes/loot/pickup.gd`, `scenes/fx/`, `scenes/ui/hud.gd`, `scripts/ui/pixel_text.gd`. Autoloads : `GameSettings`, `GameState`, `CombatFx`.
-   - Progression : `scripts/progression/` (`Upgrades`, `UpgradeEffects`), `scenes/ui/camp_panel*.gd` ; évolution du camp : `scripts/world/camp_village.gd`, `scenes/characters/villager.gd`, `Campfire.enlarge()`.
-   - Les futurs PNJ s'ajoutent au monde par `World.add_entity()` pour être triés en profondeur.
-3. Commandes utiles (depuis la racine, `godot` = exécutable console de Godot) :
-   - Régénérer l'art : `godot --headless --path . --script res://tools/generate_art.gd`, puis `godot --headless --path . --import`.
-   - Vérifier la carte : `godot --headless --path . --script res://tools/check_map.gd -- --preview=apercu.png`.
-   - Réesquisser la carte (**écrase les retouches manuelles**) : `godot --headless --path . --script res://tools/draft_map.gd`.
-   - Capture ou déplacement scripté : `godot --path . -- --at=58,40 --zoom=0 --walk=move_up:1.5 --capture=C:/chemin/shot.png`.
-   - Parcours piloté (plus court chemin case par case) avec bilan du groupe : `godot --path . -- --route=58,17/79,30/99,20/80,56/58,58`.
-   - Tests de combat : `--hero-hp=6` (forcer un K.O.) ; le bilan affiche ressources, PV et coups portés par le héros.
-   - Achats : `--give=food:30,materials:10,knowledge:2 --buy=recruit,damage` (achats exécutés au lancement).
-   - Mesures : le bilan affiche une moyenne d'images par seconde et le temps de calcul moyen par image (plus fiable que le FPS instantané).
+À lire en début de session Claude Code. Cette section donne le contexte suffisant pour reprendre sans réanalyser tout le projet.
+
+### 1. Où en est-on
+
+- Dépôt : https://github.com/adrienmazas33-create/INCR-AGE, branche `main`. Chaque lot validé porte un tag : `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`.
+- Copie locale : `C:\Users\Adrien\OneDrive\Bureau\INCR-AGE`. Identité Git définie **uniquement pour ce dépôt** (`user.name` « Adrien »).
+- Bible créative : `Bible_creative_Jeu_incremental_2D_V01.md` / `.docx`, dans les Téléchargements de l'utilisateur, **hors dépôt**.
+- **Prochaine étape : lot 3C, sauvegarde locale** (cahier des charges au point 5). Ne pas commencer d'autre phase sans demande explicite.
+
+### 2. Méthode de travail attendue
+
+- Échanges et documentation en français.
+- Travail **par lots**, avec un arrêt pour validation après chaque lot. Ne jamais élargir le périmètre de soi-même.
+- Après validation : commit, tag `phase-…`, `git push origin main --follow-tags`. Pousser **seulement** les lots validés, sans jamais forcer.
+- Tester réellement ce qui est fait (outil de test, captures d'écran lues) et dire clairement ce qui reste à vérifier par un humain.
+- Économiser les tokens : explorations ciblées, pas de refonte non demandée.
+- Garder les mécaniques validées intactes : héros dirigé au clavier, combat automatique, compagnons en laisse autour du héros, commandes minimales.
+
+### 3. Environnement
+
+- Godot 4.7.2 stable, installé via winget. Exécutables :
+  - console (pour les scripts et tests) : `%LOCALAPPDATA%\Microsoft\WinGet\Packages\GodotEngine.GodotEngine_Microsoft.Winget.Source_8wekyb3d8bbwe\Godot_v4.7.2-stable_win64_console.exe` ;
+  - jeu et éditeur : `…\Godot_v4.7.2-stable_win64.exe`.
+- Le dossier `.godot/` n'est pas versionné. Sur un clone neuf, lancer d'abord `godot --headless --path . --import`, ou `lancer_jeu.bat`, qui le fait. Sans cet import, les `class_name` et les images ne sont pas encore connus.
+- Pas de Python sur la machine : tout l'outillage est en GDScript (`tools/`), lancé avec `--headless --script`.
+- Sur batterie, les mesures de FPS ne sont pas fiables : comparer en relatif, avec le « calcul moyen » de l'outil de test.
+
+### 4. Architecture (essentiel)
+
+- **Entrée** : `scenes/main.tscn` + `main.gd`. Crée en code `Hero`, `Party`, `EnemySpawner`, `Hud` (avec `CampPanel`), `UpgradeEffects` et `CampVillage`. Gère le K.O. du héros (fondu, retour au camp).
+- **Autoloads** :
+  - `GameSettings` : options d'effets ;
+  - `GameState` : ressources `food` / `materials` / `knowledge`, `upgrades` (id → niveau), signaux `resource_changed` et `upgrade_bought` ;
+  - `CombatFx` : étincelles, arcs, chiffres, micro-pause, secousse.
+- **Monde** : `scenes/world/world.gd`
+  - `MapData` lit la carte ASCII `data/maps/prototype.txt` ;
+  - `TerrainBuilder` construit les tuiles et les collisions ;
+  - `PropSpawner` place les décors (catalogue `PROPS`, `make_prop()`) ;
+  - `World.add_entity()` et `entity_layer()` servent au tri en profondeur ;
+  - `camp_position` donne la position du feu.
+- **Personnages** :
+  - `Combatant` (`scripts/combat/combatant.gd`) : vie, recul, flash, lueur, barre de vie, `receive_hit()` ;
+  - `Hero` et `Follower` en héritent ; `Boar` (`scenes/enemies/`) aussi ;
+  - `AutoAttack` gère l'attaque automatique, `Targeting` la cible la plus proche en vue ;
+  - les caractéristiques sont dans `data/units/*.tres` (`UnitStats`).
+- **Groupe** : `scenes/characters/party.gd` (le module le plus délicat)
+  - trace de pas du héros, suivi de trajectoire, colonne par deux, places au repos, éventail de combat, laisses (110 / 150 px) ;
+  - trot de rattrapage, raccrochage à la partie récente de la trace, replacement de secours.
+- **Progression** :
+  - `scripts/progression/upgrades.gd` : catalogue, coûts, effets, `prosperity()`, `camp_stage()` ;
+  - `UpgradeEffects` : application en jeu et retours visuels ;
+  - `scenes/ui/camp_panel*.gd` : panneau du feu ;
+  - `scripts/world/camp_village.gd` : stades du camp, en données ;
+  - `scenes/characters/villager.gd` : villageois.
+- **Art** : `tools/generate_art.gd`, déterministe. Après modification, relancer le générateur puis `--import`. Les nouveaux sprites de décor s'ajoutent **à la fin** de la liste de `_gen_props()`, pour ne pas décaler l'atlas.
+
+### 5. Cahier des charges du lot 3C (déjà fixé par le porteur du projet)
+
+- **À sauvegarder au minimum** :
+  - les ressources ;
+  - les améliorations achetées ;
+  - le nombre de compagnons et le stade du camp (tous deux déduits des améliorations, mais à enregistrer si utile pour vérification) ;
+  - la position du héros, si elle est valide.
+- **Fonctionnement** : sauvegarde automatique après les changements importants (achat, nouveau stade, retour au camp, de façon périodique) et restauration au lancement.
+- **Contraintes** :
+  - fonctionnalités natives de Godot uniquement, pas de cloud, de compte ni de serveur ;
+  - validation des données ;
+  - gestion des sauvegardes anciennes ou corrompues ;
+  - protection contre une écriture interrompue.
+- **Approche suggérée** (non commencée) :
+  - un fichier `user://save.json` avec un champ `version` ;
+  - écriture dans un fichier temporaire, puis renommage, avec conservation d'une copie `.bak` ;
+  - validation champ par champ, avec retour à des valeurs par défaut sûres ;
+  - restauration avant `Party.setup()`, puisque le nombre de compagnons dépend des améliorations, et `CampVillage.setup()` reconstruit déjà le camp sans animation au bon stade ;
+  - position du héros acceptée seulement si sa cellule est praticable (`MapData.is_cell_blocked`), sinon point d'apparition.
+
+### 6. Pièges déjà rencontrés (à ne pas refaire)
+
+- **Autoload** : un autoload qui précharge (`preload`) une image plante au premier import d'un clone neuf. Charger à la demande, comme `CombatFx` et `PixelText`.
+- **Bash et heredoc** : un long heredoc contenant `'` peut faire échouer la commande bash entière ; utiliser l'outil d'édition.
+- **cmd (`.bat`)** : le joker `*` ne fonctionne pas dans un nom de dossier d'une boucle `for` ; il faut un `for /d` imbriqué. Les `.bat` sont en fins de ligne CRLF (voir `.gitattributes`).
+- **Suivi du groupe** :
+  - ne jamais viser la place finale en ligne droite (falaises, escaliers) ;
+  - la trace repasse sur elle-même lors des allers-retours, il faut donc privilégier les points récents ;
+  - sans trot, un retard ne se rattrape jamais.
+- **Physique** : les nœuds déplacés dans `_process` (villageois, papillons) doivent désactiver l'interpolation physique.
+- **Outil de test** : le parcours piloté (`--route`) ignore les bâtiments ajoutés par l'évolution du camp.
+
+### 7. Commandes utiles
+
+Depuis la racine du dépôt, `godot` désigne l'exécutable console.
+
+- Lancer le jeu : `lancer_jeu.bat` ; l'éditeur : `lancer_jeu.bat editeur`.
+- Contrôle sans affichage : `godot --headless --path . --quit-after 300`, sans aucune ligne `ERROR` attendue.
+- Régénérer l'art : `godot --headless --path . --script res://tools/generate_art.gd`, puis `godot --headless --path . --import`.
+- Vérifier la carte : `godot --headless --path . --script res://tools/check_map.gd -- --preview=apercu.png`.
+- Réesquisser la carte (**écrase les retouches manuelles**) : `godot --headless --path . --script res://tools/draft_map.gd`.
+- **Outil de test** : arguments placés après `--`, bilan affiché en console. Combinables :
+  - `--at=x,y` : placer le héros sur une case ;
+  - `--zoom=n` : choisir le palier de zoom ;
+  - `--walk=move_up:1.5` : déplacement au clavier simulé ;
+  - `--route=58,17/79,30/58,58` : parcours piloté par plus court chemin ;
+  - `--give=food:30,materials:10,knowledge:2` : donner des ressources ;
+  - `--buy=recruit,damage` : acheter au lancement ;
+  - `--hero-hp=6` : forcer un K.O. ;
+  - `--settle=s` : durée d'attente avant le bilan ;
+  - `--capture=C:/chemin/image.png` : capture d'écran ;
+  - `--no-fx`, `--no-hitstop` : couper les effets.
+  - Le bilan donne la position du héros, les FPS et le calcul moyen par image, les écarts et replacements du groupe, les ressources, les améliorations et le nombre d'ennemis.
+- **Tour de non-régression** : `--route=58,17/79,30/99,20/80,56/27,18/46,78/17,68/58,58`, environ 150 s.
+  - Référence avec 3 compagnons : 1 ou 2 replacements (après combats).
+  - Avec 8 compagnons (`--give=food:300,materials:200 --buy=recruit,recruit,recruit,recruit,recruit`) : 2 à 4 replacements.
