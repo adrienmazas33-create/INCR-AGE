@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : chantier artistique en cours. Étape 1 (audit et direction, `docs/ART_DIRECTION_PLAN.md`) et passe visuelle 1 réalisées et commitées en local, en attente du regard du porteur du projet. Aucun changement de gameplay.**
+**État : chantier artistique, passe visuelle 1 validée et publiée (tag `art-pass-1`). Aucune opération en cours ; suite du chantier (priorité 2 de `docs/ART_DIRECTION_PLAN.md`) à lancer sur demande explicite.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -52,7 +52,7 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
   - auto-tuiles indexées par masque de 8 voisins (256 variantes).
 - Chantier artistique engagé : cadrage dans `docs/ART_DIRECTION_PLAN.md`, passe visuelle 1 décrite ci-dessous. Le reste de l'art reste provisoire.
 
-## Chantier artistique — passe visuelle 1 (en attente d'avis)
+## Chantier artistique — passe visuelle 1 (validée, tag `art-pass-1`)
 
 Ciblée sur la tranche préhistorique, **sans aucun changement de mécanique** : mêmes collisions, portées, vitesses, règles et formats de planches.
 
@@ -181,12 +181,12 @@ Voir les priorités 2 et 3 du plan artistique.
   - combat et butin inchangés (sanglier abattu, butin ramassé et compté) ;
   - tour complet de la carte : 2 replacements forcés (après combats), 60 FPS de moyenne ;
   - copie neuve des fichiers versionnés : import et lancement sans erreur.
-  - **À juger par le porteur du projet** : rendu d'ensemble, lisibilité en mouvement, rythme des rayons et de l'éclat.
+  - **Validée** par le porteur du projet le 21/10/2026.
 - **Non vérifié** : sensations de contrôle, de caméra et de combat par un humain, clic réel dans le panneau (achats testés par commande), toucher sur écran tactile, écran 120/144 Hz, plein écran.
 
 ## En cours
 
-- Rien d'inachevé. La passe visuelle 1 est commitée en local et attend l'avis du porteur du projet ; elle n'est pas publiée sur GitHub (pas de tag).
+- Rien. Passe visuelle 1 validée et publiée (tag `art-pass-1`) ; aucune opération en cours.
 
 ## Problèmes connus / limites
 
@@ -210,8 +210,7 @@ Voir les priorités 2 et 3 du plan artistique.
 ## Prochaines étapes
 
 1. **Chantier artistique** :
-   - avis du porteur du projet sur la passe 1, ajustements éventuels, puis publication ;
-   - ensuite, priorité 2 du plan (`docs/ART_DIRECTION_PLAN.md`) : animation d'attaque dédiée, diagonales du terrain, végétation proche du camp, éclairage d'ambiance, décors des stades TRIBU et VILLAGE.
+   - priorité 2 du plan (`docs/ART_DIRECTION_PLAN.md`), sur demande : animation d'attaque dédiée, diagonales du terrain, végétation proche du camp, éclairage d'ambiance, décors des stades TRIBU et VILLAGE.
 2. Ajustements d'équilibrage au fil des essais : `data/units/*.tres`, `scripts/progression/upgrades.gd`. À 8 compagnons, les sangliers deviennent trop faciles.
 3. Profilage des performances sur secteur ; pistes : forêt en MultiMesh ou en tuiles, calculs du groupe (`Party`).
 4. Plus tard, selon la bible : compétences actives du héros, classes militaires, nouvelles époques.
@@ -223,10 +222,10 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ### 1. Où en est-on
 
-- Dépôt : https://github.com/adrienmazas33-create/INCR-AGE, branche `main`. Chaque lot validé porte un tag : `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`.
+- Dépôt : https://github.com/adrienmazas33-create/INCR-AGE, branche `main`. Chaque lot validé porte un tag : `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`, `art-pass-1`.
 - Copie locale : `C:\Users\Adrien\OneDrive\Bureau\INCR-AGE`. Identité Git définie **uniquement pour ce dépôt** (`user.name` « Adrien »).
 - Bible créative : `Bible_creative_Jeu_incremental_2D_V01.md` / `.docx`, dans les Téléchargements de l'utilisateur, **hors dépôt**.
-- **En cours : chantier artistique.** Étape 1 et passe visuelle 1 faites, commitées en local et non publiées. Cadrage, priorités et règles visuelles dans `docs/ART_DIRECTION_PLAN.md`. Ne pas commencer d'autre phase sans demande explicite.
+- **Chantier artistique** : étape 1 et passe visuelle 1 faites et validées (tag `art-pass-1`). Prochaine étape, sur demande : priorité 2 de `docs/ART_DIRECTION_PLAN.md`. Ne pas commencer d'autre phase sans demande explicite.
 
 ### 2. Méthode de travail attendue
 
