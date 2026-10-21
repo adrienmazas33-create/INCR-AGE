@@ -1,0 +1,12 @@
+# Godot 4
+.godot/
+*.translation
+export.cfg
+export_credentials.cfg
+/builds/
+/android/
+
+# Système
+.DS_Store
+Thumbs.db
+desktop.ini

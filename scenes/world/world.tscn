@@ -1,0 +1,22 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/world/world.gd" id="1_world"]
+[ext_resource type="Shader" path="res://assets/shaders/water.gdshader" id="2_water"]
+
+[sub_resource type="ShaderMaterial" id="water_mat"]
+shader = ExtResource("2_water")
+
+[node name="World" type="Node2D"]
+script = ExtResource("1_world")
+
+[node name="Ground" type="TileMapLayer" parent="."]
+
+[node name="Water" type="TileMapLayer" parent="."]
+material = SubResource("water_mat")
+
+[node name="Overlay" type="TileMapLayer" parent="."]
+
+[node name="Collision" type="StaticBody2D" parent="."]
+
+[node name="Entities" type="Node2D" parent="."]
+y_sort_enabled = true
