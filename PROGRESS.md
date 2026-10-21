@@ -176,7 +176,7 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 2. Ajustements d'équilibrage au fil des essais : `data/units/*.tres`, `scripts/progression/upgrades.gd`. À 8 compagnons, les sangliers deviennent trop faciles.
 3. Profilage des performances sur secteur ; pistes : forêt en MultiMesh ou en tuiles, calculs du groupe (`Party`).
 4. Plus tard, selon la bible : compétences actives du héros, classes militaires, nouvelles époques.
-6. Plus tard : manette et tactile. Les actions `move_*`, `zoom_*` et `buy_*` sont déjà abstraites, et les lignes du panneau acceptent clic et toucher.
+5. Plus tard : manette et tactile. Les actions `move_*`, `zoom_*` et `buy_*` sont déjà abstraites, et les lignes du panneau acceptent clic et toucher.
 
 ## Reprendre le développement
 
