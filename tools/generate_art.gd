@@ -251,7 +251,7 @@ func _face(img: Image, o: Vector2i, top: bool, lend: int, rend: int) -> void:
 			if top:
 				var drip := int(_h(x, 0, 77) * 3.0) + (6 if _h(x, 1, 78) < 0.1 else 0)
 				if y < 2 + drip:
-					c = G_DARK if (y > 1 or _h(x, y, 79) < 0.3) else G_MID
+					c = _highland(G_DARK if (y > 1 or _h(x, y, 79) < 0.3) else G_MID)
 				elif y == 2 + drip:
 					c = R_OUT
 			else:
@@ -496,21 +496,30 @@ func _plateau(img: Image, o: Vector2i, mask: int) -> void:
 	var wc := (mask & Ids.W) == 0
 	for y in T:
 		for x in T:
-			var c := _grass(x, y, 3)
-			var ww := 5 + int(_wob(y, 6) * 0.5)
-			var we := 5 + int(_wob(y, 7) * 0.5)
-			var wn := 4 + int(_wob(x, 8) * 0.5)
+			var c := _highland(_grass(x, y, 3))
+			var ww := 7 + int(_wob(y, 6) * 0.5)
+			var we := 7 + int(_wob(y, 7) * 0.5)
+			var wn := 5 + int(_wob(x, 8) * 0.5)
 			if s and y >= 29:
-				c = G_HI if y == 29 else G_LIGHT
+				c = _highland(G_HI if y == 29 else G_LIGHT)
+			var rock := false
 			if wc and x < ww:
-				c = R_OUT if x == 0 else (R_HI if x == 1 else (R_LIGHT if x < ww - 1 else R_MID))
+				c = [R_OUT, R_HI, R_LIGHT, R_LIGHT, R_LIGHT, R_MID, R_DARK, R_DARK][x]
+				rock = true
 			if e and x >= T - we:
-				c = R_OUT if x == 31 else (R_DARK if x >= 29 else R_MID)
+				c = [R_OUT, R_DARK, R_DARK, R_MID, R_MID, R_MID, R_LIGHT, R_LIGHT][31 - x]
+				rock = true
 			if n and y < wn:
-				c = R_OUT if y == 0 else (R_LIGHT if y < wn - 1 else R_MID)
-			if c in [R_LIGHT, R_MID] and _h(x, y, 38) < 0.12:
-				c = R_DARK
+				c = [R_OUT, R_LIGHT, R_LIGHT, R_LIGHT, R_MID, R_DARK][y]
+				rock = true
+			if rock and c != R_OUT and _h(x, y, 38) < 0.12:
+				c = c.lerp(R_DARK, 0.7)
 			img.set_pixel(o.x + x, o.y + y, c)
+
+
+## Herbe d'altitude : plus claire et plus dorée que celle de la plaine, pour lire les niveaux.
+func _highland(c: Color) -> Color:
+	return c.lerp(Color8(196, 210, 112), 0.2)
 
 
 # --- Héros -----------------------------------------------------------------

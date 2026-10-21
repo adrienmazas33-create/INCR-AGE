@@ -54,7 +54,8 @@ func _run() -> void:
 		await get_tree().create_timer(step[1]).timeout
 		Input.action_release(step[0])
 	await get_tree().create_timer(_settle).timeout
-	print("DevCapture : héros en %s (tuile %s)" % [_hero.global_position, Vector2i(_hero.global_position / TileIds.SIZE)])
+	print("DevCapture : héros en %s (tuile %s), %d FPS, %d nœuds" % [_hero.global_position, Vector2i(_hero.global_position / TileIds.SIZE),
+		Engine.get_frames_per_second(), get_tree().get_node_count()])
 	if _capture_path != "":
 		for i in 3:
 			await get_tree().process_frame

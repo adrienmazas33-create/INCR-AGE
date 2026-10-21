@@ -8,7 +8,7 @@ const SRC_BASE := 0
 const G := MapData.Ground
 const T := TileIds.SIZE
 ## Épaisseur (px) du rebord rocheux infranchissable des plateaux.
-const RIM := 5
+const RIM := 6
 
 ## Types de sol considérés comme « identiques » pour chaque famille d'auto-tuiles.
 const AUTO_KINDS := {

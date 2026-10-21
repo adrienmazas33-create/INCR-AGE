@@ -68,7 +68,7 @@ func _paint() -> void:
 	# Eau.
 	stroke(river, 3.2, "~")
 	blob(46, 85, 13, 6, "~", "", 0.5, 0.12)
-	blob(27, 15, 4, 2.5, "~", "", 0.0, 0.1)
+	blob(27, 15, 5, 3.2, "~", "", 0.0, 0.1)
 
 	# Reliefs : plateaux, faces de falaise calculées, escaliers.
 	# Bord sud aplati : une longue façade de falaise lisible plutôt qu'une suite de gradins.
