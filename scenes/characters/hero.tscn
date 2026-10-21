@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scenes/characters/hero.gd" id="1_hero"]
 [ext_resource type="Texture2D" path="res://assets/art/hero.png" id="2_sheet"]
 [ext_resource type="Texture2D" path="res://assets/art/fx/shadow.png" id="3_shadow"]
+[ext_resource type="Script" path="res://scenes/characters/character_sprite.gd" id="4_anim"]
 
 [sub_resource type="CircleShape2D" id="feet"]
 radius = 5.0
@@ -21,6 +22,7 @@ texture = ExtResource("2_sheet")
 offset = Vector2(0, -14)
 hframes = 6
 vframes = 3
+script = ExtResource("4_anim")
 
 [node name="Feet" type="CollisionShape2D" parent="."]
 position = Vector2(0, -3)

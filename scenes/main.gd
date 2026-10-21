@@ -11,6 +11,10 @@ func _ready() -> void:
 	var hero := HERO.instantiate() as Hero
 	hero.position = _world.spawn_position
 	_world.add_entity(hero)
+	var party := Party.new()
+	party.name = "Party"
+	add_child(party)
+	party.setup(hero, _world)
 	_camera.target = hero
 	_camera.set_bounds(_world.bounds)
 	_camera.snap_to_target()

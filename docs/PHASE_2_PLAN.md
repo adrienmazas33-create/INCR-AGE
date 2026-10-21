@@ -1,5 +1,7 @@
 # Phase 2 — Compagnons et premiers affrontements (proposition)
 
+**Statut : décisions validées le 21/10/2026 (recommandations retenues). Lot A réalisé, en attente de validation.**
+
 Source : bible créative V0.1, « Prototype prioritaire ».
 - Étape 0 : il reste « trois alliés qui suivent ».
 - Étape 1 : « ennemis simples, attaque du héros, combat automatique, butin, recrutement ».

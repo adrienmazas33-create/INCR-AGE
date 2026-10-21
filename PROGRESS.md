@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : phase 1 validée le 21/10/2026 (tag Git `phase-1`). Phase 2 planifiée dans `docs/PHASE_2_PLAN.md`, en attente des décisions et du feu vert.**
+**État : phase 1 validée (tag `phase-1`). Phase 2, lot A (trois alliés qui suivent) terminé côté développement, en attente de validation. Plan : `docs/PHASE_2_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
 ## Lancer et tester
@@ -25,6 +25,7 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 | Collisions | Rectangles fusionnés par rangée (eau, forêt, falaises) + bandes de 6 px sur les rebords + emprise au pied des objets | Peu de formes ; on longe les obstacles sans accrocher. |
 | Profondeur | Conteneur `Entities` trié en Y ; arbres de forêt regroupés par rangée | Le héros passe derrière les arbres, huttes et rochers. |
 | Art | 100 % procédural et original (`tools/generate_art.gd`), déterministe | Aucun asset externe ni payant ; remplaçable plus tard par de vrais sprites. |
+| Alliés | Suivi de la **trace de pas** du héros (pas de pathfinding), place mémorisée sur la trace, point visé 16 px en avant ; regroupement derrière le héros à l'arrêt | Passent toujours par un chemin valide (escaliers, ponts) ; simple et robuste. Pathfinding (`AStarGrid2D`) gardé pour de futurs ordres. |
 
 ## Terminé (phase 1)
 
@@ -42,17 +43,25 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 - Ambiance : feu animé (flammes, halo, fumée), scintillement de l'eau (shader), papillons, variations de végétation. Tout se coupe via `GameSettings`.
 - Script de lancement `lancer_jeu.bat`.
 
+## Terminé (phase 2, lot A)
+
+- Trois alliés aux looks distincts (roux en peau de loup, bandeau rouge, jeune imberbe), mêmes animations que le héros (`CharacterSprite`, partagé).
+- Suivi en file sur la trace du héros, arrivée douce, séparation entre membres ; ils heurtent le décor mais jamais le héros ni entre eux.
+- À l'arrêt : petit groupe derrière le héros, tourné vers lui ; une place derrière un mur ou au-dessus de l'eau est écartée.
+- Filet de sécurité : un allié coincé ou distancé (> 12 tuiles) est replacé sur la trace, hors du champ de la caméra si possible.
+
 ## Vérifications réellement effectuées
 
 - Lancement sans erreur de script ; captures d'écran en jeu de chaque région (campement, ponts, lac, plateaux, prairies, étang).
 - Déplacements scriptés : montée et descente d'escalier ; arrêt contre l'eau, la forêt, le pied de falaise et les rebords ouest, nord et est d'un plateau.
 - Mode sans effets (`--no-fx`) : lancement sans erreur.
 - 60 FPS (synchro verticale) en vue large au-dessus de la forêt, environ 7 600 nœuds.
-- **Non vérifié** : sensations de contrôle et de caméra par un humain, comportement sur écran 120/144 Hz, plein écran.
+- Lot A : tour complet piloté (colline nord, pont nord, grand plateau est, pont est, étang, lac, éperon sud-ouest, retour au camp, 150 s) : héros jamais bloqué, **0 replacement forcé** des alliés, écart maximal 81 px. Captures : groupe au camp, en file sur le pont et dans l'escalier, arrêt sur le pont.
+- **Non vérifié** : sensations de contrôle et de caméra par un humain, comportement sur écran 120/144 Hz, plein écran, lisibilité du héros dans le groupe à juger en jeu.
 
 ## En cours
 
-- Rien. Phase 2 proposée, décisions à prendre listées dans `docs/PHASE_2_PLAN.md`.
+- Rien. Attente de validation du lot A avant le lot B.
 
 ## Problèmes connus / limites
 
@@ -61,24 +70,25 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 - Environ 5 500 arbres en sprites : correct sur PC. Pour le Web ou le mobile, prévoir MultiMesh ou des arbres en tuiles.
 - La carte `.txt` et `props.json` ne sont pas des ressources Godot. À l'export, ajouter `*.txt, *.json` aux filtres de fichiers non-ressources.
 - Pas d'exécutable exporté : les modèles d'export Godot ne sont pas installés.
+- Alliés en file indienne pendant la marche : fidèle à « ils suivent », mais moins « troupe » qu'un groupe en formation (à juger).
 
 ## Prochaines étapes
 
-1. Phase 2, lot A : trois alliés qui suivent le héros (fin de l'étape 0 de la bible).
-2. Phase 2, lot B : sangliers, combat automatique, butin magnétique, ressources (étape 1, sans recrutement).
-3. Phase 3 pressentie : village qui évolue, recrutement, premières améliorations, sauvegarde.
-4. Plus tard : manette (les actions `move_*` et `zoom_*` sont déjà abstraites).
+1. Phase 2, lot B (après validation du lot A) : sangliers, combat automatique, butin magnétique, ressources (étape 1, sans recrutement).
+2. Phase 3 pressentie : village qui évolue, recrutement, premières améliorations, sauvegarde.
+3. Plus tard : manette (les actions `move_*` et `zoom_*` sont déjà abstraites).
 
 ## Reprendre le travail (session suivante)
 
 1. Lire ce fichier et `git log --oneline`.
 2. Architecture :
-   - `scenes/main.tscn` : assemble `World`, `Hero`, `GameCamera`.
+   - `scenes/main.tscn` : assemble `World`, `Hero`, `Party` (créé en code) et `GameCamera`.
    - `scenes/world/` : `world.gd` charge la carte. `scripts/world/` contient `MapData` (lecture et requêtes), `TerrainBuilder` (tuiles et collisions), `PropSpawner` (décors) et `TileIds` (disposition des atlas).
-   - `scenes/characters/hero.*`, `scenes/camera/game_camera.*`, `scenes/props/` (feu, papillon).
+   - `scenes/characters/` : `hero.*`, `follower.*`, `party.gd` (trace et places du groupe), `character_sprite.gd` (animation commune). `scenes/camera/game_camera.*`, `scenes/props/` (feu, papillon).
    - Les futurs PNJ s'ajoutent au monde par `World.add_entity()` pour être triés en profondeur.
 3. Commandes utiles (depuis la racine, `godot` = exécutable console de Godot) :
    - Régénérer l'art : `godot --headless --path . --script res://tools/generate_art.gd`, puis `godot --headless --path . --import`.
    - Vérifier la carte : `godot --headless --path . --script res://tools/check_map.gd -- --preview=apercu.png`.
    - Réesquisser la carte (**écrase les retouches manuelles**) : `godot --headless --path . --script res://tools/draft_map.gd`.
    - Capture ou déplacement scripté : `godot --path . -- --at=58,40 --zoom=0 --walk=move_up:1.5 --capture=C:/chemin/shot.png`.
+   - Parcours piloté (plus court chemin case par case) avec bilan du groupe : `godot --path . -- --route=58,17/79,30/99,20/80,56/58,58`.

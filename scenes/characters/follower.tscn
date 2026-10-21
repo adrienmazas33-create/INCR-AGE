@@ -1,0 +1,29 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/characters/follower.gd" id="1_follower"]
+[ext_resource type="Texture2D" path="res://assets/art/follower_0.png" id="2_sheet"]
+[ext_resource type="Texture2D" path="res://assets/art/fx/shadow.png" id="3_shadow"]
+[ext_resource type="Script" path="res://scenes/characters/character_sprite.gd" id="4_anim"]
+
+[sub_resource type="CircleShape2D" id="feet"]
+radius = 5.0
+
+[node name="Follower" type="CharacterBody2D"]
+collision_layer = 2
+motion_mode = 1
+script = ExtResource("1_follower")
+
+[node name="Shadow" type="Sprite2D" parent="."]
+position = Vector2(0, -1)
+texture = ExtResource("3_shadow")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_sheet")
+offset = Vector2(0, -14)
+hframes = 6
+vframes = 3
+script = ExtResource("4_anim")
+
+[node name="Feet" type="CollisionShape2D" parent="."]
+position = Vector2(0, -3)
+shape = SubResource("feet")

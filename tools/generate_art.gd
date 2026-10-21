@@ -596,12 +596,34 @@ const LEGS_SIDE_STRIDE := ["......sS.sS.....", ".....sS...sS....", ".....sS....s
 const LEGS_SIDE_STRIDE2 := ["......Ss.Ss.....", ".....Ss...Ss....", ".....Ss....Ss...", "....kkk....kkk.."]
 
 
+## Alliés : couleurs remplacées sur la palette du héros, sans barbe (« jeune ») ou avec bandeau.
+const FOLLOWERS := [
+	{"colors": {"h": Color8(168, 80, 38), "H": Color8(214, 124, 62),
+		"f": Color8(142, 140, 132), "F": Color8(100, 98, 96), "g": Color8(180, 178, 168)}, "beard": true, "band": false},
+	{"colors": {"h": Color8(42, 32, 32), "H": Color8(80, 62, 58),
+		"f": Color8(206, 166, 98), "F": Color8(150, 108, 58), "g": Color8(234, 202, 142)}, "beard": true, "band": true},
+	{"colors": {"h": Color8(126, 86, 52), "H": Color8(168, 118, 70),
+		"f": Color8(112, 72, 42), "F": Color8(80, 50, 30), "g": Color8(144, 98, 60)}, "beard": false, "band": false},
+]
+const BAND := Color8(186, 58, 48)
+
+
 func _gen_hero() -> void:
-	# Colonnes : repos 0-1, marche 2-5. Lignes : face, dos, profil (vers la droite).
+	_save(_character_sheet(HERO_COLORS, true, false), "hero.png")
+	for i in FOLLOWERS.size():
+		var v: Dictionary = FOLLOWERS[i]
+		var colors := HERO_COLORS.duplicate()
+		colors.merge(v["colors"], true)
+		colors["b"] = BAND
+		_save(_character_sheet(colors, v["beard"], v["band"]), "follower_%d.png" % i)
+
+
+## Planche 6 x 3 : colonnes repos 0-1, marche 2-5 ; lignes face, dos, profil (vers la droite).
+func _character_sheet(colors: Dictionary, beard: bool, band: bool) -> Image:
 	var img := _img(32 * 6, 32 * 3)
 	var bob := [0, 1, 0, -1, 0, -1]
 	for row in 3:
-		var body: Array = [HERO_DOWN, HERO_UP, HERO_SIDE][row]
+		var body := _variant_rows([HERO_DOWN, HERO_UP, HERO_SIDE][row], row, beard, band)
 		for col in 6:
 			var legs: Array
 			var arm_l := 0
@@ -618,33 +640,57 @@ func _gen_hero() -> void:
 			var frame := _img(32, 32)
 			var o := Vector2i(8, 8)
 			# Jambes (avec une rangée de hanche cachée sous la tunique).
-			_stamp(frame, [legs[0]], o + Vector2i(0, 18))
-			_stamp(frame, legs, o + Vector2i(0, 19))
+			_stamp(frame, [legs[0]], o + Vector2i(0, 18), colors)
+			_stamp(frame, legs, o + Vector2i(0, 19), colors)
 			var up := o + Vector2i(0, bob[col])
 			if row < 2:
-				_arm(frame, up + Vector2i(2, 12 + arm_l), false)
-				_arm(frame, up + Vector2i(12, 12 + arm_r), true)
-			_stamp(frame, body, up)
+				_arm(frame, up + Vector2i(2, 12 + arm_l), false, colors)
+				_arm(frame, up + Vector2i(12, 12 + arm_r), true, colors)
+			_stamp(frame, body, up, colors)
 			if row == 2:
-				_arm(frame, up + Vector2i(7 + arm_dx, 12 + arm_l), false)
+				_arm(frame, up + Vector2i(7 + arm_dx, 12 + arm_l), false, colors)
 			_outline(frame, OUTLINE)
 			img.blit_rect(frame, Rect2i(0, 0, 32, 32), Vector2i(col * 32, row * 32))
-	_save(img, "hero.png")
+	return img
 
 
-func _stamp(img: Image, rows: Array, o: Vector2i) -> void:
+## Variantes de gabarit : menton rasé (rangées 10-11 en peau, poitrine sans barbe) et bandeau (rangée 4).
+func _variant_rows(rows: Array, view: int, beard: bool, band: bool) -> Array:
+	var out := []
+	for y in rows.size():
+		var line: String = rows[y]
+		if band and y == 4:
+			line = line.replace("h", "b").replace("H", "b")
+		if not beard and view != 1:
+			# Colonnes du visage par vue : [rangée 10, rangée 11, poitrine].
+			var spans: Array = [[[4, 11], [5, 10], [5, 10]], [], [[8, 12], [8, 11], [7, 10]]][view]
+			var span: Array = []
+			var to := "s"
+			if y == 10 or y == 11:
+				span = spans[y - 10]
+			elif y >= 12 and y <= 14:
+				span = spans[2]
+				to = "f"
+			for x in range(span[0], span[1] + 1) if not span.is_empty() else []:
+				if line[x] == "h":
+					line = line.substr(0, x) + to + line.substr(x + 1)
+		out.append(line)
+	return out
+
+
+func _stamp(img: Image, rows: Array, o: Vector2i, colors: Dictionary = HERO_COLORS) -> void:
 	for y in rows.size():
 		var line: String = rows[y]
 		for x in line.length():
 			var ch := line[x]
 			if ch != ".":
-				img.set_pixel(o.x + x, o.y + y, HERO_COLORS[ch])
+				img.set_pixel(o.x + x, o.y + y, colors[ch])
 
 
-func _arm(img: Image, o: Vector2i, shaded: bool) -> void:
+func _arm(img: Image, o: Vector2i, shaded: bool, colors: Dictionary) -> void:
 	for y in 6:
-		img.set_pixel(o.x, o.y + y, HERO_COLORS["S" if shaded else "s"])
-		img.set_pixel(o.x + 1, o.y + y, HERO_COLORS["S"])
+		img.set_pixel(o.x, o.y + y, colors["S" if shaded else "s"])
+		img.set_pixel(o.x + 1, o.y + y, colors["S"])
 
 
 # --- Décors (atlas props.png + props.json) ---------------------------------
