@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : rééquilibrage de la musique et panneau des volumes faits, en commit local, en attente d'écoute et de validation (non poussé, pas de tag). Audio lots A, B, ajustements et C validés. Ensuite : chantier artistique du monde (zone témoin au camp), après validation.**
+**État : audio terminé et validé (tags `audio-a`, `audio-b`, `audio-b2`, `audio-c`, `audio-c2`). En cours : chantier artistique du monde, lot 2 (étude et zone témoin).**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -227,7 +227,7 @@ Voir les priorités 2 et 3 du plan artistique.
 - **Rééquilibrage de la musique et panneau des volumes** :
   - écart crête / moyenne par section : avant 10,5 à 13,1 dB (pic de la marimba de tête), après 10,6 à 11,8 dB, régulier sur tout le morceau ; écart de niveau entre sections ramené de 5,7 à 4,2 dB (intro et pont restent plus calmes) ; boucle toujours sans saut ;
   - panneau, par de vrais clics simulés : ouverture par le bouton, musique réglée à 0,3, nature coupée, réglages écrits ; au relancement, la nature reste coupée (bus Ambiance muet au camp) ; héros immobile pendant les clics ; ton fichier de réglages remis dans son état d'origine après l'essai ;
-  - **non vérifié** : l'écoute, à ton test.
+  - écoute : **validée** par le porteur du projet le 22/10/2026.
 - **Audio, lot C (musique)** :
   - partition contrôlée par l'outil : chaque mesure fait exactement 4 temps (aucune erreur) ; hauteurs calculées en tempérament égal depuis le nom des notes ; harmonies vérifiées mesure par mesure (notes de la mélodie dans l'accord, ou notes de passage) ;
   - niveaux moyens : intro -22,9, A -17,7, A' -17,2, pont -20,0, marimba -19,1, coda -20,4 dBFS (le pont et la coda respirent) ; crête du fichier -6 dBFS ;
@@ -243,10 +243,9 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
-- **Rééquilibrage de la musique et panneau des volumes**, en attente d'écoute et de validation :
+- **Rééquilibrage de la musique et panneau des volumes**, validés le 22/10/2026 et publiés (tag `audio-c2`) :
   - musique : mêmes notes, même rythme, même structure et mêmes instruments ; seuls les niveaux des voix changent (`LEVELS` dans `tools/generate_music.gd`) : marimba de tête 0,34 → 0,21 (doublée par la flûte un peu plus présente), arpège 0,13 → 0,105, kick 0,22 → 0,15, flûte 0,30 → 0,27, nappe 0,045 → 0,05 ; les notes aiguës de la flûte et de la marimba sont un peu adoucies et moins brillantes (jusqu'à -3 dB et moitié moins d'harmoniques vers mi6) ; niveau en jeu -7 → -8 dB ;
   - panneau des volumes (`scenes/ui/audio_panel.gd`) : touche V ou petit bouton à note de musique en bas à droite ; un curseur et une case de coupure pour MUSIQUE, EFFETS et NATURE ; réglages enregistrés dans `user://settings.cfg` (écrit au relâchement du curseur) ; un clic sur le panneau ne déplace pas le héros.
-  - Commit local seulement. Après validation : tag `audio-c2` et push.
 - **Audio, lot C : première musique d'exploration**, validé à l'écoute le 22/10/2026 et publié (tag `audio-c`) :
   - composition originale, écrite note par note dans `tools/generate_music.gd` et rendue en un fichier réutilisable (`assets/audio/music/theme_exploration.wav`, 100 s, 22 kHz mono) ; rien n'est calculé au lancement du jeu ;
   - sol majeur, 96 BPM, 40 mesures : intro (nappe, arpège), thème A (flûte rétro), variation A' (plus aiguë, petit kick), pont B plus calme en mi mineur (notes longues, sans percussion), retour du thème à la marimba, coda qui finit sur l'accord de ré pour ramener à l'intro ;
@@ -307,7 +306,7 @@ Voir les priorités 2 et 3 du plan artistique.
 ## Prochaines étapes
 
 1. **Feuille de route `docs/ROADMAP.md`**, ordre revu le 22/10/2026 (rien de tout cela n'est développé) :
-   1. ambiance sonore : lot A validé (tag `audio-a`), lot B (pas, ambiances) validé (tag `audio-b`) ; lot C (première musique) validé (tag `audio-c`) ; rééquilibrage de la musique et panneau des volumes faits, en attente de validation ; plus tard, variantes du thème par époque ;
+   1. ambiance sonore : lot A validé (tag `audio-a`), lot B (pas, ambiances) validé (tag `audio-b`) ; lot C (première musique) validé (tag `audio-c`) ; rééquilibrage de la musique et panneau des volumes validés (tag `audio-c2`) ; plus tard, variantes du thème par époque ;
    2. art du monde jouable : d'abord une zone témoin soignée autour du campement, en partant de vrais assets pixel art ;
    3. comportement plus organique des troupes ;
    4. carte du monde et mini-carte, plus tard.
@@ -325,12 +324,12 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ### 1. Où en est-on
 
-- Dépôt : https://github.com/adrienmazas33-create/INCR-AGE, branche `main`. Chaque lot validé porte un tag : `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`, `art-pass-1`, `camp-compass`, `mouse-move`, `hero-id`, `audio-a`, `audio-b`, `audio-b2`, `audio-c`.
+- Dépôt : https://github.com/adrienmazas33-create/INCR-AGE, branche `main`. Chaque lot validé porte un tag : `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`, `art-pass-1`, `camp-compass`, `mouse-move`, `hero-id`, `audio-a`, `audio-b`, `audio-b2`, `audio-c`, `audio-c2`.
 - Copie locale : `C:\Users\Adrien\OneDrive\Bureau\INCR-AGE`. Identité Git définie **uniquement pour ce dépôt** (`user.name` « Adrien »).
 - Bible créative : `Bible_creative_Jeu_incremental_2D_V01.md` / `.docx`, dans les Téléchargements de l'utilisateur, **hors dépôt**.
 - **Chantier artistique** : étape 1 et passe visuelle 1 faites et validées (tag `art-pass-1`). Prochaine étape, sur demande : priorité 2 de `docs/ART_DIRECTION_PLAN.md`. Ne pas commencer d'autre phase sans demande explicite.
 - **Indicateur du campement** : validé et publié (tag `camp-compass`).
-- **Feuille de route** `docs/ROADMAP.md` : déplacement à la souris (**fait et validé**, tag `mouse-move`) ; identification du héros (**faite et validée**, tag `hero-id`). Audio : lot A **fait et validé** (tag `audio-a`), lot B **fait et validé** (tag `audio-b`). Lot C (musique) : **fait et validé** (tag `audio-c`). Rééquilibrage musical et panneau des volumes : **faits, commit local en attente de validation**. Ensuite, **prévus et non développés** : variantes du thème par époque, art du monde (zone témoin au camp), troupes organiques, carte du monde ; amélioration VITESSE reportée.
+- **Feuille de route** `docs/ROADMAP.md` : déplacement à la souris (**fait et validé**, tag `mouse-move`) ; identification du héros (**faite et validée**, tag `hero-id`). Audio : lot A **fait et validé** (tag `audio-a`), lot B **fait et validé** (tag `audio-b`). Lot C (musique) : **fait et validé** (tag `audio-c`). Rééquilibrage musical et panneau des volumes : **faits et validés** (tag `audio-c2`). Ensuite, **prévus et non développés** : variantes du thème par époque, art du monde (zone témoin au camp), troupes organiques, carte du monde ; amélioration VITESSE reportée.
 
 ### 2. Méthode de travail attendue
 
