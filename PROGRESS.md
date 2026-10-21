@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : identification du héros faite, en commit local, en attente de validation (non poussé, pas de tag). Amélioration VITESSE reportée. Priorités suivantes revues dans `docs/ROADMAP.md` : audio, art du monde (zone témoin au camp), troupes plus organiques, puis carte du monde.**
+**État : identification du héros validée et publiée (tag `hero-id`). Amélioration VITESSE reportée. Priorités suivantes revues dans `docs/ROADMAP.md` : audio, art du monde (zone témoin au camp), troupes plus organiques, puis carte du monde.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -213,11 +213,10 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
-- **Identification du héros** (section 0 bis de `docs/ROADMAP.md`), en attente de validation :
+- **Identification du héros** (section 0 bis de `docs/ROADMAP.md`), validée le 22/10/2026 et publiée (tag `hero-id`) :
   - bandeau doré et plume à pointe d'or (`tools/generate_art.gd`, `_feather`) ;
   - anneau doré au sol, plus net quand le héros est entouré ; petit chevron au-dessus de la tête en combat seulement (`scenes/characters/hero_marker.gd`, ajouté par `Hero._ready`) ;
   - pas de lueur permanente ; collisions et mécaniques inchangées.
-  - Commit local seulement. Après validation : tag `hero-id` et push.
 - **Amélioration VITESSE** : reportée, détail de ce qu'elle demandera dans `docs/ROADMAP.md`.
 - **Déplacement à la souris** (lot 1 de `docs/ROADMAP.md`), validé le 22/10/2026 et publié (tag `mouse-move`) :
   - clic gauche sur le sol : le héros y va par un chemin praticable (escaliers, ponts, bâtiments du camp contournés) ;
@@ -267,12 +266,12 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ### 1. Où en est-on
 
-- Dépôt : https://github.com/adrienmazas33-create/INCR-AGE, branche `main`. Chaque lot validé porte un tag : `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`, `art-pass-1`, `camp-compass`, `mouse-move`.
+- Dépôt : https://github.com/adrienmazas33-create/INCR-AGE, branche `main`. Chaque lot validé porte un tag : `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`, `art-pass-1`, `camp-compass`, `mouse-move`, `hero-id`.
 - Copie locale : `C:\Users\Adrien\OneDrive\Bureau\INCR-AGE`. Identité Git définie **uniquement pour ce dépôt** (`user.name` « Adrien »).
 - Bible créative : `Bible_creative_Jeu_incremental_2D_V01.md` / `.docx`, dans les Téléchargements de l'utilisateur, **hors dépôt**.
 - **Chantier artistique** : étape 1 et passe visuelle 1 faites et validées (tag `art-pass-1`). Prochaine étape, sur demande : priorité 2 de `docs/ART_DIRECTION_PLAN.md`. Ne pas commencer d'autre phase sans demande explicite.
 - **Indicateur du campement** : validé et publié (tag `camp-compass`).
-- **Feuille de route** `docs/ROADMAP.md` : déplacement à la souris (**fait et validé**, tag `mouse-move`) ; identification du héros (**faite, commit local en attente de validation**). Ensuite, **prévus et non développés** : audio, art du monde (zone témoin au camp), troupes organiques, carte du monde ; amélioration VITESSE reportée.
+- **Feuille de route** `docs/ROADMAP.md` : déplacement à la souris (**fait et validé**, tag `mouse-move`) ; identification du héros (**faite et validée**, tag `hero-id`). Ensuite, **prévus et non développés** : audio, art du monde (zone témoin au camp), troupes organiques, carte du monde ; amélioration VITESSE reportée.
 
 ### 2. Méthode de travail attendue
 

@@ -2,7 +2,7 @@
 
 Document de cadrage rédigé le 22/10/2026 à partir des retours de test du porteur du projet.
 
-> **Fait** : l'indicateur de direction du campement (section 0, validé, tag `camp-compass`), le déplacement à la souris (section 1, validé, tag `mouse-move`) et l'identification du héros (section 0 bis, en attente de validation). **Tout le reste est PRÉVU, non développé.**
+> **Fait** : l'indicateur de direction du campement (section 0, validé, tag `camp-compass`), le déplacement à la souris (section 1, validé, tag `mouse-move`) et l'identification du héros (section 0 bis, validé, tag `hero-id`). **Tout le reste est PRÉVU, non développé.**
 
 Priorités revues le 22/10/2026, après les tests du porteur du projet (voir « Ordre des prochaines sessions »).
 
@@ -19,7 +19,7 @@ Règles communes à chaque lot :
 - La flèche suit 16 directions (rendu net en pixels). Le médaillon s'efface en fondu quand le camp redevient visible, et passe sous le compteur de ressources.
 - Purement visuel : aucune règle de jeu touchée.
 
-## 0 bis. Identification du héros — FAIT, en attente de validation
+## 0 bis. Identification du héros — FAIT et validé (tag `hero-id`)
 
 - **Silhouette** : bandeau doré et plume blanche à pointe d'or plantée dedans, qui dépasse de la tête. Ils s'ajoutent à la cape dorée et à la massue. Les compagnons ont des lances et des bandeaux rouges : le héros se lit d'un coup d'œil.
 - **Anneau au sol** (`scenes/characters/hero_marker.gd`) :
