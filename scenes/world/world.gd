@@ -33,5 +33,10 @@ func _ready() -> void:
 		_water.material = null
 
 
+## Conteneur trié en profondeur (décors ajoutés en cours de partie).
+func entity_layer() -> Node2D:
+	return _entities
+
+
 func add_entity(node: Node2D) -> void:
 	_entities.add_child(node)

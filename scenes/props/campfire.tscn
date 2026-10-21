@@ -15,7 +15,7 @@ colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 0.5, 1, 1, 1, 0)
 [sub_resource type="CircleShape2D" id="fire_shape"]
 radius = 11.0
 
-[node name="Campfire" type="Node2D"]
+[node name="Campfire" type="Node2D" groups=["campfire"]]
 script = ExtResource("1_script")
 
 [node name="Glow" type="Sprite2D" parent="."]

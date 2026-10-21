@@ -16,6 +16,10 @@ const DEFS := {
 		"cost": {"food": [4.0, 1.4], "materials": [2.0, 1.45]}, "knowledge_from": 2},
 }
 
+## Prospérité requise pour chaque stade du campement, et noms affichés.
+const CAMP_THRESHOLDS := [0, 3, 8]
+const CAMP_NAMES := ["CAMPEMENT", "TRIBU", "VILLAGE"]
+
 const BASE_COMPANIONS := 3
 const BASE_MAGNET := 96.0
 const MAGNET_PER_LEVEL := 24.0
@@ -62,6 +66,33 @@ static func any_affordable() -> bool:
 		if can_buy(id):
 			return true
 	return false
+
+
+## Prospérité : nombre total de niveaux achetés. Le campement évolue avec elle (lot 3B).
+static func prosperity() -> int:
+	var total := 0
+	for id in ORDER:
+		total += level(id)
+	return total
+
+
+## Stade du campement : 1 campement, 2 tribu, 3 village.
+static func camp_stage() -> int:
+	var stage := 1
+	for i in CAMP_THRESHOLDS.size():
+		if prosperity() >= CAMP_THRESHOLDS[i]:
+			stage = i + 1
+	return stage
+
+
+## Progression (0 à 1) vers le stade suivant ; 1 au dernier stade.
+static func camp_progress() -> float:
+	var stage := camp_stage()
+	if stage >= CAMP_THRESHOLDS.size():
+		return 1.0
+	var lo: int = CAMP_THRESHOLDS[stage - 1]
+	var hi: int = CAMP_THRESHOLDS[stage]
+	return float(prosperity() - lo) / (hi - lo)
 
 
 static func companion_count() -> int:

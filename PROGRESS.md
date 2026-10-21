@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : phases 1 et 2 validées (tags `phase-1`, `phase-2a`, `phase-2b`) ; phase 3 : lot 3A validé (tag `phase-3a`), lot 3B en cours, lot 3C non commencé. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
+**État : phases 1 et 2 validées (tags `phase-1`, `phase-2a`, `phase-2b`) ; phase 3 : lot 3A validé (tag `phase-3a`), lot 3B (évolution du campement) terminé côté développement, en attente de validation ; lot 3C non commencé. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
 ## Lancer et tester
@@ -12,6 +12,7 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 - Couper les effets d'ambiance : lancer avec `-- --no-fx`, ou passer `ambient_effects` à `false` dans `scripts/autoload/game_settings.gd`.
 - Combat : rien à presser. Le héros et ses compagnons frappent seuls les ennemis à portée ; le joueur choisit où se battre par ses déplacements. `-- --no-hitstop` coupe la micro-pause d'impact.
 - Améliorations : s'approcher du feu de camp ouvre le panneau ; cliquer (ou toucher) une ligne, ou touches 1 à 4. Un repère doré flotte au-dessus du feu quand un achat est possible.
+- Évolution du camp : automatique avec la prospérité (niveaux achetés) ; le stade et la progression s'affichent au pied du panneau du feu.
 
 ## Choix techniques
 
@@ -32,6 +33,7 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 | Laisses | Alliés : n'engagent qu'un ennemi à moins de 110 px du héros, le lâchent au-delà de 150 px. Sangliers : jamais à plus de 7 tuiles de leur repaire | Aucune poursuite sans fin ; le joueur n'est jamais entraîné loin malgré lui. |
 | Données | Caractéristiques des unités dans `data/units/*.tres` (`UnitStats`), ressources dans l'autoload `GameState` | Réglables sans code ; base de la future sauvegarde. |
 | Progression | Catalogue `Upgrades` (coûts exponentiels doux, effets calculés), niveaux dans `GameState.upgrades`, effets appliqués par `UpgradeEffects` | Achats accessibles dès 2 ou 3 combats ; stockage prêt pour la sauvegarde 3C. |
+| Campement | Trois stades (CAMPEMENT, TRIBU à 3 niveaux achetés, VILLAGE à 8) décrits en données dans `CampVillage` ; stade calculé à partir des améliorations | Aucun placement par le joueur ; rien ne progresse hors du jeu ; la sauvegarde 3C reconstruira le camp sans donnée en plus. |
 
 ## Terminé (phase 1)
 
@@ -71,6 +73,14 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 - Retours : ligne qui brille (ou tremble en rouge si refusé), compteur qui baisse en rouge, recrue qui surgit près du feu dans une gerbe d'étincelles, lueur dorée (FORCE) ou verte avec soin (VIGUEUR) sur tout le groupe, cercle du nouveau rayon (AIMANT), repère doré au-dessus du feu.
 - Huit apparences de compagnons ; marche en colonne par deux ; éventail de combat adapté au nombre ; trot de rattrapage.
 
+## Terminé (phase 3, lot 3B)
+
+- Stade 2 « TRIBU » : deux huttes, séchoir à viande, paniers de réserve, deux villageois.
+- Stade 3 « VILLAGE » : maison longue, nouvelle hutte, palissade à l'est, torches à l'entrée nord, bannière, panier, grand feu central, deux villageois de plus.
+- Transition : bandeau « LA TRIBU GRANDIT » / « LE VILLAGE PROSPERE », éléments qui apparaissent un à un (poussière, fondu, légère montée), grand feu dans une gerbe d'étincelles, villageois qui arrivent à pied par le sud.
+- Villageois : décor animé sans collision ni combat, va-et-vient entre feu, huttes et réserves, pauses tournées vers le feu.
+- Pied du panneau du feu : nom du stade et barre de progression vers le suivant.
+
 ## Vérifications réellement effectuées
 
 - Lancement sans erreur de script ; captures d'écran en jeu de chaque région (campement, ponts, lac, plateaux, prairies, étang).
@@ -80,11 +90,13 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 - Lot A : tour complet piloté (colline nord, pont nord, grand plateau est, pont est, étang, lac, éperon sud-ouest, retour au camp, 150 s) : héros jamais bloqué, **0 replacement forcé** des alliés, écart maximal 81 px. Captures : groupe au camp, en file sur le pont et dans l'escalier, arrêt sur le pont.
 - Lot B : combats en jeu près des repaires de la prairie est (charge, coups du héros et des alliés, mort, butin aimanté et compté), K.O. du héros et retour au camp (groupe replacé autour de lui), tour complet de la carte avec ennemis (héros jamais bloqué ; deux alliés mis K.O. par le grand sanglier puis replacés comme prévu), retour de l'échelle de temps à 1 après les micro-pauses, 60 FPS. Captures : mêlée, éventail des alliés, butin, compteur.
 - Lot 3A : panneau capturé au camp (achats possibles, puis après achats) ; achats simulés de toutes les améliorations (coûts déduits, effets visibles) ; tour complet de la carte à 8 compagnons : 4 replacements forcés, tous après les combats du couloir ouest (contre 67 avant le correctif de rattrapage) ; tour à 3 compagnons sans régression (1 replacement) ; combat à 8 avec FORCE 2 : sanglier abattu en moins d'une seconde, butin ramassé ; 60 FPS, environ 7 780 nœuds.
+- Lot 3B : captures du passage au stade 2 (bandeau, éléments) et du stade 3 installé (village, villageois, grand feu, pied du panneau) ; tour complet de la carte au stade 3 avec 8 compagnons : héros jamais bloqué, 2 replacements forcés (après combats). Coût de calcul comparé sans affichage, en alternant les passages : stade 3 avec 8 compagnons pas plus coûteux que le stade 1 (10 à 18 ms contre 14 à 24 ms par image).
+- **Performances absolues non fiables pendant ce lot** : l'ordinateur était sur batterie (processeur bridé) ; la version 3A, à 60 FPS lors de sa validation, ne tenait plus que 29 à 50 FPS dans les mêmes conditions. À revérifier sur secteur.
 - **Non vérifié** : sensations de contrôle, de caméra et de combat par un humain, clic réel dans le panneau (achats testés par commande), toucher sur écran tactile, écran 120/144 Hz, plein écran.
 
 ## En cours
 
-- Lot 3B : évolution automatique du campement.
+- Rien. Attente de validation du lot 3B avant le lot 3C.
 
 ## Problèmes connus / limites
 
@@ -94,15 +106,17 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 - La carte `.txt` et `props.json` ne sont pas des ressources Godot. À l'export, ajouter `*.txt, *.json` aux filtres de fichiers non-ressources.
 - Pas d'exécutable exporté : les modèles d'export Godot ne sont pas installés.
 - À 8 compagnons, les combats contre les jeunes sangliers deviennent très courts : l'équilibrage des ennemis devra suivre la croissance de l'armée (phases suivantes).
+- Les villageois traversent les décors (ils n'ont pas de collision) : invisible la plupart du temps, leurs trajets étant choisis dans les espaces dégagés.
+- L'outil de parcours piloté calcule ses chemins sur la carte d'origine : il ignore les bâtiments ajoutés par l'évolution du camp (placés hors des chemins).
+- Coût de calcul par image à profiler sur secteur (10 à 24 ms mesurés sur batterie) : piste d'optimisation pour le Web et le mobile.
 - Équilibrage provisoire (vie, dégâts, cadences) : à ajuster après tes essais, directement dans `data/units/*.tres`.
 - Le butin non ramassé reste au sol indéfiniment (pas encore de disparition).
 
 ## Prochaines étapes
 
-1. Lot 3B (après validation) : évolution automatique du campement en trois états.
-2. Lot 3C : sauvegarde locale fiable.
-3. Ajustements d'équilibrage au fil des essais (`data/units/*.tres`, `scripts/progression/upgrades.gd`).
-4. Plus tard : manette (les actions `move_*` et `zoom_*` sont déjà abstraites).
+1. Lot 3C (après validation du 3B) : sauvegarde locale fiable.
+2. Ajustements d'équilibrage au fil des essais (`data/units/*.tres`, `scripts/progression/upgrades.gd`).
+3. Plus tard : manette (les actions `move_*` et `zoom_*` sont déjà abstraites).
 
 ## Reprendre le travail (session suivante)
 
@@ -112,7 +126,7 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
    - `scenes/world/` : `world.gd` charge la carte. `scripts/world/` contient `MapData` (lecture et requêtes), `TerrainBuilder` (tuiles et collisions), `PropSpawner` (décors) et `TileIds` (disposition des atlas).
    - `scenes/characters/` : `hero.*`, `follower.*`, `party.gd` (trace et places du groupe), `character_sprite.gd` (animation commune). `scenes/camera/game_camera.*`, `scenes/props/` (feu, papillon).
    - Combat : `scripts/combat/` (`UnitStats`, `Health`, `Combatant`, `AutoAttack`, `Targeting`, `HealthBar`), `scenes/enemies/boar.*`, `scripts/world/enemy_spawner.gd`, `scenes/loot/pickup.gd`, `scenes/fx/`, `scenes/ui/hud.gd`, `scripts/ui/pixel_text.gd`. Autoloads : `GameSettings`, `GameState`, `CombatFx`.
-   - Progression : `scripts/progression/` (`Upgrades`, `UpgradeEffects`), `scenes/ui/camp_panel*.gd`.
+   - Progression : `scripts/progression/` (`Upgrades`, `UpgradeEffects`), `scenes/ui/camp_panel*.gd` ; évolution du camp : `scripts/world/camp_village.gd`, `scenes/characters/villager.gd`, `Campfire.enlarge()`.
    - Les futurs PNJ s'ajoutent au monde par `World.add_entity()` pour être triés en profondeur.
 3. Commandes utiles (depuis la racine, `godot` = exécutable console de Godot) :
    - Régénérer l'art : `godot --headless --path . --script res://tools/generate_art.gd`, puis `godot --headless --path . --import`.
@@ -122,3 +136,4 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
    - Parcours piloté (plus court chemin case par case) avec bilan du groupe : `godot --path . -- --route=58,17/79,30/99,20/80,56/58,58`.
    - Tests de combat : `--hero-hp=6` (forcer un K.O.) ; le bilan affiche ressources, PV et coups portés par le héros.
    - Achats : `--give=food:30,materials:10,knowledge:2 --buy=recruit,damage` (achats exécutés au lancement).
+   - Mesures : le bilan affiche une moyenne d'images par seconde et le temps de calcul moyen par image (plus fiable que le FPS instantané).

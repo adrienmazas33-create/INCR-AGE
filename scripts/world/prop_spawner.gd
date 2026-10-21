@@ -25,6 +25,13 @@ const PROPS := {
 	"M": {"sprites": ["menhir"], "foot": Vector2(12, 6), "jitter": 0},
 	"I": {"sprites": ["totem"], "foot": Vector2(10, 6), "jitter": 0},
 	"n": {"sprites": ["reeds_0", "reeds_1"], "foot": Vector2.ZERO, "jitter": 6},
+	# Éléments ajoutés par l'évolution du campement (CampVillage), sans caractère de carte.
+	"longhouse": {"sprites": ["longhouse"], "foot": Vector2(84, 16), "jitter": 0},
+	"palisade": {"sprites": ["palisade"], "foot": Vector2(32, 6), "jitter": 0},
+	"rack_meat": {"sprites": ["rack_meat"], "foot": Vector2(26, 4), "jitter": 0},
+	"baskets": {"sprites": ["baskets"], "foot": Vector2(20, 6), "jitter": 0},
+	"torch": {"sprites": ["torch"], "foot": Vector2(4, 4), "jitter": 0},
+	"banner": {"sprites": ["banner"], "foot": Vector2(6, 4), "jitter": 0},
 }
 const FOREST_SPRITES := ["tree_0", "tree_2", "tree_0", "tree_1", "pine_0", "pine_1"]
 const MAX_BUTTERFLIES := 14
@@ -61,7 +68,7 @@ func spawn(entities: Node2D) -> void:
 				butterflies += 1
 
 
-func _spawn_prop(parent: Node2D, def: Dictionary, c: Vector2i, anchor: Vector2) -> void:
+func _spawn_prop(parent: Node2D, def: Dictionary, c: Vector2i, anchor: Vector2) -> Node2D:
 	var sprites: Array = def["sprites"]
 	var jitter: float = def["jitter"]
 	var pos := anchor + Vector2(_rand(c, 1) - 0.5, _rand(c, 2) - 0.5) * 2.0 * jitter
@@ -71,7 +78,7 @@ func _spawn_prop(parent: Node2D, def: Dictionary, c: Vector2i, anchor: Vector2) 
 	if foot == Vector2.ZERO:
 		sprite.position = pos
 		parent.add_child(sprite)
-		return
+		return sprite
 	var body := StaticBody2D.new()
 	body.position = pos
 	var shape := RectangleShape2D.new()
@@ -82,6 +89,12 @@ func _spawn_prop(parent: Node2D, def: Dictionary, c: Vector2i, anchor: Vector2) 
 	body.add_child(sprite)
 	body.add_child(col)
 	parent.add_child(body)
+	return body
+
+
+## Crée un décor du catalogue PROPS sur une cellule (utilisé par l'évolution du campement).
+func make_prop(key: String, c: Vector2i, parent: Node2D) -> Node2D:
+	return _spawn_prop(parent, PROPS[key], c, Vector2(c * T) + Vector2(T * 0.5, T * 0.75))
 
 
 ## Forêt dense : une rangée de la carte = un nœud trié en Y contenant ses arbres

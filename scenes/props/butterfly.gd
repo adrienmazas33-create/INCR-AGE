@@ -14,6 +14,8 @@ var _speed := Vector2.ONE
 
 
 func _ready() -> void:
+	# Déplacé hors du rythme physique : pas d'interpolation physique.
+	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	z_index = 2
 	_home = position
 	_time = float(variant_seed % 1000)

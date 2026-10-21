@@ -7,6 +7,9 @@ extends Control
 const WIDTH := 136.0
 const ROW_H := 26.0
 const HEADER_H := 15.0
+## Pied du panneau : stade du campement et progression vers le suivant.
+const FOOTER_H := 15.0
+const BAR_WIDTH := 52.0
 const MARGIN := 6.0
 const OPEN_RADIUS := 88.0
 const SLIDE_SPEED := 5.0
@@ -19,6 +22,7 @@ var _hero: Hero
 var _camp := Vector2.ZERO
 var _rows: Array[CampPanelRow] = []
 var _slide := 0.0
+var _stage_label := PixelText.new()
 
 
 func setup(hero: Hero, camp: Vector2) -> void:
@@ -28,7 +32,11 @@ func setup(hero: Hero, camp: Vector2) -> void:
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_PASS
-	size = Vector2(WIDTH, HEADER_H + ROW_H * Upgrades.ORDER.size() + 3)
+	size = Vector2(WIDTH, HEADER_H + ROW_H * Upgrades.ORDER.size() + FOOTER_H + 2)
+	_stage_label.align = 0.0
+	_stage_label.modulate = TITLE
+	_stage_label.position = Vector2(8, size.y - FOOTER_H * 0.5 - 1)
+	add_child(_stage_label)
 	var title := PixelText.new()
 	title.text = "FEU DE CAMP"
 	title.modulate = TITLE
@@ -75,6 +83,8 @@ func _buy(row: CampPanelRow) -> void:
 
 
 func _refresh() -> void:
+	_stage_label.text = Upgrades.CAMP_NAMES[Upgrades.camp_stage() - 1]
+	queue_redraw()
 	for row in _rows:
 		row.refresh()
 
@@ -85,3 +95,10 @@ func _draw() -> void:
 	draw_line(Vector2(1, 1), Vector2(size.x - 1, 1), BORDER_LIGHT)
 	draw_line(Vector2(1, 1), Vector2(1, size.y - 1), BORDER_LIGHT)
 	draw_line(Vector2(4, HEADER_H - 2), Vector2(size.x - 4, HEADER_H - 2), BORDER_LIGHT)
+	# Pied : stade du campement et barre de progression vers le stade suivant.
+	var foot_y := size.y - FOOTER_H - 1
+	draw_line(Vector2(4, foot_y), Vector2(size.x - 4, foot_y), BORDER_LIGHT)
+	var bar := Rect2(size.x - BAR_WIDTH - 8, foot_y + FOOTER_H * 0.5 - 2, BAR_WIDTH, 4)
+	draw_rect(bar.grow(1), BORDER_DARK)
+	draw_rect(bar, Color8(70, 50, 40))
+	draw_rect(Rect2(bar.position, Vector2(roundf(BAR_WIDTH * Upgrades.camp_progress()), 4)), TITLE)

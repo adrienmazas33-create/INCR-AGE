@@ -619,6 +619,11 @@ const FOLLOWERS := [
 		"f": Color8(106, 128, 68), "F": Color8(76, 96, 48), "g": Color8(138, 162, 92)}, "beard": false, "band": true},
 ]
 const BAND := Color8(186, 58, 48)
+## Villageois du campement (phase 3B) : tuniques claires, sans barbe.
+const VILLAGERS := [
+	{"h": Color8(60, 40, 30), "H": Color8(98, 68, 48), "f": Color8(214, 196, 158), "F": Color8(164, 146, 112), "g": Color8(236, 222, 190)},
+	{"h": Color8(176, 110, 56), "H": Color8(214, 150, 86), "f": Color8(150, 74, 56), "F": Color8(108, 50, 38), "g": Color8(184, 104, 80)},
+]
 
 
 func _gen_hero() -> void:
@@ -629,6 +634,10 @@ func _gen_hero() -> void:
 		colors.merge(v["colors"], true)
 		colors["b"] = BAND
 		_save(_character_sheet(colors, v["beard"], v["band"]), "follower_%d.png" % i)
+	for i in VILLAGERS.size():
+		var colors := HERO_COLORS.duplicate()
+		colors.merge(VILLAGERS[i], true)
+		_save(_character_sheet(colors, false, false), "villager_%d.png" % i)
 
 
 ## Planche 6 x 3 : colonnes repos 0-1, marche 2-5 ; lignes face, dos, profil (vers la droite).
@@ -728,6 +737,13 @@ func _gen_props() -> void:
 	sprites.append(["totem", _totem(), Vector2i(8, 40)])
 	for v in 2:
 		sprites.append(["reeds_%d" % v, _reeds(v), Vector2i(7, 18)])
+	# Campement en évolution (phase 3B).
+	sprites.append(["longhouse", _longhouse(), Vector2i(48, 60)])
+	sprites.append(["palisade", _palisade(), Vector2i(16, 37)])
+	sprites.append(["rack_meat", _rack_meat(), Vector2i(15, 28)])
+	sprites.append(["baskets", _baskets(), Vector2i(13, 17)])
+	sprites.append(["torch", _torch(), Vector2i(5, 27)])
+	sprites.append(["banner", _banner(), Vector2i(8, 41)])
 	_pack(sprites, "props")
 
 
@@ -1036,6 +1052,150 @@ func _woodpile() -> Image:
 	return img
 
 
+## Maison longue au toit de chaume (96 x 64) : bâtiment du village prospère.
+func _longhouse() -> Image:
+	var img := _img(96, 64)
+	# Murs de rondins.
+	for y in range(40, 60):
+		for x in range(8, 88):
+			var c := WD_MID if (y - 40) % 5 < 3 else WD_DARK
+			if (y - 40) % 5 == 0:
+				c = WD_LIGHT
+			img.set_pixel(x, y, c)
+	# Toit : demi-ellipse de chaume, rangées décalées, ombré à droite.
+	for y in range(8, 46):
+		for x in range(2, 94):
+			var dx := (x + 0.5 - 48.0) / 46.0
+			var dy := (y + 0.5 - 46.0) / 38.0
+			if dx * dx + dy * dy > 1.0:
+				continue
+			var row := (y - 8) / 5
+			var c := ST_MID
+			if dx < -0.5:
+				c = ST_LIGHT
+			elif dx > 0.45:
+				c = ST_DARK
+			if (y - 8) % 5 == 4 and _h(x, row, 98) < 0.7:
+				c = c.lerp(WD_DARK, 0.45)
+			elif _h(x, row, 99) < 0.12:
+				c = c.lerp(ST_LIGHT, 0.5)
+			img.set_pixel(x, y, c)
+	# Porte et poutres d'angle.
+	for y in range(44, 60):
+		for x in range(42, 54):
+			if y >= 49 or Vector2(x + 0.5, y + 0.5).distance_to(Vector2(48, 49)) <= 6.0:
+				img.set_pixel(x, y, Color8(44, 26, 20))
+	for y in range(40, 60):
+		for x in [8, 87]:
+			img.set_pixel(x, y, WD_DARK)
+	for p in [[Vector2(48, 9), Vector2(40, 1)], [Vector2(48, 9), Vector2(56, 1)]]:
+		for i in 12:
+			var q: Vector2 = p[0].lerp(p[1], i / 11.0)
+			img.set_pixel(int(q.x), int(q.y), WD_MID)
+	_outline(img, OUTLINE)
+	_ground_shadow(img, 48, 60, 46, 4.5)
+	return img
+
+
+## Tronçon de palissade : pieux taillés en pointe liés par une corde.
+func _palisade() -> Image:
+	var img := _img(32, 40)
+	for k in 5:
+		var x0 := 1 + k * 6
+		var top := 4 + int(_h(k, 0, 100) * 4.0)
+		for y in range(top, 38):
+			for x in range(x0, x0 + 5):
+				var c := WD_LIGHT if x == x0 else (WD_DARK if x == x0 + 4 else WD_MID)
+				if y < top + 3 and (x < x0 + 1 + (y - top) or x > x0 + 3 - (y - top)):
+					continue
+				img.set_pixel(x, y, c)
+	for x in 32:
+		for y in [15, 29]:
+			img.set_pixel(x, y, HERO_COLORS["r"])
+			img.set_pixel(x, y + 1, ST_DARK)
+	_outline(img, OUTLINE)
+	_ground_shadow(img, 16, 38, 16, 2.0)
+	return img
+
+
+## Séchoir garni de lanières de viande (réserve de vivres).
+func _rack_meat() -> Image:
+	var img := _img(30, 30)
+	for y in range(3, 29):
+		for x in [3, 26]:
+			img.set_pixel(x, y, WD_MID)
+			img.set_pixel(x + 1, y, WD_DARK)
+	for x in range(2, 28):
+		img.set_pixel(x, 4, WD_LIGHT)
+		img.set_pixel(x, 5, WD_DARK)
+	for k in 5:
+		var x0 := 7 + k * 4
+		var length := 9 + int(_h(k, 1, 101) * 7.0)
+		for y in range(6, 6 + length):
+			img.set_pixel(x0, y, Color8(198, 84, 70) if y % 3 else Color8(150, 56, 50))
+			img.set_pixel(x0 + 1, y, Color8(230, 130, 110) if y < 8 + length / 2 else Color8(178, 70, 60))
+	_outline(img, OUTLINE)
+	_ground_shadow(img, 15, 29, 13, 1.5)
+	return img
+
+
+## Paniers de réserve tressés, l'un rempli de baies.
+func _baskets() -> Image:
+	var img := _img(26, 20)
+	for b in [Vector3(8, 12, 6), Vector3(18, 13, 5)]:
+		for y in range(int(b.y - b.z), int(b.y + b.z) + 1):
+			for x in range(int(b.x - b.z), int(b.x + b.z) + 1):
+				var d := Vector2((x + 0.5 - b.x) / b.z, (y + 0.5 - b.y) / b.z)
+				if d.y < -0.35 or d.length() > 1.0:
+					continue
+				var weave := (x + y) % 3 == 0
+				img.set_pixel(x, y, ST_DARK if weave else ST_MID)
+	for i in 7:
+		var p := Vector2i(4 + int(_h(i, 2, 102) * 8.0), 8 + int(_h(2, i, 103) * 2.0))
+		img.set_pixelv(p, Color8(150, 40, 70))
+		img.set_pixelv(p + Vector2i(0, -1), Color8(206, 70, 100))
+	_outline(img, OUTLINE)
+	_ground_shadow(img, 13, 18, 12, 1.5)
+	return img
+
+
+## Torche plantée à l'entrée du camp.
+func _torch() -> Image:
+	var img := _img(10, 29)
+	for y in range(9, 28):
+		img.set_pixel(4, y, WD_MID)
+		img.set_pixel(5, y, WD_DARK)
+	for x in range(3, 7):
+		img.set_pixel(x, 9, HERO_COLORS["r"])
+	_outline(img, OUTLINE)
+	for p in [Vector2i(4, 3), Vector2i(5, 4), Vector2i(4, 5), Vector2i(5, 6), Vector2i(4, 7), Vector2i(5, 8), Vector2i(3, 6), Vector2i(6, 7)]:
+		img.set_pixelv(p, Color8(255, 194, 64))
+	for p in [Vector2i(4, 6), Vector2i(5, 7), Vector2i(4, 7)]:
+		img.set_pixelv(p, Color8(255, 244, 170))
+	img.set_pixel(5, 2, Color8(240, 106, 40))
+	return img
+
+
+## Bannière de peau peinte sur une perche.
+func _banner() -> Image:
+	var img := _img(16, 43)
+	for y in range(2, 42):
+		img.set_pixel(3, y, WD_MID)
+		img.set_pixel(4, y, WD_DARK)
+	for y in range(5, 22):
+		var width := 10 - (2 if y > 18 and y % 2 else 0)
+		for x in range(5, 5 + width):
+			img.set_pixel(x, y, HERO_COLORS["g"] if x < 9 else HERO_COLORS["f"])
+	# Motif : soleil rouge.
+	for p in [Vector2i(9, 11), Vector2i(10, 11), Vector2i(9, 12), Vector2i(10, 12), Vector2i(9, 9), Vector2i(12, 11), Vector2i(9, 14), Vector2i(7, 12)]:
+		img.set_pixelv(p, Color8(190, 70, 50))
+	for p in [Vector2i(2, 1), Vector2i(5, 1), Vector2i(3, 0)]:
+		img.set_pixelv(p, Color8(240, 236, 220))
+	_outline(img, OUTLINE)
+	_ground_shadow(img, 4, 42, 5, 1.2)
+	return img
+
+
 func _rack() -> Image:
 	var img := _img(30, 30)
 	for y in range(3, 29):
@@ -1131,6 +1291,7 @@ func _reeds(v: int) -> Image:
 func _gen_fx() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUT + "fx"))
 	_save(_campfire(), "fx/campfire.png")
+	_save(_campfire_big(), "fx/campfire_big.png")
 	var glow := _img(48, 48)
 	for y in 48:
 		for x in 48:
@@ -1204,6 +1365,50 @@ func _campfire() -> Image:
 		var sx: int = [19, 13, 17, 14][f]
 		fr.set_pixel(sx, 7 - f, Color8(255, 224, 130))
 		img.blit_rect(fr, Rect2i(0, 0, 32, 32), Vector2i(f * 32, 0))
+	return img
+
+
+## Grand feu central du village prospère : 4 images 48 x 40, couronne de pierres plus large.
+func _campfire_big() -> Image:
+	var img := _img(48 * 4, 40)
+	var heights := [[9, 14, 18, 13, 8], [11, 16, 15, 14, 9], [8, 13, 19, 15, 10], [10, 17, 16, 12, 9]]
+	for f in 4:
+		var fr := _img(48, 40)
+		var stones := []
+		for k in 11:
+			var a := TAU * k / 11.0 + 0.2
+			stones.append(Vector2(24 + cos(a) * 15.0, 32 + sin(a) * 5.5))
+		for st in stones:
+			if st.y <= 32:
+				_stone(fr, st)
+		for i in 18:
+			fr.set_pixel(15 + i, 32 - i / 3, WD_MID)
+			fr.set_pixel(15 + i, 33 - i / 3, WD_DARK)
+			fr.set_pixel(32 - i, 32 - i / 3, WD_LIGHT)
+			fr.set_pixel(32 - i, 33 - i / 3, WD_DARK)
+		for st in stones:
+			if st.y > 32:
+				_stone(fr, st)
+		_outline(fr, OUTLINE)
+		var xs := [16, 20, 24, 28, 32]
+		for t in 5:
+			var hgt: int = heights[f][t]
+			for i in hgt:
+				var k := float(i) / hgt
+				var half := int(round(3.4 * (1.0 - k) + 0.5))
+				var sway := int(round(sin(k * 3.0 + f * 1.6 + t) * 1.5 * k))
+				for dx in range(-half, half + 1):
+					var rel := absf(dx) / maxf(half, 1.0)
+					var c := Color8(240, 106, 40)
+					if rel < 0.4 and k < 0.6:
+						c = Color8(255, 244, 170)
+					elif rel < 0.8 and k < 0.85:
+						c = Color8(255, 194, 64)
+					fr.set_pixel(xs[t] + dx + sway, 30 - i, c)
+		for s in 2:
+			var sx: int = [27, 19, 25, 21][(f + s) % 4]
+			fr.set_pixel(sx, 9 - f - s * 3, Color8(255, 224, 130))
+		img.blit_rect(fr, Rect2i(0, 0, 48, 40), Vector2i(f * 48, 0))
 	return img
 
 

@@ -1,6 +1,6 @@
 # Phase 3 — Première progression incrémentale
 
-**Statut : lot 3A réalisé et validé ; lot 3B en cours ; lot 3C (sauvegarde) attend une validation explicite.**
+**Statut : lot 3A réalisé et validé ; lot 3B réalisé, en attente de validation ; lot 3C (sauvegarde) attend une validation explicite.**
 
 Écart par rapport au plan : ajout d'un trot de rattrapage des compagnons et d'un décalage latéral conditionnel, nécessaires pour que 8 compagnons suivent sans être replacés de force.
 
@@ -52,3 +52,24 @@ Un jeune sanglier rapporte environ 2,5 vivres et 1 matériau. Les premiers achat
 - Tour complet de la carte à 8 compagnons : replacements forcés, écart maximal, FPS.
 - Achats simulés (`--give`, `--buy`) ; captures du panneau et des effets.
 - Combats à 8 compagnons.
+
+## Lot 3B — Évolution automatique du campement (plan technique)
+
+- **Déclencheur** : la *prospérité*, c'est-à-dire le nombre total de niveaux d'amélioration achetés.
+  - Stade 2 (« TRIBU ») à 3 niveaux, stade 3 (« VILLAGE ») à 8 niveaux, sur 18 au total.
+  - On voit le camp grandir quand on investit, et rien n'avance hors du jeu.
+- **Indicateur** : en bas du panneau du feu de camp, le nom du stade et une barre de progression vers le stade suivant.
+- **Contenu ajouté par stade**, placé hors des chemins, dans les zones libres du camp :
+  - stade 2 : deux huttes, un séchoir à viande, des paniers de réserve, deux villageois ;
+  - stade 3 : maison longue, une hutte, palissade à l'est, torches aux entrées, bannière, panier, grand feu central, deux villageois de plus.
+- **Transition** :
+  - un bandeau en police pixel annonce le changement (« LA TRIBU GRANDIT », « LE VILLAGE PROSPERE ») ;
+  - les éléments apparaissent un à un (poussière, fondu, légère montée) ;
+  - le feu s'agrandit dans une gerbe d'étincelles ;
+  - les villageois arrivent à pied par le chemin du sud.
+- **Villageois** : décor animé sans collision ni combat. Ils vont et viennent entre le feu, les huttes et les réserves, avec des pauses tournées vers le feu.
+- **Architecture** :
+  - `CampVillage` (`scripts/world/camp_village.gd`) décrit les stades sous forme de données et construit les éléments ;
+  - `PropSpawner.make_prop()` est réutilisé pour les sprites et les collisions ;
+  - le stade se calcule à partir des améliorations, la sauvegarde 3C n'aura donc rien de plus à stocker pour le reconstruire.
+- **Vérifications** : captures des trois stades, tour complet de la carte au stade 3 (accessibilité, replacements, FPS), transition capturée en cours.

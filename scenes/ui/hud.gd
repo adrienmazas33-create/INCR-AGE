@@ -50,6 +50,32 @@ func _ready() -> void:
 		_labels[kind].text = str(GameState.resources[kind])
 
 
+## Bandeau d'annonce en haut de l'écran (évolution du campement) : apparaît, tient, s'efface.
+func announce(text: String) -> void:
+	var band := Node2D.new()
+	var back := ColorRect.new()
+	var label := PixelText.new()
+	label.text = text
+	label.scale = Vector2(2, 2)
+	label.modulate = GAIN_COLOR
+	var width := label.text_width() * 2.0 + 24.0
+	back.color = Color(0.07, 0.05, 0.05, 0.6)
+	back.size = Vector2(width, 24)
+	back.position = Vector2(-width * 0.5, -12)
+	back.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	band.add_child(back)
+	band.add_child(label)
+	band.position = Vector2(roundf(get_viewport().get_visible_rect().size.x * 0.5), 46)
+	band.modulate.a = 0.0
+	add_child(band)
+	move_child(band, _veil.get_index())
+	var tween := band.create_tween()
+	tween.tween_property(band, "modulate:a", 1.0, 0.3)
+	tween.tween_interval(2.0)
+	tween.tween_property(band, "modulate:a", 0.0, 0.6)
+	tween.tween_callback(band.queue_free)
+
+
 ## Ajoute un panneau sous le voile de transition.
 func add_panel(panel: Control) -> void:
 	add_child(panel)
