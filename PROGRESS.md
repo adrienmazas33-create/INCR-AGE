@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : phase 1 (fondations) terminée côté développement, en attente de validation (rendu et sensations de jeu).**
+**État : phase 1 validée le 21/10/2026 (tag Git `phase-1`). Phase 2 planifiée dans `docs/PHASE_2_PLAN.md`, en attente des décisions et du feu vert.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
 ## Lancer et tester
@@ -52,7 +52,7 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
 ## En cours
 
-- Rien. Attente de validation de la phase 1.
+- Rien. Phase 2 proposée, décisions à prendre listées dans `docs/PHASE_2_PLAN.md`.
 
 ## Problèmes connus / limites
 
@@ -62,12 +62,12 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 - La carte `.txt` et `props.json` ne sont pas des ressources Godot. À l'export, ajouter `*.txt, *.json` aux filtres de fichiers non-ressources.
 - Pas d'exécutable exporté : les modèles d'export Godot ne sont pas installés.
 
-## Prochaines étapes (après validation)
+## Prochaines étapes
 
-1. Ajuster selon les retours : vitesse du héros, paliers et vitesse de zoom, densité de la forêt, couleurs.
-2. Bible, étape 0 restante : trois alliés qui suivent le héros.
-3. Étape 1 : ennemis simples, attaque, combat automatique, butin, recrutement.
-4. Plus tard : manette (les actions `move_*` et `zoom_*` sont déjà abstraites), sauvegarde.
+1. Phase 2, lot A : trois alliés qui suivent le héros (fin de l'étape 0 de la bible).
+2. Phase 2, lot B : sangliers, combat automatique, butin magnétique, ressources (étape 1, sans recrutement).
+3. Phase 3 pressentie : village qui évolue, recrutement, premières améliorations, sauvegarde.
+4. Plus tard : manette (les actions `move_*` et `zoom_*` sont déjà abstraites).
 
 ## Reprendre le travail (session suivante)
 
