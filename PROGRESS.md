@@ -80,7 +80,7 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
 ## Reprendre le travail (session suivante)
 
-1. Lire ce fichier et `git log --oneline`.
+1. Lire ce fichier et `git log --oneline`. Dépôt GitHub : https://github.com/adrienmazas33-create/INCR-AGE (branche `main`, tags `phase-1`, `phase-2a`). Pousser après chaque étape validée.
 2. Architecture :
    - `scenes/main.tscn` : assemble `World`, `Hero`, `Party` (créé en code) et `GameCamera`.
    - `scenes/world/` : `world.gd` charge la carte. `scripts/world/` contient `MapData` (lecture et requêtes), `TerrainBuilder` (tuiles et collisions), `PropSpawner` (décors) et `TileIds` (disposition des atlas).
