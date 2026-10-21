@@ -1,7 +1,7 @@
 # INCR-AGE — Suivi du projet
 
-**État : lot 3C (sauvegarde persistante) terminé côté développement, commité en local, en attente du test et de la validation du porteur du projet ; pas encore publié sur GitHub.**
-**Validé : phases 1, 2 (lots A et B), 3 (lots 3A et 3B) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
+**État : phase 3 terminée et validée (lots 3A, 3B, 3C). Aucune opération en cours. Prochaine étape prévue : chantier « direction artistique et rendu pixel art », à lancer sur demande explicite.**
+**Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
 ## Lancer et tester
@@ -98,7 +98,7 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 - Villageois : décor animé sans collision ni combat, va-et-vient entre feu, huttes et réserves, pauses tournées vers le feu.
 - Pied du panneau du feu : nom du stade et barre de progression vers le suivant.
 
-## Terminé (phase 3, lot 3C) — en attente de validation
+## Terminé (phase 3, lot 3C)
 
 - **Contenu enregistré** : ressources, niveaux d'amélioration, nombre de compagnons et stade du village (déduits des améliorations, enregistrés pour contrôle), dernière position valide du héros (aucune pendant un K.O.).
 - **Sauvegardes automatiques** :
@@ -144,12 +144,12 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
   - position hors carte ou dans l'eau : point d'apparition ;
   - position dans la maison longue : héros repoussé sur une case libre.
 - Performances (lot 3C), toujours sur batterie (secteur indisponible pendant la session) : **60 FPS de moyenne stable** au camp, au village avec 8 compagnons, et en vue large au-dessus de la forêt.
-- **Validations humaines** : phase 1, lots 2A, 2B, 3A et 3B testés en jeu et validés par le porteur du projet (le 21/10/2026). Lot 3C : à tester.
+- **Validations humaines** : phase 1, lots 2A, 2B, 3A, 3B et 3C testés en jeu et validés par le porteur du projet (le 21/10/2026).
 - **Non vérifié** : sensations de contrôle, de caméra et de combat par un humain, clic réel dans le panneau (achats testés par commande), toucher sur écran tactile, écran 120/144 Hz, plein écran.
 
 ## En cours
 
-- Rien. Lot 3C commité en local, en attente du test du porteur du projet ; publication sur GitHub (tag `phase-3c`) après validation.
+- Rien. Phase 3 validée et publiée (tag `phase-3c`) ; aucune opération en cours.
 
 ## Problèmes connus / limites
 
@@ -172,11 +172,10 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
 ## Prochaines étapes
 
-1. **Validation du lot 3C** par le porteur du projet, puis tag `phase-3c` et `git push origin main --follow-tags`.
-2. **Chantier « direction artistique et rendu pixel art »** : prévu prochainement, non commencé (voir « Direction artistique »).
-3. Ajustements d'équilibrage au fil des essais : `data/units/*.tres`, `scripts/progression/upgrades.gd`. À 8 compagnons, les sangliers deviennent trop faciles.
-4. Profilage des performances sur secteur ; pistes : forêt en MultiMesh ou en tuiles, calculs du groupe (`Party`).
-5. Plus tard, selon la bible : compétences actives du héros, classes militaires, nouvelles époques.
+1. **Chantier « direction artistique et rendu pixel art »** : prévu prochainement, non commencé (voir « Direction artistique »).
+2. Ajustements d'équilibrage au fil des essais : `data/units/*.tres`, `scripts/progression/upgrades.gd`. À 8 compagnons, les sangliers deviennent trop faciles.
+3. Profilage des performances sur secteur ; pistes : forêt en MultiMesh ou en tuiles, calculs du groupe (`Party`).
+4. Plus tard, selon la bible : compétences actives du héros, classes militaires, nouvelles époques.
 6. Plus tard : manette et tactile. Les actions `move_*`, `zoom_*` et `buy_*` sont déjà abstraites, et les lignes du panneau acceptent clic et toucher.
 
 ## Reprendre le développement
@@ -185,10 +184,10 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
 ### 1. Où en est-on
 
-- Dépôt : https://github.com/adrienmazas33-create/INCR-AGE, branche `main`. Chaque lot validé porte un tag : `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`.
+- Dépôt : https://github.com/adrienmazas33-create/INCR-AGE, branche `main`. Chaque lot validé porte un tag : `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`.
 - Copie locale : `C:\Users\Adrien\OneDrive\Bureau\INCR-AGE`. Identité Git définie **uniquement pour ce dépôt** (`user.name` « Adrien »).
 - Bible créative : `Bible_creative_Jeu_incremental_2D_V01.md` / `.docx`, dans les Téléchargements de l'utilisateur, **hors dépôt**.
-- **Étape en cours : lot 3C (sauvegarde) commité en local, en attente de validation**, puis tag `phase-3c` et push. Ensuite, chantier « direction artistique » prévu. Ne pas commencer d'autre phase sans demande explicite.
+- **Prochaine étape : chantier « direction artistique et rendu pixel art »**, prévu, non commencé, à lancer sur demande explicite. Ne pas commencer d'autre phase sans demande explicite.
 
 ### 2. Méthode de travail attendue
 
