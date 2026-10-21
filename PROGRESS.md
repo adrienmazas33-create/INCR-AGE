@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : audio, lot A (premiers bruitages) fait, en commit local, en attente de validation (non poussé, pas de tag). Musique non commencée. Suite des priorités dans `docs/ROADMAP.md` : art du monde (zone témoin au camp), troupes plus organiques, puis carte du monde.**
+**État : audio, lot A (premiers bruitages) validé et publié (tag `audio-a`). Musique non commencée. Suite des priorités dans `docs/ROADMAP.md` : art du monde (zone témoin au camp), troupes plus organiques, puis carte du monde.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -215,18 +215,17 @@ Voir les priorités 2 et 3 du plan artistique.
   - combat au repaire est : 17 bruitages joués (coups, grognements, butin), 9 écartés par l'anti-empilement ; loin du camp, ambiance muette (-200 dB) ;
   - tour complet à 8 compagnons : 150 s, 60 FPS, 19 bruitages joués, 5 replacements forcés (référence : 2 à 4) ; aucune erreur de script ;
   - un premier essai de tour, lancé depuis le camp, ne s'est pas terminé (processus arrêté à la main au bout de 20 min) ; cause non trouvée, non reproduite au second essai ;
-  - **non vérifié** : l'écoute elle-même (qualité, volumes relatifs) : je ne peux pas entendre, c'est à ton test.
+  - **non vérifié** : l'écoute elle-même (qualité, volumes relatifs) : je ne peux pas entendre, validée à l'écoute par le porteur du projet le 22/10/2026.
 - **Non vérifié** : vrai clic de souris et toucher sur écran tactile (clics simulés seulement), sensation de contrôle à la souris ; sensations de contrôle, de caméra et de combat par un humain, clic réel dans le panneau (achats testés par commande), toucher sur écran tactile, écran 120/144 Hz, plein écran.
 
 ## En cours
 
-- **Audio, lot A : premiers bruitages** (section 3 de `docs/ROADMAP.md`), en attente de validation :
+- **Audio, lot A : premiers bruitages** (section 3 de `docs/ROADMAP.md`), validé le 22/10/2026 et publié (tag `audio-a`) :
   - autoload `AudioManager` (`scripts/autoload/audio_manager.gd`) : bus Music, SFX et Ambience créés au lancement, volumes séparés (0 à 1) et coupure par catégorie, enregistrés dans `user://settings.cfg`, à part de la sauvegarde ; pas encore de menu pour les régler ;
   - bruitages originaux synthétisés par `tools/generate_sfx.gd` (licences : `assets/audio/README.md`) : coup sur un ennemi, ramassage du butin, achat d'amélioration (arpège de marimba), grognement du sanglier avant sa charge, crépitement du feu en boucle (bus Ambiance, audible près du camp) ;
   - anti-empilement : lectures simultanées et intervalle minimal par son, légère variation de hauteur, sons du monde atténués avec la distance à la caméra ;
   - `play_music()` prêt (fondu) pour la future boucle d'exploration ; aucune musique fournie ;
   - branchements sur les événements existants (`Combatant.receive_hit`, charge du sanglier, ramassage, signal `upgrade_bought`, feu de camp) ; aucun changement de gameplay.
-  - Commit local seulement. Après validation : tag `audio-a` et push.
 
 - **Identification du héros** (section 0 bis de `docs/ROADMAP.md`), validée le 22/10/2026 et publiée (tag `hero-id`) :
   - bandeau doré et plume à pointe d'or (`tools/generate_art.gd`, `_feather`) ;
@@ -263,7 +262,7 @@ Voir les priorités 2 et 3 du plan artistique.
 ## Prochaines étapes
 
 1. **Feuille de route `docs/ROADMAP.md`**, ordre revu le 22/10/2026 (rien de tout cela n'est développé) :
-   1. ambiance sonore : lot A (bruitages) fait, en attente de validation ; ensuite autres bruitages (pas, ambiances de nature), puis musique rétro originale ;
+   1. ambiance sonore : lot A (bruitages) fait et validé (tag `audio-a`) ; ensuite autres bruitages (pas, ambiances de nature), puis musique rétro originale ;
    2. art du monde jouable : d'abord une zone témoin soignée autour du campement, en partant de vrais assets pixel art ;
    3. comportement plus organique des troupes ;
    4. carte du monde et mini-carte, plus tard.
@@ -281,12 +280,12 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ### 1. Où en est-on
 
-- Dépôt : https://github.com/adrienmazas33-create/INCR-AGE, branche `main`. Chaque lot validé porte un tag : `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`, `art-pass-1`, `camp-compass`, `mouse-move`, `hero-id`.
+- Dépôt : https://github.com/adrienmazas33-create/INCR-AGE, branche `main`. Chaque lot validé porte un tag : `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`, `art-pass-1`, `camp-compass`, `mouse-move`, `hero-id`, `audio-a`.
 - Copie locale : `C:\Users\Adrien\OneDrive\Bureau\INCR-AGE`. Identité Git définie **uniquement pour ce dépôt** (`user.name` « Adrien »).
 - Bible créative : `Bible_creative_Jeu_incremental_2D_V01.md` / `.docx`, dans les Téléchargements de l'utilisateur, **hors dépôt**.
 - **Chantier artistique** : étape 1 et passe visuelle 1 faites et validées (tag `art-pass-1`). Prochaine étape, sur demande : priorité 2 de `docs/ART_DIRECTION_PLAN.md`. Ne pas commencer d'autre phase sans demande explicite.
 - **Indicateur du campement** : validé et publié (tag `camp-compass`).
-- **Feuille de route** `docs/ROADMAP.md` : déplacement à la souris (**fait et validé**, tag `mouse-move`) ; identification du héros (**faite et validée**, tag `hero-id`). Audio lot A : **fait, commit local en attente de validation**. Ensuite, **prévus et non développés** : musique et autres sons, art du monde (zone témoin au camp), troupes organiques, carte du monde ; amélioration VITESSE reportée.
+- **Feuille de route** `docs/ROADMAP.md` : déplacement à la souris (**fait et validé**, tag `mouse-move`) ; identification du héros (**faite et validée**, tag `hero-id`). Audio lot A : **fait et validé** (tag `audio-a`). Ensuite, **prévus et non développés** : musique et autres sons, art du monde (zone témoin au camp), troupes organiques, carte du monde ; amélioration VITESSE reportée.
 
 ### 2. Méthode de travail attendue
 
