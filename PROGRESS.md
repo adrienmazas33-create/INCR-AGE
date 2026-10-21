@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : phase 1 validée (tag `phase-1`). Phase 2, lot A (trois alliés qui suivent) terminé côté développement, en attente de validation. Plan : `docs/PHASE_2_PLAN.md`.**
+**État : phase 1 validée (tag `phase-1`) ; phase 2, lot A (trois alliés qui suivent) validé (tag `phase-2a`). Prochaine étape : lot B. Plan : `docs/PHASE_2_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
 ## Lancer et tester
@@ -61,7 +61,7 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
 ## En cours
 
-- Rien. Attente de validation du lot A avant le lot B.
+- Rien. Lot A validé ; lot B à lancer sur demande.
 
 ## Problèmes connus / limites
 
