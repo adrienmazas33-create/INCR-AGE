@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : phases 1 et 2 validées (tags `phase-1`, `phase-2a`, `phase-2b`). Phase 3, lot 3A (recrutement et améliorations) terminé côté développement, en attente de validation ; lots 3B et 3C non commencés. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
+**État : phases 1 et 2 validées (tags `phase-1`, `phase-2a`, `phase-2b`) ; phase 3 : lot 3A validé (tag `phase-3a`), lot 3B en cours, lot 3C non commencé. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
 ## Lancer et tester
@@ -84,7 +84,7 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
 ## En cours
 
-- Rien. Attente de validation du lot 3A avant le lot 3B.
+- Lot 3B : évolution automatique du campement.
 
 ## Problèmes connus / limites
 
@@ -106,7 +106,7 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
 ## Reprendre le travail (session suivante)
 
-1. Lire ce fichier et `git log --oneline`. Dépôt GitHub : https://github.com/adrienmazas33-create/INCR-AGE (branche `main`, tags `phase-1`, `phase-2a`, `phase-2b`). Pousser après chaque étape validée.
+1. Lire ce fichier et `git log --oneline`. Dépôt GitHub : https://github.com/adrienmazas33-create/INCR-AGE (branche `main`, tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`). Pousser après chaque étape validée.
 2. Architecture :
    - `scenes/main.tscn` : assemble `World`, `Hero`, `Party`, `EnemySpawner`, `Hud` (avec `CampPanel`), `UpgradeEffects` (créés en code) et `GameCamera` ; gère le retour au camp.
    - `scenes/world/` : `world.gd` charge la carte. `scripts/world/` contient `MapData` (lecture et requêtes), `TerrainBuilder` (tuiles et collisions), `PropSpawner` (décors) et `TileIds` (disposition des atlas).
