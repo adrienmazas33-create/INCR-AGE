@@ -78,6 +78,7 @@ func _process(delta: float) -> void:
 			_z = move_toward(_z, 0.0, 60.0 * delta)
 			if global_position.distance_to(aim) < 5.0:
 				GameState.add(kind)
+				AudioManager.play(&"pickup", global_position)
 				CombatFx.sparkle(global_position, SPARKLE[kind])
 				queue_free()
 				return

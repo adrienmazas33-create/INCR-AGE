@@ -21,6 +21,7 @@ GameSettings="*res://scripts/autoload/game_settings.gd"
 GameState="*res://scripts/autoload/game_state.gd"
 CombatFx="*res://scripts/autoload/combat_fx.gd"
 SaveGame="*res://scripts/autoload/save_game.gd"
+AudioManager="*res://scripts/autoload/audio_manager.gd"
 
 [display]
 

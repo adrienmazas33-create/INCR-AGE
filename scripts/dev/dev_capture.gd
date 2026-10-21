@@ -101,6 +101,8 @@ func _run() -> void:
 		print("DevCapture : " + party.debug_summary())
 	print("DevCapture : ressources %s ; héros %d/%d PV, %d coup(s) porté(s) ; %d ennemi(s) debout ; échelle de temps %.2f" % [GameState.summary(),
 		_hero.health.current, _hero.health.max_health, _hero.attack.hits, get_tree().get_nodes_in_group(&"enemies").size(), Engine.time_scale])
+	print("DevCapture : audio %d bruitage(s) joué(s), %d écarté(s) (anti-empilement) ; niveau ambiance %.0f dB" % [AudioManager.played, AudioManager.skipped,
+		AudioServer.get_bus_peak_volume_left_db(AudioServer.get_bus_index(AudioManager.AMBIENCE), 0)])
 	if _capture_path != "":
 		for i in 3:
 			await get_tree().process_frame

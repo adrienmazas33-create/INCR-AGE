@@ -14,6 +14,7 @@ var _glow_size := 1.0
 
 
 func _ready() -> void:
+	add_child(AudioManager.make_fire_crackle())
 	if not GameSettings.ambient_effects:
 		_smoke.emitting = false
 		_glow.hide()

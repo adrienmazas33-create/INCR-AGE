@@ -60,6 +60,8 @@ func receive_hit(amount: float, from: Vector2, knockback: float) -> void:
 	_knock = dir * knockback * stats.knockback_taken
 	_flash = FLASH_TIME
 	CombatFx.damage_number(global_position + Vector2(0, -bar_height + 2), amount, is_in_group("party_members"))
+	if is_in_group(&"enemies"):
+		AudioManager.play(&"hit", global_position)
 	_on_hit(from)
 
 

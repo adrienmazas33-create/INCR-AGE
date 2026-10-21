@@ -66,6 +66,7 @@ func _physics_process(delta: float) -> void:
 				_set_state(State.RETURN)
 			elif sight and edge_distance(_target) <= charge_trigger:
 				_set_state(State.WINDUP, windup_time)
+				AudioManager.play(&"boar_grunt", global_position)
 				_aim_locked = false
 			else:
 				move = global_position.direction_to(_target.global_position) * stats.move_speed
