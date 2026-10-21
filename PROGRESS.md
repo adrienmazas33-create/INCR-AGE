@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : phase 1 validée (tag `phase-1`) ; phase 2, lot A validé (tag `phase-2a`) ; lot B (premier combat et butin) terminé côté développement, en attente de validation. Plan : `docs/PHASE_2_PLAN.md`.**
+**État : phase 1 validée (tag `phase-1`) ; phase 2 validée : lot A (tag `phase-2a`) et lot B, premier combat et butin (tag `phase-2b`). Prochaine étape à définir (phase 3 pressentie). Plan de la phase 2 : `docs/PHASE_2_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
 ## Lancer et tester
@@ -74,7 +74,7 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
 ## En cours
 
-- Rien. Attente de validation du lot B.
+- Rien. Phase 2 validée ; phase 3 à cadrer sur demande.
 
 ## Problèmes connus / limites
 
@@ -89,13 +89,13 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
 ## Prochaines étapes
 
-1. Ajuster le lot B selon tes retours (rythme des combats, dégâts, lisibilité).
+1. Ajustements d'équilibrage au fil des essais (`data/units/*.tres`).
 2. Phase 3 pressentie : village qui évolue, recrutement, premières améliorations, sauvegarde.
 3. Plus tard : manette (les actions `move_*` et `zoom_*` sont déjà abstraites).
 
 ## Reprendre le travail (session suivante)
 
-1. Lire ce fichier et `git log --oneline`. Dépôt GitHub : https://github.com/adrienmazas33-create/INCR-AGE (branche `main`, tags `phase-1`, `phase-2a`). Pousser après chaque étape validée.
+1. Lire ce fichier et `git log --oneline`. Dépôt GitHub : https://github.com/adrienmazas33-create/INCR-AGE (branche `main`, tags `phase-1`, `phase-2a`, `phase-2b`). Pousser après chaque étape validée.
 2. Architecture :
    - `scenes/main.tscn` : assemble `World`, `Hero`, `Party`, `EnemySpawner`, `Hud` (créés en code) et `GameCamera` ; gère le retour au camp.
    - `scenes/world/` : `world.gd` charge la carte. `scripts/world/` contient `MapData` (lecture et requêtes), `TerrainBuilder` (tuiles et collisions), `PropSpawner` (décors) et `TileIds` (disposition des atlas).
