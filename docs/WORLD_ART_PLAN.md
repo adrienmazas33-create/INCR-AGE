@@ -114,3 +114,44 @@ Idées gardées pour plus tard, sans changement :
 - troupes aux mouvements plus organiques ;
 - personnages plus aboutis ;
 - carte du monde consultable.
+
+## 8. Essai de la voie A (LPC) dans la zone témoin — résultats (23/10/2026)
+
+**Ce qui a été fait.**
+- Le pack `lpc_base_assets.zip` a été téléchargé avec ton accord. Seules cinq planches de Lanea Zimmerman (« Sharm ») sont copiées dans `assets/art/lpc/` : herbe, terre, eau avec berge herbeuse, couronnes d'arbres, troncs. Licence OGA-BY 3.0 : usage commercial permis, crédit obligatoire. Les crédits sont dans `assets/art/lpc/README.md`.
+- `scripts/world/zone_temoin.gd` redessine la zone de (44,44) à (82,66) seulement :
+  - herbe en fond ;
+  - plaques de terre et d'eau, dont chaque case choisit son bord ou son coin d'après ses voisines ;
+  - arbres LPC à la place des arbres d'origine, ceux-ci étant masqués, pas supprimés.
+- La carte, les collisions et le gameplay ne changent pas.
+- **F2** active ou désactive l'essai en jeu, pour comparer sur place. L'argument `-- --zone-temoin=off` le désactive au lancement.
+
+**Comparaison** (mêmes endroits, mêmes zooms) :
+- `docs/art/zone_temoin/avant_vue_large.png` et `apres_vue_large.png` ;
+- `avant_pont.png` et `apres_pont.png`.
+
+**Ce que l'essai démontre**
+
+| Gagné | Révélé comme limite |
+|---|---|
+| Herbe texturée, en touffes : le sol ne fait plus « tapis » | **Échelle** : les arbres LPC (3 cases de large, 4 de haut) sont dessinés pour des personnages deux fois plus grands que les nôtres. Notre groupe paraît minuscule. |
+| Berges herbeuses qui débordent sur l'eau, eau profonde avec reflets : la rivière devient organique | **Transitions d'une seule case** (diagonales des chemins, abords du pont) : blocs carrés. Le format LPC de base n'a que 13 tuiles par terrain ; il faudrait l'extension « LPC terrain » ou nos propres tuiles (grille double). |
+| Chemins aux bords caillouteux irréguliers | Huttes, rochers et buissons d'origine : contour et palette un peu différents de LPC |
+| Arbres en volume, avec tronc et ombre : la forêt devient crédible | Plaque d'herbe claire LPC (prairie) : contour sombre peu naturel, retirée de l'essai |
+| 60 FPS en moyenne, sans changement | Falaises **non testées** : pas de tuile adaptée retenue dans le pack de base |
+
+**Conclusion.** L'essai confirme d'où vient le saut de qualité :
+- des textures dessinées à la main ;
+- des transitions par plaques aux bords irréguliers ;
+- des arbres en volume, avec leur ombre.
+
+Il confirme aussi les limites d'un pack générique pour notre jeu : l'échelle, les transitions d'une case et l'identité.
+
+**Suite recommandée (voie C).** Un jeu de tuiles original en 32 px, à l'échelle de nos personnages, qui reprend ces qualités :
+- herbe en touffes ;
+- berges débordantes ;
+- bords irréguliers ;
+- arbres de 2 à 3 cases de haut, avec ombre ;
+- tuiles de transition complètes (grille double).
+
+En attendant, l'essai LPC reste en place, activable par F2, comme banc de comparaison.
