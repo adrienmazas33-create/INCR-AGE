@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : chantier artistique du monde — essai de la voie A (tuiles LPC) dans la zone témoin fait, en commit local, en attente de validation (non poussé, pas de tag). F2 pour comparer en jeu. Audio terminé et validé.**
+**État : essai LPC de la zone témoin validé comme banc de comparaison (F2) et publié. En cours : fiche technique de notre propre jeu de tuiles (voie C). Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -243,13 +243,12 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
-- **Essai de la voie A (LPC) dans la zone témoin** (section 8 de `docs/WORLD_ART_PLAN.md`), en attente de validation :
+- **Essai de la voie A (LPC) dans la zone témoin** (section 8 de `docs/WORLD_ART_PLAN.md`), validé le 23/10/2026 comme banc de comparaison et publié :
   - `lpc_base_assets.zip` (712 926 octets, OpenGameArt) téléchargé avec ton accord ; cinq planches de Lanea Zimmerman (« Sharm ») copiées dans `assets/art/lpc/`, licence OGA-BY 3.0 (crédit obligatoire, usage commercial permis), crédits dans `assets/art/lpc/README.md` ;
   - `scripts/world/zone_temoin.gd` : herbe, terre et rivière LPC, arbres LPC à la place des arbres d'origine (masqués, pas supprimés), dans la zone de (44,44) à (82,66) seulement ; F2 pour comparer, `-- --zone-temoin=off` pour désactiver ;
   - captures avant et après aux mêmes endroits dans `docs/art/zone_temoin/` ; 60 FPS de moyenne ;
   - limites révélées : échelle des arbres LPC (faits pour des personnages deux fois plus grands), transitions d'une case en blocs carrés, falaises non testées ;
   - carte, collisions et gameplay inchangés.
-  - Commit local seulement.
 - **Chantier artistique du monde, lot 2 : étude et zone témoin** (`docs/WORLD_ART_PLAN.md`), en attente de décision :
   - constat des limites visuelles, avec trois captures de référence dans `docs/art/zone_temoin/` (dossier ignoré par Godot) ;
   - point clé : garder la densité de 32 px par tuile de nos personnages ;
