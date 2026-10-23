@@ -196,7 +196,7 @@ L'étape 1 ne change que l'herbe (prairie et sol des forêts compris) ; le reste
 - La densité reste un peu régulière : 3 ou 4 éléments par tuile. À ajuster si tu le souhaites, avec plus de tuiles presque vides.
 - **Raccords encore visibles, attendus** : un liseré vert vif borde les chemins et la rivière. Il vient des anciennes tuiles de chemin et d'eau, qui contiennent l'ancien vert, et disparaîtra avec les étapes 2 (terre sur herbe) et 3 (eau sur herbe). La bordure de la zone témoin reste visible aussi.
 
-## 11. Voie C, étape 2 : terre sur herbe (23/10/2026, en attente de validation)
+## 11. Voie C, étape 2 : terre sur herbe (23/10/2026, validée)
 
 **Livrables** (dessinés dans `tools/draw_tiles.gd`)
 - `assets/art/tiles/dirt_fill.png` : 3 remplissages de terre, avec cailloux éclairés, terre tassée, terre sèche et fissures, placés à la main.
