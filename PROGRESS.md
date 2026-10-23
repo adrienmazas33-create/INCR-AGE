@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : fiche technique de notre jeu de tuiles (voie C) écrite (`docs/TILESET_SPEC.md`), en commit local, en attente de validation (non poussée). Essai LPC validé comme banc de comparaison (F2). Audio terminé et validé.**
+**État : fiche technique du jeu de tuiles validée et publiée. En cours : étape 1 de la production (palette et 6 remplissages d'herbe), dessinée pixel par pixel. Essai LPC conservé comme banc de comparaison (F2). Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -243,7 +243,7 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
-- **Fiche technique du jeu de tuiles original (voie C)** (`docs/TILESET_SPEC.md`), en attente de validation :
+- **Fiche technique du jeu de tuiles original (voie C)** (`docs/TILESET_SPEC.md`), validée le 23/10/2026 et publiée :
   - format 32 px à l'échelle 1, vue 3/4, lumière en haut à gauche, pas de contour noir sur le terrain ;
   - palette de 44 couleurs proposée (dégradés à décalage de teinte), à livrer en `palette.gpl` avant de dessiner ;
   - échelle de référence : personnage 26 px, feuillus de 64 à 88 px de haut (contre 130 à 150 px pour LPC) ;
