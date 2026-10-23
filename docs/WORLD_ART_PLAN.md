@@ -223,7 +223,7 @@ L'étape 1 ne change que l'herbe (prairie et sol des forêts compris) ; le reste
   - la bordure de la zone témoin.
 - La même ondulation se répète le long des bords droits, toutes les 32 px. Elle est discrète ; on pourra ajouter une seconde série de tuiles de bord si elle se remarque.
 
-## 12. Voie C, étape 3 : eau sur herbe, eau animée, écume (23/10/2026, en attente de validation)
+## 12. Voie C, étape 3 : eau sur herbe, eau animée, écume (23/10/2026, validée)
 
 **Livrables** (dessinés dans `tools/draw_tiles.gd`)
 - `assets/art/tiles/water_fill.png` : l'eau profonde en 4 images qui bouclent.

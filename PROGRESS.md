@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : voie C, étape 3 (eau sur herbe en grille double, eau animée, écume) faite, en commit local, en attente de validation (non poussée). Étapes 1 et 2 validées. F2 fait défiler nos tuiles, le rendu original et l'essai LPC dans la zone témoin. Audio terminé et validé.**
+**État : voie C, étapes 1 à 3 validées et publiées. En cours : étape 4 (arbres, buissons, souche et ombres à l'échelle de nos personnages). F2 fait défiler nos tuiles, le rendu original et l'essai LPC dans la zone témoin. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -243,7 +243,7 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
-- **Voie C, étape 3 : eau sur herbe, eau animée, écume** (section 12 de `docs/WORLD_ART_PLAN.md`), en attente de validation :
+- **Voie C, étape 3 : eau sur herbe, eau animée, écume** (section 12 de `docs/WORLD_ART_PLAN.md`), validée le 23/10/2026 et publiée :
   - `water_fill.png` (4 images, reflets qui respirent sur place) et `water_on_grass.png` (16 tuiles x 4 images : lèvre d'herbe, berge sombre, écume scintillante, hauts-fonds, coins arrondis), dessinés dans `tools/draw_tiles.gd`, couleurs contrôlées ;
   - zone témoin : toute l'eau en grille double sur son propre calque (redessiné 6 fois par seconde, 60 FPS) ; pont d'origine visible par-dessus ; anciens décors de la couche Overlay masqués dans la zone en mode INCR-AGE seulement ;
   - restent : bordure de la zone, pont, roseaux, arbres et décors dans l'ancien style.
