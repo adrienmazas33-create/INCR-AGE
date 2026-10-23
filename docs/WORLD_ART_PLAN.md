@@ -222,3 +222,33 @@ L'étape 1 ne change que l'herbe (prairie et sol des forêts compris) ; le reste
   - des bouts de chemin carrés aux abords du pont, dont les sommets sont laissés à l'étape 3 ;
   - la bordure de la zone témoin.
 - La même ondulation se répète le long des bords droits, toutes les 32 px. Elle est discrète ; on pourra ajouter une seconde série de tuiles de bord si elle se remarque.
+
+## 12. Voie C, étape 3 : eau sur herbe, eau animée, écume (23/10/2026, en attente de validation)
+
+**Livrables** (dessinés dans `tools/draw_tiles.gd`)
+- `assets/art/tiles/water_fill.png` : l'eau profonde en 4 images qui bouclent.
+  - Zones plus profondes posées à la main.
+  - 7 reflets qui « respirent » sur place (1, 3, 5 puis 3 pixels), décalés entre eux : l'eau scintille sans glisser ni sauter.
+- `assets/art/tiles/water_on_grass.png` : les 16 tuiles « eau sur herbe » pour chacune des 4 images (4 planches 4 × 4).
+  - Berges sur deux lignes ondulées tracées à la main, différentes de celles des chemins.
+  - Coins arrondis.
+  - En partant du bord : côté terre, une lèvre d'herbe sombre avec des pointes claires ; côté eau, 1 px de berge sombre, 2 px d'écume qui scintille d'une image à l'autre, 4 px de hauts-fonds clairs (le dernier en damier), puis l'eau profonde.
+  - Côté terre, la tuile est transparente : on y voit l'herbe ou la terre dessous.
+- L'écume est intégrée aux tuiles de berge animées plutôt que posée en couche séparée : le rendu est le même, avec une couche de moins.
+- Les couleurs sont contrôlées contre la palette ; l'herbe et la terre sont inchangées au pixel près.
+
+**Dans le jeu** (zone témoin, rendu TUILES INCR-AGE)
+- Toute l'eau est posée en grille double, tuiles pleines comprises. Les cases d'eau reçoivent de l'herbe dessous, si bien que la partie « terre » d'une berge arrondie montre bien de l'herbe.
+- Le chemin rejoint la berge et le pont.
+- La zone témoin passe sous la couche du pont d'origine, qui reste visible par-dessus. Les anciens décors de cette couche (sous les roseaux) sont masqués dans la zone et rétablis dans les autres rendus.
+- L'eau est sur son propre calque, seul redessiné 6 fois par seconde : **60 FPS**, comme le rendu original.
+
+**Captures** : `incr_vue_large.png`, `incr_pont.png`, `incr_berge.png` dans `docs/art/zone_temoin/`.
+
+**Constat**
+- La rivière devient organique : berges ondulées, coins arrondis, écume, hauts-fonds, eau profonde qui scintille.
+- Le liseré vert d'origine a disparu partout dans la zone.
+- Il reste à traiter :
+  - la bordure de la zone témoin, visible ;
+  - le pont, les roseaux, les arbres et les décors, encore dans l'ancien style ;
+  - la même ondulation qui revient toutes les 32 px le long des longues berges droites, discrète.

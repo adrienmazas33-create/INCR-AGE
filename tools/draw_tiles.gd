@@ -5,6 +5,8 @@ extends SceneTree
 ## Usage : godot --headless --path . --script res://tools/draw_tiles.gd, puis --import.
 ##
 ## Étape 1 : six remplissages d'herbe (grass_fill.png, 6 tuiles de 32 px côte à côte).
+## Étape 3 : eau animée (water_fill.png, 4 images) et les 16 tuiles « eau sur herbe » avec berges,
+## hauts-fonds et écume, pour chacune des 4 images (water_on_grass.png, 4 planches 4 x 4 côte à côte).
 ## Étape 2 : trois remplissages de terre (dirt_fill.png) et les 16 tuiles « terre sur herbe » en
 ## grille double (dirt_on_grass.png, planche 4 x 4).
 ## Les bords de chaque tuile restent du vert de fond : les six variantes se raccordent entre elles.
@@ -21,7 +23,22 @@ const INK := {
 	"1": Color8(74, 50, 38), "2": Color8(107, 74, 51), "3": Color8(140, 101, 66),
 	"4": Color8(171, 132, 86), "5": Color8(199, 162, 110),
 	"Q": Color8(82, 74, 82), "q": Color8(109, 100, 102), "r": Color8(139, 130, 124), "R": Color8(173, 162, 150),
+	# Eau (N la plus profonde à I la plus claire) et écume.
+	"N": Color8(29, 59, 82), "M": Color8(36, 85, 122), "L": Color8(47, 111, 150),
+	"J": Color8(74, 143, 176), "I": Color8(125, 182, 200), "F": Color8(207, 232, 230),
 }
+const WATER_BASE := "L"
+## Animation de l'eau : 4 images (6 par seconde en jeu), qui bouclent.
+const FRAMES := 4
+## Fond d'eau : zones plus profondes, posées à la main (fixes).
+const WATER_DEEP := [["deep", 4, 18], ["deep", 20, 6], ["deep_small", 24, 25], ["deep_small", 9, 3]]
+## Reflets : [x du centre, y, décalage de phase]. Chaque reflet « respire » sur place au fil des 4 images
+## (longueur 1, 3, 5 puis 3 pixels, plus clair au plus long) : l'eau scintille sans glisser ni sauter.
+const WATER_GLINTS := [[4, 6, 0], [19, 12, 1], [10, 27, 2], [25, 22, 3], [14, 17, 1], [27, 2, 2], [6, 13, 3]]
+const GLINT_LENGTHS := [1, 3, 5, 3]
+## Lignes de partage des berges : autres ondulations que celles des chemins, tracées à la main.
+const WAVE_V2 := [0, -1, -1, -2, -2, -1, 0, 1, 1, 2, 2, 2, 1, 0, 0, -1, -2, -2, -1, -1, 0, 1, 1, 1, 2, 1, 1, 0, 0, -1, 0, 0]
+const WAVE_H2 := [0, 0, -1, -1, 0, 1, 2, 2, 3, 2, 1, 1, 0, -1, -1, -2, -2, -1, 0, 0, 1, 2, 2, 1, 0, -1, -1, -1, 0, 0, 0, 0]
 const DIRT_BASE := "4"
 const BASE := "g"
 
@@ -105,6 +122,16 @@ const STAMPS := {
 		".2.",
 		".22",
 	],
+	# Eau plus profonde.
+	"deep": [
+		".MMM.",
+		"MMMMM",
+		"..MM.",
+	],
+	"deep_small": [
+		"MM.",
+		".MM",
+	],
 }
 
 ## Trois remplissages de terre (chemins, sol du camp).
@@ -160,7 +187,59 @@ func _init() -> void:
 	_check_palette(pair)
 	pair.save_png(OUT + "dirt_on_grass.png")
 	print("draw_tiles : dirt_fill.png (%d tuiles), dirt_on_grass.png (16 tuiles)" % DIRT_TILES.size())
+	# Étape 3 : eau animée (4 images), puis les 16 tuiles « eau sur herbe » pour chacune des 4 images.
+	var water := Image.create(T * FRAMES, T, false, Image.FORMAT_RGBA8)
+	for fr in FRAMES:
+		_draw_water(water, fr * T, fr)
+	_check_palette(water)
+	water.save_png(OUT + "water_fill.png")
+	var banks := Image.create(T * 4 * FRAMES, T * 4, false, Image.FORMAT_RGBA8)
+	for fr in FRAMES:
+		_draw_banks(banks, fr, water)
+	_check_palette(banks)
+	banks.save_png(OUT + "water_on_grass.png")
+	print("draw_tiles : water_fill.png (%d images), water_on_grass.png (16 tuiles x %d images)" % [FRAMES, FRAMES])
 	quit()
+
+
+func _draw_water(img: Image, ox: int, frame: int) -> void:
+	_draw_tile(img, ox, {"stamps": WATER_DEEP, "dark": [], "light": []}, WATER_BASE)
+	for g: Array in WATER_GLINTS:
+		var state: int = (frame + g[2]) % FRAMES
+		var length: int = GLINT_LENGTHS[state]
+		for k in length:
+			_put(img, ox, g[0] - length / 2 + k, g[1], INK["I"] if length == 5 else INK["J"])
+
+
+## Berges, image par image. La « part d'eau » de chaque pixel (0 à 1, même calcul que pour la terre,
+## avec les ondulations des berges) donne des bandes régulières à partir du bord, en pixels :
+## côté terre, 1 px d'herbe assombrie avec des pointes claires (le reste transparent : on voit dessous
+## l'herbe ou la terre) ; côté eau, 1 px de berge sombre, 2 px d'écume scintillante, 4 px de hauts-fonds
+## clairs (le dernier en damier), puis l'eau profonde animée.
+func _draw_banks(img: Image, frame: int, water: Image) -> void:
+	var px := 1.0 / T
+	for n in 16:
+		var ox := frame * T * 4 + (n % 4) * T
+		var oy := (n / 4) * T
+		for y in T:
+			for x in T:
+				var f := _field(n, x, y, WAVE_V2, WAVE_H2)
+				var col := Color(0, 0, 0, 0)
+				if f < 0.5 - px:
+					pass
+				elif f < 0.5:
+					col = INK["b"] if (x * 7 + y * 13) % 5 < 2 else INK["a"]
+				elif f < 0.5 + px:
+					col = INK["N"]
+				elif f < 0.5 + 3.0 * px:
+					col = INK["F"] if (x * 3 + y * 5 + frame * 2) % 7 < 3 else INK["J"]
+				elif f < 0.5 + 6.0 * px:
+					col = INK["J"]
+				elif f < 0.5 + 7.0 * px:
+					col = INK["J"] if (x + y) % 2 == 0 else INK["L"]
+				else:
+					col = water.get_pixel(frame * T + x, y)
+				img.set_pixel(ox + x, oy + y, col)
 
 
 ## Planche 4 x 4 d'une paire en grille double : la tuile n (n = coins couverts par la terre :
@@ -192,19 +271,23 @@ func _dual_pair(grass: Image, dirt: Image) -> Image:
 	return out
 
 
-## Vrai si le pixel (x, y) de la tuile n est de la terre. Les 4 coins de la tuile valent 1 (terre) ou 0
-## (herbe) ; leur moyenne pondérée selon la position (interpolation bilinéaire), seuillée à 0,5, donne des
-## bords droits entre deux coins pareils et des coins arrondis ailleurs. Les lignes ondulées décalent la
-## position : le bord coupe toujours les côtés de la tuile à 16 px, pour se raccorder aux voisines.
-## Un pixel juste hors de la tuile est rabattu sur son bord (le voisin y a les mêmes coins).
-func _dirt_at(n: int, x: int, y: int) -> bool:
+## Part de terre (ou d'eau) du pixel (x, y) de la tuile n, de 0 à 1. Les 4 coins de la tuile valent 1
+## (terre ou eau) ou 0 (herbe) ; leur moyenne pondérée selon la position (interpolation bilinéaire),
+## seuillée à 0,5, donne des bords droits entre deux coins pareils et des coins arrondis ailleurs. Les
+## lignes ondulées `wv` et `wh` décalent la position : le bord coupe toujours les côtés de la tuile à
+## 16 px, pour se raccorder aux voisines. Un pixel juste hors de la tuile est rabattu sur son bord.
+func _field(n: int, x: int, y: int, wv: Array, wh: Array) -> float:
 	var cx := clampi(x, 0, T - 1)
 	var cy := clampi(y, 0, T - 1)
-	var u := clampf((cx + 0.5 - int(WAVE_V[cy])) / T, 0.0, 1.0)
-	var v := clampf((cy + 0.5 - int(WAVE_H[cx])) / T, 0.0, 1.0)
+	var u := clampf((cx + 0.5 - int(wv[cy])) / T, 0.0, 1.0)
+	var v := clampf((cy + 0.5 - int(wh[cx])) / T, 0.0, 1.0)
 	var top := (1.0 - u) * float(n & 1 != 0) + u * float(n & 2 != 0)
 	var bottom := (1.0 - u) * float(n & 4 != 0) + u * float(n & 8 != 0)
-	return (1.0 - v) * top + v * bottom >= 0.5
+	return (1.0 - v) * top + v * bottom
+
+
+func _dirt_at(n: int, x: int, y: int) -> bool:
+	return _field(n, x, y, WAVE_V, WAVE_H) >= 0.5
 
 
 ## Fond uni, motifs placés à la main, puis points isolés sombres et clairs.

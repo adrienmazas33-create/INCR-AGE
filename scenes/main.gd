@@ -36,8 +36,9 @@ func _ready() -> void:
 	var zone := ZoneTemoin.new()
 	zone.name = "ZoneTemoin"
 	_world.add_child(zone)
-	_world.move_child(zone, _world.entity_layer().get_index())
-	zone.setup(_world.map, _world.entity_layer(), _hud)
+	# Sous la couche des ponts et nénuphars d'origine, qui restent visibles par-dessus notre eau.
+	_world.move_child(zone, _world.get_node("Overlay").get_index())
+	zone.setup(_world.map, _world.entity_layer(), _hud, _world.get_node("Overlay"))
 	var ambience := Ambience.new()
 	ambience.name = "Ambience"
 	add_child(ambience)
