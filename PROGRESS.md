@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : voie C, étape 1 (palette et herbe) validée et publiée. En cours : étape 2 (terre sur herbe en grille double, 3 remplissages de terre). F2 fait défiler nos tuiles, le rendu original et l'essai LPC dans la zone témoin. Audio terminé et validé.**
+**État : voie C, étape 2 (terre sur herbe en grille double, 3 remplissages de terre) faite, en commit local, en attente de validation (non poussée). Étape 1 validée. F2 fait défiler nos tuiles, le rendu original et l'essai LPC dans la zone témoin. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -243,6 +243,10 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
+- **Voie C, étape 2 : terre sur herbe** (section 11 de `docs/WORLD_ART_PLAN.md`), en attente de validation :
+  - `dirt_fill.png` (3 remplissages) et `dirt_on_grass.png` (16 tuiles en grille double, coins arrondis, frange d'ombre), dessinés dans `tools/draw_tiles.gd`, couleurs contrôlées contre la palette ;
+  - zone témoin : chemins et sol du camp en terre, une transition à chaque sommet herbe/terre ; sommets au contact de l'eau et du pont laissés à l'étape 3 ; 60 FPS ;
+  - le liseré vert d'origine a disparu le long des chemins ; restent les berges (étape 3) et des bouts de chemin carrés aux abords du pont.
 - **Voie C, étape 1 : palette et herbe** (section 10 de `docs/WORLD_ART_PLAN.md`), validée le 23/10/2026 et publiée :
   - `assets/art/tiles/palette.gpl` (44 couleurs) ; `assets/art/tiles/grass_fill.png`, 6 remplissages dessinés pixel par pixel dans `tools/draw_tiles.gd` (motifs écrits point par point, placés à la main, couleurs contrôlées contre la palette) ;
   - zone témoin : F2 fait défiler TUILES INCR-AGE (au lancement), RENDU ORIGINAL et ESSAI LPC, avec un bandeau ; `-- --zone-temoin=off`, `=lpc` ou `=incr` au lancement ;

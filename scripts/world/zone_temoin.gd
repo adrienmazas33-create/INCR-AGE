@@ -5,13 +5,18 @@ extends Node2D
 ## - ORIGINAL : le rendu actuel du jeu ;
 ## - LPC : essai de la voie A (tuiles LPC, assets/art/lpc, OGA-BY 3.0), sol, chemins, rivière et arbres ;
 ## - INCR : notre propre jeu de tuiles (voie C, docs/TILESET_SPEC.md), au fil des étapes de production ;
-##   étape 1 : herbe seulement (assets/art/tiles/grass_fill.png), le reste garde le rendu actuel.
+##   étape 1 : herbe (grass_fill.png) ; étape 2 : terre et ses bords en grille double (dirt_fill.png,
+##   dirt_on_grass.png). Le reste (eau, pont, arbres, décors) garde le rendu actuel.
 ## Au lancement : INCR ; « -- --zone-temoin=off », « =lpc » ou « =incr » pour choisir.
 ## Purement visuel : carte, collisions et règles intactes.
 
 enum Mode { ORIGINAL, LPC, INCR }
 const MODE_NAMES := ["RENDU ORIGINAL", "ESSAI LPC", "TUILES INCR-AGE"]
 const OUR_GRASS := preload("res://assets/art/tiles/grass_fill.png")
+const OUR_DIRT := preload("res://assets/art/tiles/dirt_fill.png")
+const OUR_DIRT_EDGES := preload("res://assets/art/tiles/dirt_on_grass.png")
+const GRASS_KINDS := [MapData.Ground.GRASS, MapData.Ground.MEADOW, MapData.Ground.FOREST]
+const DIRT_KINDS := [MapData.Ground.PATH, MapData.Ground.SAND]
 
 ## Zone témoin, en cases (bornes incluses).
 const ZONE := Rect2i(44, 44, 39, 23)
@@ -151,17 +156,38 @@ func _draw() -> void:
 	_layer(WATER, [MapData.Ground.WATER, MapData.Ground.BRIDGE])
 
 
-## Notre jeu de tuiles, étape 1 : les six remplissages d'herbe sur les cases d'herbe, de prairie et de forêt
-## (sous les arbres, pour ne pas laisser de bande du vert d'origine autour des forêts).
-## Variantes 0 à 3 courantes (20 % chacune), 4 (motte) et 5 (fleurs) plus rares (10 % chacune).
+## Notre jeu de tuiles.
+## 1. Remplissages, case par case : herbe sur les cases d'herbe, de prairie et de forêt (sous les arbres,
+##    sans bande du vert d'origine autour), variantes 0 à 3 à 20 % chacune, motte et fleurs à 10 % ;
+##    terre sur les chemins (3 variantes).
+## 2. Grille double : à chaque sommet entre quatre cases mêlant herbe et terre, une tuile de transition
+##    décalée d'une demi-case. Les sommets qui touchent l'eau ou le pont sont laissés pour l'étape 3.
 func _draw_incr() -> void:
 	for y in range(ZONE.position.y, ZONE.end.y):
 		for x in range(ZONE.position.x, ZONE.end.x):
 			var c := Vector2i(x, y)
-			if _map.ground_at(c) in [MapData.Ground.GRASS, MapData.Ground.MEADOW, MapData.Ground.FOREST]:
+			var g := _map.ground_at(c)
+			if g in GRASS_KINDS:
 				var h := _hash(c) % 20
 				var v := h / 4 if h < 16 else (4 if h < 18 else 5)
 				draw_texture_rect_region(OUR_GRASS, Rect2(Vector2(c * T), Vector2(T, T)), Rect2(v * T, 0, T, T))
+			elif g in DIRT_KINDS:
+				draw_texture_rect_region(OUR_DIRT, Rect2(Vector2(c * T), Vector2(T, T)), Rect2(_hash(c) % 3 * T, 0, T, T))
+	for vy in range(ZONE.position.y + 1, ZONE.end.y):
+		for vx in range(ZONE.position.x + 1, ZONE.end.x):
+			var mask := 0
+			var skip := false
+			# Coins : haut-gauche 1, haut-droite 2, bas-gauche 4, bas-droite 8 (docs/TILESET_SPEC.md).
+			for k in 4:
+				var g := _map.ground_at(Vector2i(vx - 1 + k % 2, vy - 1 + k / 2))
+				if g in DIRT_KINDS:
+					mask |= 1 << k
+				elif not g in GRASS_KINDS:
+					skip = true
+			if skip or mask == 0 or mask == 15:
+				continue
+			draw_texture_rect_region(OUR_DIRT_EDGES, Rect2(Vector2(vx * T - T / 2, vy * T - T / 2), Vector2(T, T)),
+				Rect2(mask % 4 * T, mask / 4 * T, T, T))
 
 
 ## Plaque d'un terrain : chaque case choisit son bord, son coin ou son remplissage d'après ses voisines.

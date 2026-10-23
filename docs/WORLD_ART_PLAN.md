@@ -195,3 +195,30 @@ L'étape 1 ne change que l'herbe (prairie et sol des forêts compris) ; le reste
 - Les touffes et les fleurs se lisent au zoom proche, sans grille visible.
 - La densité reste un peu régulière : 3 ou 4 éléments par tuile. À ajuster si tu le souhaites, avec plus de tuiles presque vides.
 - **Raccords encore visibles, attendus** : un liseré vert vif borde les chemins et la rivière. Il vient des anciennes tuiles de chemin et d'eau, qui contiennent l'ancien vert, et disparaîtra avec les étapes 2 (terre sur herbe) et 3 (eau sur herbe). La bordure de la zone témoin reste visible aussi.
+
+## 11. Voie C, étape 2 : terre sur herbe (23/10/2026, en attente de validation)
+
+**Livrables** (dessinés dans `tools/draw_tiles.gd`)
+- `assets/art/tiles/dirt_fill.png` : 3 remplissages de terre, avec cailloux éclairés, terre tassée, terre sèche et fissures, placés à la main.
+- `assets/art/tiles/dirt_on_grass.png` : les 16 tuiles « terre sur herbe » en grille double, en planche 4 × 4 selon la fiche.
+  - Le bord suit deux lignes ondulées tracées à la main (décalages pixel par pixel), qui coupent chaque côté à 16 px pour se raccorder.
+  - Les coins sont arrondis : le terrain est pondéré entre les 4 coins, de sorte que les coins saillants et rentrants s'adoucissent tandis que les bords entre deux coins pareils restent droits.
+  - Frange : la terre fonce d'un ton contre l'herbe, et de deux sous un bord d'herbe situé au-dessus (ombre). L'herbe s'assombrit le long du bord, avec quelques pointes claires.
+- Les couleurs sont contrôlées contre la palette, et l'herbe de l'étape 1 est inchangée au pixel près.
+
+**Dans le jeu** (zone témoin, rendu TUILES INCR-AGE)
+- Les chemins et le sol du camp sont en terre.
+- Une tuile de transition est posée à chaque sommet où se croisent herbe et terre.
+- Les sommets qui touchent l'eau ou le pont sont laissés à l'étape 3.
+- 60 FPS.
+
+**Captures** : `incr_vue_large.png`, `incr_proche.png`, `incr_chemin.png` dans `docs/art/zone_temoin/`.
+
+**Constat**
+- Les chemins deviennent organiques : coins arrondis, diagonales lues comme des diagonales et non plus comme des escaliers.
+- Le liseré vert vif d'origine a disparu le long des chemins.
+- Il reste à traiter :
+  - les berges de la rivière, encore dans l'ancien rendu (étape 3) ;
+  - des bouts de chemin carrés aux abords du pont, dont les sommets sont laissés à l'étape 3 ;
+  - la bordure de la zone témoin.
+- La même ondulation se répète le long des bords droits, toutes les 32 px. Elle est discrète ; on pourra ajouter une seconde série de tuiles de bord si elle se remarque.

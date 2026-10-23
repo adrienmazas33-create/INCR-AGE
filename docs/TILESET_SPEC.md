@@ -99,7 +99,7 @@ La tuile d'indice `n` (somme des coins couverts par le terrain du dessus) se pla
 
 **Règles de dessin des bords**
 - Le bord ne suit jamais le milieu exact de la tuile : il ondule de ± 3 à 5 px.
-- Il doit pourtant **raccorder** exactement d'une tuile à l'autre. Les points d'entrée sur chaque côté sont fixes, à 10 et 22 px.
+- Il doit pourtant **raccorder** exactement d'une tuile à l'autre : il coupe chaque côté de la tuile en son milieu, à 16 px (rectifié à l'étape 2, où l'on a vu que c'est le point de raccord naturel de la grille double).
 - Une frange de 2 à 3 px de transition : touffes d'herbe qui débordent, cailloux sur le bord des chemins.
 
 **Paires nécessaires**
