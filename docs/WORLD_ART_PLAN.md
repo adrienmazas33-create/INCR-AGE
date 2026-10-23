@@ -155,3 +155,16 @@ Il confirme aussi les limites d'un pack générique pour notre jeu : l'échelle,
 - tuiles de transition complètes (grille double).
 
 En attendant, l'essai LPC reste en place, activable par F2, comme banc de comparaison.
+
+## 9. Suite : fiche technique de la voie C
+
+L'essai LPC a été validé le 23/10/2026 comme banc de comparaison (F2). La fiche technique de notre propre jeu de tuiles est rédigée : `docs/TILESET_SPEC.md`. Elle couvre :
+- le format ;
+- la palette ;
+- l'échelle ;
+- la grille double ;
+- l'eau et les falaises ;
+- la végétation et les décalques ;
+- l'intégration dans Godot ;
+- l'ordre de production ;
+- les critères d'acceptation.

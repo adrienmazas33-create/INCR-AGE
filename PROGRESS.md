@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : essai LPC de la zone témoin validé comme banc de comparaison (F2) et publié. En cours : fiche technique de notre propre jeu de tuiles (voie C). Audio terminé et validé.**
+**État : fiche technique de notre jeu de tuiles (voie C) écrite (`docs/TILESET_SPEC.md`), en commit local, en attente de validation (non poussée). Essai LPC validé comme banc de comparaison (F2). Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -243,6 +243,14 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
+- **Fiche technique du jeu de tuiles original (voie C)** (`docs/TILESET_SPEC.md`), en attente de validation :
+  - format 32 px à l'échelle 1, vue 3/4, lumière en haut à gauche, pas de contour noir sur le terrain ;
+  - palette de 44 couleurs proposée (dégradés à décalage de teinte), à livrer en `palette.gpl` avant de dessiner ;
+  - échelle de référence : personnage 26 px, feuillus de 64 à 88 px de haut (contre 130 à 150 px pour LPC) ;
+  - grille double : 16 tuiles par paire de terrains, sans aucun bloc carré ; paires terre, eau, sable et plateau sur herbe ;
+  - eau animée, hauts-fonds et écume ; falaises en strates aux coins arrondis ; forêts en canopée avec arbres de lisière ; décalques au sol en grappes ; ombres d'une seule couleur ;
+  - fichiers et intégration Godot (bascule F2 réutilisée), ordre de production de la zone témoin (environ 90 tuiles et objets), critères d'acceptation ;
+  - qui dessine : toi, un pixel artiste (payant, avec ton accord) ou moi pixel par pixel (niveau inférieur à un artiste confirmé).
 - **Essai de la voie A (LPC) dans la zone témoin** (section 8 de `docs/WORLD_ART_PLAN.md`), validé le 23/10/2026 comme banc de comparaison et publié :
   - `lpc_base_assets.zip` (712 926 octets, OpenGameArt) téléchargé avec ton accord ; cinq planches de Lanea Zimmerman (« Sharm ») copiées dans `assets/art/lpc/`, licence OGA-BY 3.0 (crédit obligatoire, usage commercial permis), crédits dans `assets/art/lpc/README.md` ;
   - `scripts/world/zone_temoin.gd` : herbe, terre et rivière LPC, arbres LPC à la place des arbres d'origine (masqués, pas supprimés), dans la zone de (44,44) à (82,66) seulement ; F2 pour comparer, `-- --zone-temoin=off` pour désactiver ;
