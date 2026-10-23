@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : fiche technique du jeu de tuiles validée et publiée. En cours : étape 1 de la production (palette et 6 remplissages d'herbe), dessinée pixel par pixel. Essai LPC conservé comme banc de comparaison (F2). Audio terminé et validé.**
+**État : voie C, étape 1 (palette et 6 remplissages d'herbe dessinés pixel par pixel) faite, en commit local, en attente de validation (non poussée). F2 fait défiler nos tuiles, le rendu original et l'essai LPC dans la zone témoin. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -9,7 +9,7 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 - Jeu : double-clic sur `lancer_jeu.bat`. Éditeur : `lancer_jeu.bat editeur`.
 - Ou à la main : Godot 4.7.2 → Importer → `project.godot` → F5.
 - Godot a été installé par `winget install GodotEngine.GodotEngine` (4.7.2 stable).
-- Contrôles : ZQSD, WASD ou flèches pour se déplacer, ou clic gauche sur le sol ; molette pour zoomer ; V (ou le bouton à note de musique en bas à droite) pour les volumes ; F2 pour comparer l'essai artistique de la zone témoin ; F11 pour le plein écran ; Échap pour quitter.
+- Contrôles : ZQSD, WASD ou flèches pour se déplacer, ou clic gauche sur le sol ; molette pour zoomer ; V (ou le bouton à note de musique en bas à droite) pour les volumes ; F2 pour faire défiler les rendus de la zone témoin (nos tuiles, original, essai LPC) ; F11 pour le plein écran ; Échap pour quitter.
 - Couper les effets d'ambiance : lancer avec `-- --no-fx`, ou passer `ambient_effects` à `false` dans `scripts/autoload/game_settings.gd`.
 - Combat : rien à presser. Le héros et ses compagnons frappent seuls les ennemis à portée ; le joueur choisit où se battre par ses déplacements. `-- --no-hitstop` coupe la micro-pause d'impact.
 - Améliorations : s'approcher du feu de camp ouvre le panneau ; cliquer (ou toucher) une ligne, ou touches 1 à 4. Un repère doré flotte au-dessus du feu quand un achat est possible.
@@ -243,6 +243,10 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
+- **Voie C, étape 1 : palette et herbe** (section 10 de `docs/WORLD_ART_PLAN.md`), en attente de validation :
+  - `assets/art/tiles/palette.gpl` (44 couleurs) ; `assets/art/tiles/grass_fill.png`, 6 remplissages dessinés pixel par pixel dans `tools/draw_tiles.gd` (motifs écrits point par point, placés à la main, couleurs contrôlées contre la palette) ;
+  - zone témoin : F2 fait défiler TUILES INCR-AGE (au lancement), RENDU ORIGINAL et ESSAI LPC, avec un bandeau ; `-- --zone-temoin=off`, `=lpc` ou `=incr` au lancement ;
+  - liseré vert vif encore visible le long des chemins et de la rivière (anciennes tuiles), attendu jusqu'aux étapes 2 et 3.
 - **Fiche technique du jeu de tuiles original (voie C)** (`docs/TILESET_SPEC.md`), validée le 23/10/2026 et publiée :
   - format 32 px à l'échelle 1, vue 3/4, lumière en haut à gauche, pas de contour noir sur le terrain ;
   - palette de 44 couleurs proposée (dégradés à décalage de teinte), à livrer en `palette.gpl` avant de dessiner ;
@@ -449,6 +453,7 @@ Depuis la racine du dépôt, `godot` désigne l'exécutable console.
 - Régénérer l'art : `godot --headless --path . --script res://tools/generate_art.gd`, puis `godot --headless --path . --import`.
 - Régénérer les bruitages : `godot --headless --path . --script res://tools/generate_sfx.gd`, puis `--import`.
 - Régénérer la musique : `godot --headless --path . --script res://tools/generate_music.gd`, puis `--import` (environ 10 s).
+- Redessiner les tuiles originales (voie C) : `godot --headless --path . --script res://tools/draw_tiles.gd`, puis `--import`.
 - Vérifier la carte : `godot --headless --path . --script res://tools/check_map.gd -- --preview=apercu.png`.
 - Réesquisser la carte (**écrase les retouches manuelles**) : `godot --headless --path . --script res://tools/draft_map.gd`.
 - **Outil de test** : arguments placés après `--`, bilan affiché en console. Combinables :

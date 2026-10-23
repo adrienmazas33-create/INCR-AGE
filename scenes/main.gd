@@ -32,12 +32,12 @@ func _ready() -> void:
 	var panel := CampPanel.new()
 	panel.setup(_hero, _world.camp_position)
 	_hud.add_panel(panel)
-	# Essai artistique (voie A, tuiles LPC) dans la zone témoin autour du camp ; F2 pour comparer.
+	# Zone témoin du chantier artistique : F2 fait défiler rendu original, essai LPC et nos tuiles.
 	var zone := ZoneTemoin.new()
 	zone.name = "ZoneTemoin"
 	_world.add_child(zone)
 	_world.move_child(zone, _world.entity_layer().get_index())
-	zone.setup(_world.map, _world.entity_layer())
+	zone.setup(_world.map, _world.entity_layer(), _hud)
 	var ambience := Ambience.new()
 	ambience.name = "Ambience"
 	add_child(ambience)

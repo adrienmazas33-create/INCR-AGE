@@ -168,3 +168,30 @@ L'essai LPC a été validé le 23/10/2026 comme banc de comparaison (F2). La fic
 - l'intégration dans Godot ;
 - l'ordre de production ;
 - les critères d'acceptation.
+
+## 10. Voie C, étape 1 : palette et herbe (23/10/2026, en attente de validation)
+
+**Livrables**
+- `assets/art/tiles/palette.gpl` : les 44 couleurs de la fiche, lisibles par LibreSprite, Aseprite, Pixelorama et GIMP.
+- `assets/art/tiles/grass_fill.png` : 6 remplissages d'herbe de 32 px, dessinés pixel par pixel dans `tools/draw_tiles.gd`. Chaque motif y est écrit point par point, et sa place dans chaque tuile est choisie à la main, sans aucun bruit aléatoire :
+  - grande touffe, petite touffe et brin ;
+  - plaque claire et creux d'ombre ;
+  - motte ;
+  - fleurs jaune et blanche.
+- Les variantes 0 à 3 sont courantes (20 % chacune), la motte et les fleurs plus rares (10 % chacune). Les bords de chaque tuile restent du vert de fond, si bien que les variantes se raccordent sans couture.
+- L'outil vérifie que toutes les couleurs viennent de la palette.
+
+**Dans le jeu.** F2 fait maintenant défiler trois rendus de la zone témoin, avec un bandeau qui annonce lequel est affiché :
+- **TUILES INCR-AGE**, le rendu au lancement ;
+- **RENDU ORIGINAL** ;
+- **ESSAI LPC**.
+
+L'étape 1 ne change que l'herbe (prairie et sol des forêts compris) ; le reste garde le rendu actuel.
+
+**Captures** : `docs/art/zone_temoin/incr_vue_large.png` (zoom large) et `incr_proche.png` (zoom proche), à comparer avec `avant_vue_large.png` et `apres_vue_large.png` (LPC).
+
+**Constat**
+- Le sol est plus calme et moins saturé, et les personnages ressortent mieux.
+- Les touffes et les fleurs se lisent au zoom proche, sans grille visible.
+- La densité reste un peu régulière : 3 ou 4 éléments par tuile. À ajuster si tu le souhaites, avec plus de tuiles presque vides.
+- **Raccords encore visibles, attendus** : un liseré vert vif borde les chemins et la rivière. Il vient des anciennes tuiles de chemin et d'eau, qui contiennent l'ancien vert, et disparaîtra avec les étapes 2 (terre sur herbe) et 3 (eau sur herbe). La bordure de la zone témoin reste visible aussi.

@@ -1,0 +1,48 @@
+GIMP Palette
+Name: INCR-AGE (ere prehistorique)
+Columns: 6
+# Palette fermee du jeu de tuiles original, voir docs/TILESET_SPEC.md (section 3). 44 couleurs.
+ 47  79  44	herbe 1
+ 62 106  53	herbe 2
+ 82 127  61	herbe 3 (fond)
+107 150  72	herbe 4
+143 174  88	herbe 5
+184 196 110	herbe 6
+ 31  58  46	feuillage 1
+ 45  82  54	feuillage 2
+ 63 109  60	feuillage 3
+ 94 138  68	feuillage 4
+134 166  80	feuillage 5
+ 27  51  48	conifere 1
+ 39  74  61	conifere 2
+ 55  97  71	conifere 3
+ 79 122  82	conifere 4
+ 74  50  38	terre 1
+107  74  51	terre 2
+140 101  66	terre 3
+171 132  86	terre 4
+199 162 110	terre 5
+156 131  88	sable 1
+191 166 118	sable 2
+219 199 150	sable 3
+ 58  53  64	roche 1
+ 82  74  82	roche 2
+109 100 102	roche 3
+139 130 124	roche 4
+173 162 150	roche 5
+207 196 178	roche 6
+ 29  59  82	eau 1
+ 36  85 122	eau 2
+ 47 111 150	eau 3
+ 74 143 176	eau 4
+125 182 200	eau 5
+207 232 230	ecume
+ 59  42  34	bois 1
+ 90  63  44	bois 2
+122  86  56	bois 3
+232 211 106	fleur jaune
+227 154  91	fleur orange
+201 163 214	fleur mauve
+242 239 226	fleur blanche
+196  87  63	champignon
+ 26  26  46	ombre (35 % d'opacite)
