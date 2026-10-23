@@ -169,7 +169,7 @@ L'essai LPC a été validé le 23/10/2026 comme banc de comparaison (F2). La fic
 - l'ordre de production ;
 - les critères d'acceptation.
 
-## 10. Voie C, étape 1 : palette et herbe (23/10/2026, en attente de validation)
+## 10. Voie C, étape 1 : palette et herbe (23/10/2026, validée)
 
 **Livrables**
 - `assets/art/tiles/palette.gpl` : les 44 couleurs de la fiche, lisibles par LibreSprite, Aseprite, Pixelorama et GIMP.
