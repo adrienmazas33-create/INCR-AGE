@@ -252,3 +252,38 @@ L'étape 1 ne change que l'herbe (prairie et sol des forêts compris) ; le reste
   - la bordure de la zone témoin, visible ;
   - le pont, les roseaux, les arbres et les décors, encore dans l'ancien style ;
   - la même ondulation qui revient toutes les 32 px le long des longues berges droites, discrète.
+
+## 13. Voie C, étape 4 : arbres, buissons, souche et ombres (23/10/2026, en attente de validation)
+
+**Livrables** (dessinés dans `tools/draw_nature.gd`)
+- `assets/art/tiles/nature.png` et `nature.json` (rectangle et point d'ancrage aux pieds de chaque objet) :
+  - 3 feuillus : chêne rond (64 × 73 px), arbre élancé (56 × 84), arbre large (72 × 68) ;
+  - 1 sapin (44 × 92) ;
+  - 2 buissons, dont un à baies ;
+  - 1 souche ;
+  - l'ombre de chaque objet, sur une rangée à part pour pouvoir l'ajuster.
+- **Échelle** : de 2 à 3 cases de haut pour les arbres, soit trois fois la taille de nos personnages de 26 px, contre plus de quatre cases pour les arbres LPC.
+- **Fait à la main** :
+  - la silhouette de chaque feuillu, en 4 à 7 touffes rondes (centre et rayon choisis un à un) ;
+  - les 5 étages du sapin ;
+  - l'écorce et la souche, écrites pixel par pixel ;
+  - les taches de lumière, les creux d'ombre et les baies, posés un à un ;
+  - un motif de petites feuilles et un motif d'aiguilles répétés dans les feuillages.
+- **Calculé** : l'éclairage venu d'en haut à gauche, le relief entre touffes (plus sombre sous une touffe placée devant) et le contour, plus foncé en bas et à droite.
+- Les couleurs sont contrôlées contre la palette.
+- Le fichier est rangé dans `assets/art/tiles/` avec le reste de la voie C, plutôt que dans un nouveau dossier `props/`.
+
+**Dans le jeu** (zone témoin, rendu TUILES INCR-AGE)
+- Forêts : un arbre par case en quinconce, comme les arbres d'origine, mêlant chênes, arbres élancés, arbres larges et sapins, un peu assombris au cœur de la forêt.
+- Arbres et buissons isolés de la carte remplacés par les nôtres.
+- Deux souches décoratives en lisière, sans collision.
+- Seuls les dessins d'origine sont masqués : les collisions ne changent pas.
+- 60 FPS ; environ 630 nœuds de plus.
+
+**Captures** : `incr_vue_large.png`, `incr_foret.png` (zoom proche), `incr_pont.png` dans `docs/art/zone_temoin/`.
+
+**Constat**
+- Les forêts se lisent comme de vraies forêts : silhouettes variées, volumes, palette commune avec le sol, et l'échelle reste juste face au groupe.
+- Restent dans l'ancien style : huttes, feu, pont, rochers, caisses, totem, roseaux.
+- Les ombres des arbres ne se voient qu'en lisière, la forêt dense les couvre.
+- La canopée continue et les arbres de lisière posés devant (fiche, section 8) ne sont pas encore faits : pour l'instant, c'est toujours un arbre par case.

@@ -7,7 +7,8 @@ extends Node2D
 ## - INCR : notre propre jeu de tuiles (voie C, docs/TILESET_SPEC.md), au fil des étapes de production ;
 ##   étape 1 : herbe (grass_fill.png) ; étape 2 : terre et ses bords en grille double (dirt_fill.png,
 ##   dirt_on_grass.png) ; étape 3 : eau animée et berges (water_fill.png, water_on_grass.png).
-##   Le reste (pont, arbres, décors) garde le rendu actuel ; le pont, posé au-dessus, reste visible.
+##   étape 4 : arbres, buissons, souches et leurs ombres (nature.png). Le pont, les huttes et les
+##   petits décors gardent le rendu actuel.
 ## Au lancement : INCR ; « -- --zone-temoin=off », « =lpc » ou « =incr » pour choisir.
 ## Purement visuel : carte, collisions et règles intactes.
 
@@ -18,6 +19,7 @@ const OUR_DIRT := preload("res://assets/art/tiles/dirt_fill.png")
 const OUR_DIRT_EDGES := preload("res://assets/art/tiles/dirt_on_grass.png")
 const GRASS_KINDS := [MapData.Ground.GRASS, MapData.Ground.MEADOW, MapData.Ground.FOREST]
 const DIRT_KINDS := [MapData.Ground.PATH, MapData.Ground.SAND]
+const NATURE := preload("res://assets/art/tiles/nature.png")
 const OUR_WATER := preload("res://assets/art/tiles/water_fill.png")
 const OUR_WATER_EDGES := preload("res://assets/art/tiles/water_on_grass.png")
 const WATER_KINDS := [MapData.Ground.WATER, MapData.Ground.BRIDGE]
@@ -54,6 +56,10 @@ var _entities: Node2D
 ## Sprites d'origine masqués dans la zone, et arbres LPC ajoutés : basculés ensemble par F2.
 var _hidden: Array[CanvasItem] = []
 var _trees: Array[Node2D] = []
+## Nos arbres, buissons et souches (voie C, étape 4) et buissons d'origine qu'ils remplacent.
+var _our_trees: Array[Node2D] = []
+var _hidden_bushes: Array[CanvasItem] = []
+var _nature := {}
 var _mode := Mode.INCR
 var _hud: Hud
 var _overlay: TileMapLayer
@@ -82,6 +88,7 @@ func setup(map: MapData, entities: Node2D, hud: Hud = null, overlay: TileMapLaye
 	# Les décors sont posés juste après le terrain : on attend qu'ils existent pour les relever.
 	_collect_old_trees.call_deferred()
 	_plant_trees()
+	_plant_our_trees()
 	_water.draw.connect(_draw_water)
 	add_child(_water)
 
@@ -110,10 +117,16 @@ func _set_mode(mode: int) -> void:
 	_mode = mode
 	visible = mode != Mode.ORIGINAL
 	# Les arbres LPC ne remplacent les arbres d'origine que dans l'essai LPC.
+	# Arbres d'origine remplacés dans l'essai LPC (arbres LPC) comme dans nos tuiles (nos arbres) ;
+	# buissons d'origine remplacés dans nos tuiles seulement.
 	for item in _hidden:
-		item.visible = mode != Mode.LPC
+		item.visible = mode == Mode.ORIGINAL
+	for item in _hidden_bushes:
+		item.visible = mode != Mode.INCR
 	for tree in _trees:
 		tree.visible = mode == Mode.LPC
+	for tree in _our_trees:
+		tree.visible = mode == Mode.INCR
 	for c: Vector2i in _overlay_cells:
 		if mode == Mode.INCR:
 			_overlay.erase_cell(c)
@@ -123,20 +136,81 @@ func _set_mode(mode: int) -> void:
 	_water.queue_redraw()
 
 
-## Arbres d'origine de la zone (forêts et arbres isolés) : masqués pendant l'essai.
+## Arbres d'origine de la zone (forêts, arbres isolés) et buissons : masqués selon le rendu affiché.
+## Seuls leurs dessins sont masqués : leurs collisions restent en place.
 func _collect_old_trees() -> void:
 	for child in _entities.get_children():
 		if child.name.begins_with("ForestRow"):
 			for sprite: Node2D in child.get_children():
 				if _in_zone(sprite.global_position):
 					_hidden.append(sprite)
-		elif child is Node2D and not child in _trees and _in_zone(child.global_position):
-			var c := Vector2i((child as Node2D).global_position / T)
-			if _map.char_at(c) in "tp":
+		elif child is Node2D and not child in _trees and not child in _our_trees and _in_zone(child.global_position):
+			var ch := _map.char_at(Vector2i((child as Node2D).global_position / T))
+			if ch.length() == 1 and ch in "tpb":
 				for part in child.get_children():
 					if part is Sprite2D:
-						_hidden.append(part)
+						if ch == "b":
+							_hidden_bushes.append(part)
+						else:
+							_hidden.append(part)
 	_set_mode(_mode)
+
+
+## Nos arbres (voie C, étape 4) : en forêt, un par case en quinconce comme les arbres d'origine,
+## un peu assombris au cœur de la forêt ; feuillus et sapins sur les arbres isolés de la carte,
+## nos buissons sur ses buissons, et deux souches posées en lisière (décor, sans collision).
+const FOREST_MIX := ["oak", "birch", "wide", "oak", "pine", "wide", "birch", "pine"]
+const STUMPS: Array[Vector2i] = [Vector2i(64, 62), Vector2i(50, 51)]
+
+
+func _plant_our_trees() -> void:
+	_nature = JSON.parse_string(FileAccess.get_file_as_string("res://assets/art/tiles/nature.json"))
+	for y in range(ZONE.position.y, ZONE.end.y):
+		for x in range(ZONE.position.x, ZONE.end.x):
+			var c := Vector2i(x, y)
+			var ch := _map.char_at(c)
+			var at := Vector2(c * T) + Vector2(T * 0.5, T * 0.75)
+			if _map.ground_at(c) == MapData.Ground.FOREST:
+				var stagger := 8.0 if y % 2 else -8.0
+				at += Vector2(stagger + (_hash(c) % 9 - 4), _hash(c + Vector2i(5, 9)) % 7 - 3)
+				var shade := 1.0 if _forest_edge(c) else 0.84 + (_hash(c) % 10) * 0.01
+				_add_ours(FOREST_MIX[_hash(c) % FOREST_MIX.size()], at, shade, _hash(c) % 2 == 0)
+			elif ch == "t":
+				_add_ours(["oak", "birch", "wide"][_hash(c) % 3], at, 1.0, _hash(c) % 2 == 0)
+			elif ch == "p":
+				_add_ours("pine", at, 1.0, _hash(c) % 2 == 0)
+			elif ch == "b":
+				_add_ours("bush_berry" if _hash(c) % 3 == 0 else "bush", at, 1.0, _hash(c) % 2 == 0)
+	for c in STUMPS:
+		_add_ours("stump", Vector2(c * T) + Vector2(T * 0.5, T * 0.75), 1.0, false)
+
+
+func _forest_edge(c: Vector2i) -> bool:
+	for d: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+		if _map.ground_at(c + d) != MapData.Ground.FOREST:
+			return true
+	return false
+
+
+## Un objet de la planche nature.png, posé à ses pieds, avec son ombre dessous (même nœud, trié en profondeur).
+func _add_ours(key: String, at: Vector2, shade: float, flip: bool) -> void:
+	var node := Node2D.new()
+	node.position = at.round()
+	for part in [key + "_shadow", key]:
+		var info: Dictionary = _nature[part]
+		var sprite := Sprite2D.new()
+		sprite.texture = NATURE
+		sprite.region_enabled = true
+		sprite.region_rect = Rect2(info["rect"][0], info["rect"][1], info["rect"][2], info["rect"][3])
+		sprite.centered = false
+		sprite.offset = -Vector2(info["pivot"][0], info["pivot"][1])
+		# L'ombre n'est jamais retournée : la lumière vient toujours d'en haut à gauche.
+		sprite.flip_h = flip and part == key
+		if part == key:
+			sprite.modulate = Color(shade, shade, shade)
+		node.add_child(sprite)
+	_entities.add_child(node)
+	_our_trees.append(node)
 
 
 ## Arbres LPC : un toutes les deux cases en forêt (couvert dense), et sur chaque arbre isolé.
