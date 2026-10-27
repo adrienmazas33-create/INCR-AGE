@@ -66,6 +66,11 @@ léger, sans microgestion, sans progression hors jeu.
 
 ## Ce qui manque de l'export
 
-Tout ce qui a été décidé **après le 23/10 17 h 58** : la fin de la conception, les choix d'art
-(campagne artistique, voie C), et la suite du chantier. `PROGRESS.md` et `ROADMAP.md` couvrent le
-chantier, mais pas les décisions de conception prises oralement ensuite.
+Rien d'essentiel. L'export s'arrête au 23/10 17 h 58, quand les limites d'utilisation de Claude ont
+été atteintes ; le fil a repris dans Claude Code, puis dans la session du 27/10. Les décisions prises
+entre-temps ne sont pas perdues : elles sont dans le dépôt, sous forme de lots validés, de tags et de
+plans (`PROGRESS.md`, `docs/ROADMAP.md`, `docs/WORLD_ART_PLAN.md`, `docs/ART_DIRECTION_PLAN.md`).
+
+Autrement dit : la conception de ce document s'arrête avant la campagne artistique, mais **la
+campagne artistique elle-même est documentée ailleurs**. Ce fichier ne la remplace pas ; il rappelle
+seulement pourquoi le jeu existe et où il va.
