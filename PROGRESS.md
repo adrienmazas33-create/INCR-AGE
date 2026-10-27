@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : troupes organiques, lot 1, validé et publié (pas de tag). Lots 1 à 4 de la diversification de l'armée et voie C validés et publiés. Audio terminé et validé.**
+**État : voie C, étape 6 (falaises du plateau témoin), faite, en commit local, en attente de validation (non poussé, pas de tag). Troupes organiques (lot 1), lots 1 à 4 de la diversification de l'armée et voie C, étapes 1 à 5, validés et publiés. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -234,6 +234,12 @@ Voir les priorités 2 et 3 du plan artistique.
   - raccord de boucle : aucun saut entre la fin et le début ; en jeu, après 105 s, la lecture est repartie du début (position 5,5 s), en boucle ;
   - 60 FPS au camp et en combat avec la musique ; rendu en 9 s par l'outil, une fois pour toutes ;
   - écoute : **validée** par le porteur du projet le 22/10/2026.
+- **Voie C, étape 6 (falaises du plateau témoin)**, en jeu, copies d'une sauvegarde de test :
+  - captures avant et après aux mêmes endroits et zooms (escalier, extrémités ouest et est en gradins, vue large du plateau), dans `docs/art/zone_temoin/etape6/` ; toutes les situations de la carte y figurent : faces continues, coins saillants et rentrants, escalier, rebords ;
+  - bascule F2 par touches simulées : TUILES INCR-AGE, puis RENDU ORIGINAL, ESSAI LPC (rendu original sur le plateau) et retour à TUILES INCR-AGE, avec le bandeau ;
+  - camp capturable intact sur le plateau (mât, piquets, foyer, défenseurs) ;
+  - performances : sur le plateau en vue large (le cas le plus chargé), mesures alternées ancienne et nouvelle version, deux fois : 60 FPS dans les quatre cas (10 282 nœuds contre 8 683 : nos arbres de la zone) ; sur le tour complet, la machine variait d'un passage à l'autre (52,8 puis 146 FPS avec la nouvelle version, 56,5 avec l'ancienne entre les deux) : pas de conclusion à en tirer, sinon aucune erreur et un tour identique (149,8 s) ;
+  - **à ta charge** : l'appréciation artistique (roche, lèvre d'herbe, coins, escalier), la lisibilité du relief avec la même herbe en haut et en bas, et le ressenti à 60 FPS en jouant.
 - **Troupes organiques (lot 1)**, en jeu, sauvegardes isolées (copie d'une partie de test à 8 compagnons, 5 lances et 3 frondes) :
   - tour complet de la carte, même parcours, avant et après, dans les mêmes conditions : 149,8 s dans les deux cas, **60 FPS** (moyenne 59,9 avant, 60,6 après : la machine a retrouvé ses 60 FPS, la mesure en attente est faite) ; **4 replacements forcés contre 6** avant ; aucune erreur de script ;
   - colonne en marche (captures avant et après, côte à côte) : l'ancienne grille parfaite par deux devient une colonne irrégulière, sans membre isolé ni chevauchement ;
@@ -295,6 +301,11 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
+- **Voie C, étape 6 : falaises, escalier et rebords** (section 15 de `docs/WORLD_ART_PLAN.md`), en attente de validation (commit local, non poussé) :
+  - `cliffs.png` (26 tuiles) dessinée par le nouvel outil `tools/draw_cliffs.gd` : faces haute et basse en strates (3 variantes chacune), coins saillants arrondis, coins rentrants, escalier et ses joues, ombre au pied, rebords ouest, est et nord ; couleurs contrôlées contre la palette ;
+  - seconde zone témoin (`ZoneTemoin.CLIFF_ZONE`) : le grand plateau nord-est entier et ses abords, avec aussi notre herbe, nos chemins, nos arbres et nos décalques ; bascule F2 comme pour la zone du camp (l'essai LPC n'y change rien) ;
+  - purement visuel : carte, collisions et règles inchangées ; le camp capturable reste en place ;
+  - régénérer la planche : `godot --headless --path . --script res://tools/draw_cliffs.gd`, puis `--import`.
 - **Troupes organiques, lot 1** (priorité 3 de `docs/ROADMAP.md`), validé par le porteur du projet et publié :
   - le suivi reste celui d'avant (trace du héros, mêmes garde-fous contre les blocages) ; seules les places et les rythmes varient ;
   - allure propre à chaque compagnon, tirée une fois pour toutes d'après son numéro (`Party._give_gait`) : vitesse de marche ±5 %, avance ou retard dans la colonne ±4 px, écart à la trace 5 à 11 px au lieu de 8, et un lent balancement de ces deux places (±2,5 px, période de 5 à 9 s) ;

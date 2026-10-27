@@ -321,3 +321,35 @@ Ils sont petits (au plus 11 × 7 px), sans contour et peu contrastés. Les coule
 **Constat**
 - L'effet est volontairement discret : de petites touches de vie (feuilles et champignons en lisière, cailloux près des chemins, fleurs isolées) entre de larges zones calmes.
 - Les touffes se fondent dans l'herbe, qui en contient déjà ; les champignons rouges sont la touche la plus visible.
+
+## 15. Voie C, étape 6 : falaises, escalier et rebords (27/10/2026, en attente de validation)
+
+**Livrable** : `assets/art/tiles/cliffs.png`, planche de 8 × 4 tuiles de 32 px, dessinée dans `tools/draw_cliffs.gd` (nouvel outil, même méthode que les étapes précédentes : tracés, joints, silhouettes et petits motifs placés à la main ; le calcul se limite à l'éclairage, en haut à gauche) :
+- face haute (sous le plateau, avec la lèvre d'herbe qui déborde) et face basse (pied, éboulis), 3 variantes chacune ;
+- coins saillants arrondis, à gauche et à droite, en haut et en bas (4) ;
+- coins rentrants, à gauche (ombre portée par le relief voisin) et à droite (joint sombre), en haut et en bas (4 calques) ;
+- escalier taillé dans la roche, haut et bas (2), et ses joues, gauche et droite, haut et bas (4 calques) ;
+- ombre au pied de la face (1, calque) ;
+- rebords vus de dessus, ouest (côté lumière), est (côté ombre) et nord, 2 variantes chacun (6).
+
+Soit 26 tuiles, contre 14 environ prévues : les coins rentrants, les joues de l'escalier et les rebords se sont révélés nécessaires sur le vrai plateau. Toutes les couleurs sont contrôlées contre la palette. Les tuiles des étapes 1 à 5 sont inchangées.
+
+**Strates sans grille** : chaque fissure entre strates ondule, s'estompe par endroits et coupe les bords de la tuile à la même hauteur dans toutes les variantes ; les fractures verticales sont rares et obliques, certaines ne sont que des fentes ; quelques blocs sont en retrait (plus sombres, sans arête claire). Les variantes se posent donc dans n'importe quel ordre sans raccord visible. Petits motifs : mousse, fentes, lierre, racine, touffe, rocher tombé, cailloux, éboulis.
+
+**Placement** (rendu TUILES INCR-AGE), dans `scripts/world/zone_temoin.gd` :
+- Une seconde zone témoin, le grand plateau nord-est entier et ses abords, de la rivière à l'ouest jusqu'aux forêts au nord, à l'est et au sud (cases 78 à 119, 4 à 41). Le plan initial (section 6) visait un petit échantillon de (96, 22) à (106, 30) ; il aurait coupé la falaise au milieu et laissé des raccords en ligne droite en pleine herbe. La zone reçoit aussi notre herbe, nos chemins, nos arbres, nos buissons et nos décalques (étapes 1 à 5), ce qui place ses limites sous les arbres ou dans l'eau.
+- Chaque face fait deux rangées (haute, basse). Une face prolonge sa voisine de même hauteur ; contre un sol plus bas, son bout s'arrondit ; contre le plateau, ou contre une face plus avancée, elle passe derrière (coin rentrant). Les deux extrémités du plateau descendent en gradins : tous ces cas y sont présents.
+- Le dessus du plateau reçoit notre herbe, avec des rebords de pierre sur ses bords ouest, est et nord ; l'escalier repose sur la terre du chemin.
+- L'essai LPC ne couvre pas cette zone : elle y garde le rendu original.
+- Carte, collisions et règles inchangées ; le camp capturable, ses défenseurs et ses décors restent en place.
+
+**Captures** dans `docs/art/zone_temoin/etape6/` (mêmes endroits, mêmes zooms, avant et après) :
+- `avant_escalier.png` et `apres_escalier.png` : l'escalier et le chemin qui en part ;
+- `avant_ouest.png` et `apres_ouest.png` : extrémité ouest, en gradins ;
+- `avant_est.png` et `apres_est.png` : extrémité est, en gradins ;
+- `avant_vue_large.png` et `apres_vue_large.png` : tout le plateau.
+
+**Constat**
+- La falaise se lit comme de la roche en strates, et non plus comme un mur de pierres taillées ; l'escalier n'a plus son quadrillage.
+- Le dessus du plateau a la même herbe que le bas : le relief se lit par les faces, les ombres et les rebords, pas par une herbe différente. Une herbe propre au plateau demanderait de nouvelles tuiles, si tu la souhaites.
+- Les rochers posés sur le plateau gardent le rendu actuel (hors du périmètre de cette étape).

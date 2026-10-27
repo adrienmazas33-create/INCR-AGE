@@ -212,7 +212,7 @@ Le tout s'appliquera d'abord à la zone témoin, avec la même bascule **F2** qu
 3. Eau sur herbe (16), eau animée, écume : la rivière.
 4. 3 feuillus, 1 conifère, 2 buissons, 1 souche, et leurs ombres : l'échelle face au groupe.
 5. 12 décalques au sol.
-6. Échantillon de falaise : lèvre, faces, coins, escalier (environ 14 tuiles) sur le plateau témoin.
+6. Échantillon de falaise : lèvre, faces, coins, escalier (environ 14 tuiles) sur le plateau témoin. **Fait** : `cliffs.png`, 26 tuiles, sur tout le grand plateau nord-est (section 15 de `docs/WORLD_ART_PLAN.md`).
 
 C'est environ **90 tuiles et objets** pour la zone témoin complète.
 

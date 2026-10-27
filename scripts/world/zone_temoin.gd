@@ -9,6 +9,10 @@ extends Node2D
 ##   dirt_on_grass.png) ; étape 3 : eau animée et berges (water_fill.png, water_on_grass.png).
 ##   étape 4 : arbres, buissons, souches et leurs ombres (nature.png). Le pont, les huttes et les
 ##   petits décors gardent le rendu actuel.
+##   étape 5 : décalques au sol (decals.png).
+##   étape 6 : falaises, escalier et rebords (cliffs.png), sur une seconde zone : le grand plateau
+##   nord-est entier et ses abords (CLIFF_ZONE), qui reçoit aussi notre herbe, nos chemins, nos arbres
+##   et nos décalques. L'essai LPC ne la couvre pas : elle y garde le rendu original.
 ## Au lancement : INCR ; « -- --zone-temoin=off », « =lpc » ou « =incr » pour choisir.
 ## Purement visuel : carte, collisions et règles intactes.
 
@@ -17,8 +21,11 @@ const MODE_NAMES := ["RENDU ORIGINAL", "ESSAI LPC", "TUILES INCR-AGE"]
 const OUR_GRASS := preload("res://assets/art/tiles/grass_fill.png")
 const OUR_DIRT := preload("res://assets/art/tiles/dirt_fill.png")
 const OUR_DIRT_EDGES := preload("res://assets/art/tiles/dirt_on_grass.png")
-const GRASS_KINDS := [MapData.Ground.GRASS, MapData.Ground.MEADOW, MapData.Ground.FOREST]
-const DIRT_KINDS := [MapData.Ground.PATH, MapData.Ground.SAND]
+## Sols qui reçoivent notre herbe : le dessus du plateau, et les faces de falaise (sous leurs parties
+## transparentes : coins arrondis, pied).
+const GRASS_KINDS := [MapData.Ground.GRASS, MapData.Ground.MEADOW, MapData.Ground.FOREST, MapData.Ground.PLATEAU, MapData.Ground.FACE]
+## L'escalier compte comme la terre du chemin qui y mène : la terre passe dessous.
+const DIRT_KINDS := [MapData.Ground.PATH, MapData.Ground.SAND, MapData.Ground.STAIRS]
 const NATURE := preload("res://assets/art/tiles/nature.png")
 const DECALS := preload("res://assets/art/tiles/decals.png")
 const OUR_WATER := preload("res://assets/art/tiles/water_fill.png")
@@ -28,8 +35,17 @@ const WATER_KINDS := [MapData.Ground.WATER, MapData.Ground.BRIDGE]
 const WATER_FPS := 6.0
 const WATER_FRAMES := 4
 
-## Zone témoin, en cases (bornes incluses).
+## Zone témoin autour du camp, et zone du plateau témoin (étape 6), en cases.
 const ZONE := Rect2i(44, 44, 39, 23)
+const CLIFF_ZONE := Rect2i(78, 4, 42, 38)
+const ZONES: Array[Rect2i] = [ZONE, CLIFF_ZONE]
+## Falaises (cliffs.png, voir tools/draw_cliffs.gd) : colonnes de la planche.
+const CLIFFS := preload("res://assets/art/tiles/cliffs.png")
+const CLIFF_END_LEFT := 3
+const CLIFF_END_RIGHT := 4
+const CLIFF_NOOK_LEFT := 5
+const CLIFF_NOOK_RIGHT := 6
+const CLIFF_SHADOW := Vector2i(6, 2)
 const T := 32
 const GRASS := preload("res://assets/art/lpc/grass.png")
 const DIRT := preload("res://assets/art/lpc/dirt.png")
@@ -57,9 +73,12 @@ var _entities: Node2D
 ## Sprites d'origine masqués dans la zone, et arbres LPC ajoutés : basculés ensemble par F2.
 var _hidden: Array[CanvasItem] = []
 var _trees: Array[Node2D] = []
-## Nos arbres, buissons et souches (voie C, étape 4) et buissons d'origine qu'ils remplacent.
+## Nos arbres, buissons et souches (voie C, étape 4), et décors d'origine masqués seulement sous nos
+## tuiles : buissons, et arbres de la zone du plateau (l'essai LPC n'y plante rien).
 var _our_trees: Array[Node2D] = []
-var _hidden_bushes: Array[CanvasItem] = []
+var _hidden_incr: Array[CanvasItem] = []
+## Cases des deux zones, dans l'ordre (rangée par rangée).
+var _cells: Array[Vector2i] = []
 var _nature := {}
 ## Décalques au sol : [numéro dans decals.png, position des pieds en pixels], calculés une fois.
 var _decals: Array = []
@@ -78,10 +97,15 @@ func setup(map: MapData, entities: Node2D, hud: Hud = null, overlay: TileMapLaye
 	_entities = entities
 	_hud = hud
 	_overlay = overlay
-	# Décors d'origine de la couche Overlay dans la zone (sauf les ponts) : masqués sous nos tuiles.
+	for zone in ZONES:
+		for y in range(zone.position.y, zone.end.y):
+			for x in range(zone.position.x, zone.end.x):
+				_cells.append(Vector2i(x, y))
+	# Décors d'origine de la couche Overlay dans les zones (sauf les ponts ; dont l'ombre au pied des
+	# falaises) : masqués sous nos tuiles.
 	if overlay:
 		for c in overlay.get_used_cells():
-			if ZONE.has_point(c) and map.ground_at(c) != MapData.Ground.BRIDGE:
+			if _in_zones(c) and map.ground_at(c) != MapData.Ground.BRIDGE:
 				_overlay_cells[c] = [overlay.get_cell_source_id(c), overlay.get_cell_atlas_coords(c)]
 	for arg in OS.get_cmdline_user_args():
 		match arg:
@@ -125,7 +149,7 @@ func _set_mode(mode: int) -> void:
 	# buissons d'origine remplacés dans nos tuiles seulement.
 	for item in _hidden:
 		item.visible = mode == Mode.ORIGINAL
-	for item in _hidden_bushes:
+	for item in _hidden_incr:
 		item.visible = mode != Mode.INCR
 	for tree in _trees:
 		tree.visible = mode == Mode.LPC
@@ -140,7 +164,7 @@ func _set_mode(mode: int) -> void:
 	_water.queue_redraw()
 
 
-## Arbres d'origine de la zone (forêts, arbres isolés) et buissons : masqués selon le rendu affiché.
+## Arbres d'origine des zones (forêts, arbres isolés) et buissons : masqués selon le rendu affiché.
 ## Seuls leurs dessins sont masqués : leurs collisions restent en place.
 func _collect_old_trees() -> void:
 	for child in _entities.get_children():
@@ -148,13 +172,15 @@ func _collect_old_trees() -> void:
 			for sprite: Node2D in child.get_children():
 				if _in_zone(sprite.global_position):
 					_hidden.append(sprite)
-		elif child is Node2D and not child in _trees and not child in _our_trees and _in_zone(child.global_position):
+				elif _in_zones(Vector2i(sprite.global_position / T)):
+					_hidden_incr.append(sprite)
+		elif child is Node2D and not child in _trees and not child in _our_trees and _in_zones(Vector2i((child as Node2D).global_position / T)):
 			var ch := _map.char_at(Vector2i((child as Node2D).global_position / T))
 			if ch.length() == 1 and ch in "tpb":
 				for part in child.get_children():
 					if part is Sprite2D:
-						if ch == "b":
-							_hidden_bushes.append(part)
+						if ch == "b" or not _in_zone(child.global_position):
+							_hidden_incr.append(part)
 						else:
 							_hidden.append(part)
 	_set_mode(_mode)
@@ -169,22 +195,20 @@ const STUMPS: Array[Vector2i] = [Vector2i(64, 62), Vector2i(50, 51)]
 
 func _plant_our_trees() -> void:
 	_nature = JSON.parse_string(FileAccess.get_file_as_string("res://assets/art/tiles/nature.json"))
-	for y in range(ZONE.position.y, ZONE.end.y):
-		for x in range(ZONE.position.x, ZONE.end.x):
-			var c := Vector2i(x, y)
-			var ch := _map.char_at(c)
-			var at := Vector2(c * T) + Vector2(T * 0.5, T * 0.75)
-			if _map.ground_at(c) == MapData.Ground.FOREST:
-				var stagger := 8.0 if y % 2 else -8.0
-				at += Vector2(stagger + (_hash(c) % 9 - 4), _hash(c + Vector2i(5, 9)) % 7 - 3)
-				var shade := 1.0 if _forest_edge(c) else 0.84 + (_hash(c) % 10) * 0.01
-				_add_ours(FOREST_MIX[_hash(c) % FOREST_MIX.size()], at, shade, _hash(c) % 2 == 0)
-			elif ch == "t":
-				_add_ours(["oak", "birch", "wide"][_hash(c) % 3], at, 1.0, _hash(c) % 2 == 0)
-			elif ch == "p":
-				_add_ours("pine", at, 1.0, _hash(c) % 2 == 0)
-			elif ch == "b":
-				_add_ours("bush_berry" if _hash(c) % 3 == 0 else "bush", at, 1.0, _hash(c) % 2 == 0)
+	for c in _cells:
+		var ch := _map.char_at(c)
+		var at := Vector2(c * T) + Vector2(T * 0.5, T * 0.75)
+		if _map.ground_at(c) == MapData.Ground.FOREST:
+			var stagger := 8.0 if c.y % 2 else -8.0
+			at += Vector2(stagger + (_hash(c) % 9 - 4), _hash(c + Vector2i(5, 9)) % 7 - 3)
+			var shade := 1.0 if _forest_edge(c) else 0.84 + (_hash(c) % 10) * 0.01
+			_add_ours(FOREST_MIX[_hash(c) % FOREST_MIX.size()], at, shade, _hash(c) % 2 == 0)
+		elif ch == "t":
+			_add_ours(["oak", "birch", "wide"][_hash(c) % 3], at, 1.0, _hash(c) % 2 == 0)
+		elif ch == "p":
+			_add_ours("pine", at, 1.0, _hash(c) % 2 == 0)
+		elif ch == "b":
+			_add_ours("bush_berry" if _hash(c) % 3 == 0 else "bush", at, 1.0, _hash(c) % 2 == 0)
 	for c in STUMPS:
 		_add_ours("stump", Vector2(c * T) + Vector2(T * 0.5, T * 0.75), 1.0, false)
 
@@ -281,23 +305,23 @@ func _draw() -> void:
 ##    pleines : les cases d'eau reçoivent de l'herbe dessous, si bien que la part « terre » d'une berge
 ##    arrondie montre de l'herbe et non de l'eau. Les sommets de bordure sont inclus pour l'eau.
 func _draw_incr() -> void:
-	for y in range(ZONE.position.y, ZONE.end.y):
-		for x in range(ZONE.position.x, ZONE.end.x):
-			var c := Vector2i(x, y)
-			var g := _map.ground_at(c)
-			if g in GRASS_KINDS or g in WATER_KINDS:
-				var h := _hash(c) % 20
-				var v := h / 4 if h < 16 else (4 if h < 18 else 5)
-				draw_texture_rect_region(OUR_GRASS, Rect2(Vector2(c * T), Vector2(T, T)), Rect2(v * T, 0, T, T))
-			elif g in DIRT_KINDS:
-				draw_texture_rect_region(OUR_DIRT, Rect2(Vector2(c * T), Vector2(T, T)), Rect2(_hash(c) % 3 * T, 0, T, T))
+	for c in _cells:
+		var g := _map.ground_at(c)
+		if g in GRASS_KINDS or g in WATER_KINDS:
+			var h := _hash(c) % 20
+			var v := h / 4 if h < 16 else (4 if h < 18 else 5)
+			draw_texture_rect_region(OUR_GRASS, Rect2(Vector2(c * T), Vector2(T, T)), Rect2(v * T, 0, T, T))
+		elif g in DIRT_KINDS:
+			draw_texture_rect_region(OUR_DIRT, Rect2(Vector2(c * T), Vector2(T, T)), Rect2(_hash(c) % 3 * T, 0, T, T))
 	# Terre, puis berges et eau par-dessus (côté terre des berges transparent, sauf une lèvre d'herbe).
-	for vy in range(ZONE.position.y + 1, ZONE.end.y):
-		for vx in range(ZONE.position.x + 1, ZONE.end.x):
-			var dest := Rect2(Vector2(vx * T - T / 2, vy * T - T / 2), Vector2(T, T))
-			var mask := _corners(vx, vy, DIRT_KINDS)
-			if mask != 0 and mask != 15:
-				draw_texture_rect_region(OUR_DIRT_EDGES, dest, Rect2(mask % 4 * T, mask / 4 * T, T, T))
+	for zone in ZONES:
+		for vy in range(zone.position.y + 1, zone.end.y):
+			for vx in range(zone.position.x + 1, zone.end.x):
+				var dest := Rect2(Vector2(vx * T - T / 2, vy * T - T / 2), Vector2(T, T))
+				var mask := _corners(vx, vy, DIRT_KINDS)
+				if mask != 0 and mask != 15:
+					draw_texture_rect_region(OUR_DIRT_EDGES, dest, Rect2(mask % 4 * T, mask / 4 * T, T, T))
+	_draw_cliffs()
 	# Décalques au sol (étape 5), posés à plat par-dessus le sol et sous les personnages.
 	for d: Array in _decals:
 		draw_texture_rect_region(DECALS, Rect2(d[1] - Vector2(8, 15), Vector2(16, 16)), Rect2(d[0] * 16, 0, 16, 16))
@@ -307,16 +331,87 @@ func _draw_incr() -> void:
 func _draw_water() -> void:
 	if _mode != Mode.INCR:
 		return
-	for vy in range(ZONE.position.y, ZONE.end.y + 1):
-		for vx in range(ZONE.position.x, ZONE.end.x + 1):
-			var mask := _corners(vx, vy, WATER_KINDS)
-			if mask == 0:
-				continue
-			var dest := Rect2(Vector2(vx * T - T / 2, vy * T - T / 2), Vector2(T, T))
-			if mask == 15:
-				_water.draw_texture_rect_region(OUR_WATER, dest, Rect2(_frame * T, 0, T, T))
-			else:
-				_water.draw_texture_rect_region(OUR_WATER_EDGES, dest, Rect2(_frame * T * 4 + mask % 4 * T, mask / 4 * T, T, T))
+	for zone in ZONES:
+		for vy in range(zone.position.y, zone.end.y + 1):
+			for vx in range(zone.position.x, zone.end.x + 1):
+				var mask := _corners(vx, vy, WATER_KINDS)
+				if mask == 0:
+					continue
+				var dest := Rect2(Vector2(vx * T - T / 2, vy * T - T / 2), Vector2(T, T))
+				if mask == 15:
+					_water.draw_texture_rect_region(OUR_WATER, dest, Rect2(_frame * T, 0, T, T))
+				else:
+					_water.draw_texture_rect_region(OUR_WATER_EDGES, dest, Rect2(_frame * T * 4 + mask % 4 * T, mask / 4 * T, T, T))
+
+
+## Falaises du plateau (étape 6), par-dessus l'herbe et la terre, sous les décalques et les personnages.
+## Faces : face haute (sous le plateau) ou basse ; une face prolonge sa voisine de même hauteur. Contre
+## un sol plus bas, son bout s'arrondit (coin saillant) ; contre le plateau, ou contre une face plus
+## avancée, elle passe derrière (coin rentrant, avec l'ombre du relief voisin à gauche). Escalier avec
+## ses joues ; rebords vus de dessus sur les bords ouest, est et nord du plateau ; ombre au pied des faces.
+func _draw_cliffs() -> void:
+	for c in _cells:
+		match _map.ground_at(c):
+			MapData.Ground.FACE:
+				var top := _map.ground_at(c + Vector2i.UP) != MapData.Ground.FACE
+				var row := 0 if top else 1
+				var left := _face_side(c, Vector2i.LEFT)
+				var right := _face_side(c, Vector2i.RIGHT)
+				var col := _hash(c) % 3
+				if left == 1:
+					col = CLIFF_END_LEFT
+				elif right == 1:
+					col = CLIFF_END_RIGHT
+				_cliff(c, Vector2i(col, row))
+				if left == 2:
+					_cliff(c, Vector2i(CLIFF_NOOK_LEFT, row))
+				if right == 2:
+					_cliff(c, Vector2i(CLIFF_NOOK_RIGHT, row))
+			MapData.Ground.STAIRS:
+				var top := _map.ground_at(c + Vector2i.UP) == MapData.Ground.PLATEAU
+				_cliff(c, Vector2i(0 if top else 1, 2))
+				if _map.ground_at(c + Vector2i.LEFT) != MapData.Ground.STAIRS:
+					_cliff(c, Vector2i(2 if top else 4, 2))
+				if _map.ground_at(c + Vector2i.RIGHT) != MapData.Ground.STAIRS:
+					_cliff(c, Vector2i(3 if top else 5, 2))
+			MapData.Ground.PLATEAU:
+				var v := _hash(c) % 2
+				if _map.ground_at(c + Vector2i.LEFT) != MapData.Ground.PLATEAU:
+					_cliff(c, Vector2i(v, 3))
+				if _map.ground_at(c + Vector2i.RIGHT) != MapData.Ground.PLATEAU:
+					_cliff(c, Vector2i(2 + v, 3))
+				if _map.ground_at(c + Vector2i.UP) != MapData.Ground.PLATEAU:
+					_cliff(c, Vector2i(4 + v, 3))
+			var g:
+				var above := c + Vector2i.UP
+				if g != MapData.Ground.WATER and _map.ground_at(above) == MapData.Ground.FACE \
+						and _map.ground_at(above + Vector2i.UP) == MapData.Ground.FACE:
+					_cliff(c, CLIFF_SHADOW)
+
+
+## Côté d'une face : 0 si elle continue (face de même hauteur, escalier), 1 si son bout est à l'air
+## (coin saillant), 2 si elle passe derrière le relief voisin (coin rentrant).
+func _face_side(c: Vector2i, dir: Vector2i) -> int:
+	var n := c + dir
+	match _map.ground_at(n):
+		MapData.Ground.STAIRS:
+			return 0
+		MapData.Ground.PLATEAU:
+			return 2
+		MapData.Ground.FACE:
+			var mine := _face_top_row(c)
+			var theirs := _face_top_row(n)
+			return 0 if mine == theirs else (1 if mine > theirs else 2)
+	return 1
+
+
+## Rangée du haut de la face à laquelle appartient la case (la face fait deux rangées).
+func _face_top_row(c: Vector2i) -> int:
+	return c.y if _map.ground_at(c + Vector2i.UP) != MapData.Ground.FACE else c.y - 1
+
+
+func _cliff(c: Vector2i, tile: Vector2i) -> void:
+	draw_texture_rect_region(CLIFFS, Rect2(Vector2(c * T), Vector2(T, T)), Rect2(Vector2(tile * T), Vector2(T, T)))
 
 
 ## Coins du sommet (vx, vy) appartenant à `kinds` : haut-gauche 1, haut-droite 2, bas-gauche 4,
@@ -375,6 +470,14 @@ func _in_zone(p: Vector2) -> bool:
 	return ZONE.has_point(Vector2i(p / T))
 
 
+## Case dans l'une des deux zones (camp, plateau).
+func _in_zones(c: Vector2i) -> bool:
+	for zone in ZONES:
+		if zone.has_point(c):
+			return true
+	return false
+
+
 static func _hash(c: Vector2i) -> int:
 	return absi((c.x * 73856093) ^ (c.y * 19349663)) % 1000
 
@@ -408,36 +511,32 @@ func _place_decals() -> void:
 			for y in range(p.y - 2, p.y + 2):
 				for x in range(p.x - 2, p.x + 3):
 					blocked[Vector2i(x, y)] = true
-	for y in range(ZONE.position.y, ZONE.end.y):
-		for x in range(ZONE.position.x, ZONE.end.x):
-			var c := Vector2i(x, y)
-			var ch := _map.char_at(c)
-			if ch.length() == 1 and BUSY_PROPS.contains(ch):
-				for dy in range(-1, 2):
-					for dx in range(-1, 2):
-						blocked[c + Vector2i(dx, dy)] = true
+	for c in _cells:
+		var ch := _map.char_at(c)
+		if ch.length() == 1 and BUSY_PROPS.contains(ch):
+			for dy in range(-1, 2):
+				for dx in range(-1, 2):
+					blocked[c + Vector2i(dx, dy)] = true
 	var is_tree := func(n: Vector2i) -> bool:
 		return _map.ground_at(n) == MapData.Ground.FOREST or _map.char_at(n) in ["t", "p"]
 	var is_path := func(n: Vector2i) -> bool:
 		return _map.ground_at(n) == MapData.Ground.PATH
 	var seeds: Array[Vector2i] = []
-	for y in range(ZONE.position.y, ZONE.end.y):
-		for x in range(ZONE.position.x, ZONE.end.x):
-			var c := Vector2i(x, y)
-			if not _decal_ok(c, blocked):
-				continue
-			var edge := _near(c, is_tree, 2)
-			var path := _near(c, is_path)
-			var chance := SEED_EDGE if edge else (SEED_PATH if path else SEED_OPEN)
-			if _hash(c + Vector2i(31, 17)) >= chance:
-				continue
-			var crowded := false
-			for s in seeds:
-				crowded = crowded or (absi(s.x - c.x) <= 2 and absi(s.y - c.y) <= 2)
-			if crowded:
-				continue
-			seeds.append(c)
-			_cluster(c, edge, path, blocked)
+	for c in _cells:
+		if not _decal_ok(c, blocked):
+			continue
+		var edge := _near(c, is_tree, 2)
+		var path := _near(c, is_path)
+		var chance := SEED_EDGE if edge else (SEED_PATH if path else SEED_OPEN)
+		if _hash(c + Vector2i(31, 17)) >= chance:
+			continue
+		var crowded := false
+		for s in seeds:
+			crowded = crowded or (absi(s.x - c.x) <= 2 and absi(s.y - c.y) <= 2)
+		if crowded:
+			continue
+		seeds.append(c)
+		_cluster(c, edge, path, blocked)
 	print_verbose("ZoneTemoin : %d grappes, %d décalques" % [seeds.size(), _decals.size()])
 
 
@@ -464,9 +563,9 @@ func _cluster(c: Vector2i, edge: bool, path: bool, blocked: Dictionary) -> void:
 		_decals.append([kind, at.round()])
 
 
-## Case où un décalque peut se poser : herbe ou prairie nue de la zone, hors des abords bâtis.
+## Case où un décalque peut se poser : herbe ou prairie nue des zones, hors des abords bâtis.
 func _decal_ok(c: Vector2i, blocked: Dictionary) -> bool:
-	return ZONE.has_point(c) and not blocked.has(c) and _map.char_at(c) in [".", "\""] \
+	return _in_zones(c) and not blocked.has(c) and _map.char_at(c) in [".", "\""] \
 		and _map.ground_at(c) in [MapData.Ground.GRASS, MapData.Ground.MEADOW]
 
 
