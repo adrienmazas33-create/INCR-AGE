@@ -167,7 +167,7 @@ Détail des tests : `PROGRESS.md`.
 - Au camp, la bande TROUPE du panneau permet de choisir le rôle de la prochaine recrue et de réaffecter chaque compagnon (gratuit et réversible pour ce lot). La limite reste de 8 compagnons.
 - Sauvegarde version 2, avec les rôles ; les anciennes sauvegardes sont reprises, leurs compagnons devenant des combattants.
 
-**Lot 2 — Lanceur de pierres (ennemi à distance) : FAIT, en attente de validation** (détail dans `PROGRESS.md`)
+**Lot 2 — Lanceur de pierres (ennemi à distance) : FAIT et validé** (commit local, non poussé) (détail dans `PROGRESS.md`)
 - Ennemi d'un clan rival : garde ses distances, brève préparation visible, pierre vers une position figée au départ (esquivable), dégâts seulement au contact d'un membre du groupe, une seule fois.
 - Recul bref et borné quand on l'approche, seulement si la voie est libre ; abandon et retour au repaire quand le groupe s'éloigne ; tirs désynchronisés.
 - Lignes de tir distinctes des obstacles au déplacement : l'eau n'arrête plus une pierre (ni celle du lanceur, ni celle du frondeur allié).

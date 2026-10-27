@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : diversification des ennemis, lot 2 (lanceur de pierres) fait, en commit local, en attente de validation (non poussé, pas de tag). Frondeur allié (lot 1) validé et voie C étape 5 en attente : commits locaux, non poussés. Audio terminé et validé.**
+**État : diversification de l'armée et des ennemis, lots 1 (frondeur allié) et 2 (lanceur de pierres) validés, en commits locaux non poussés : ils suivent le commit de la voie C, étape 5, encore en attente de validation. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -272,7 +272,7 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
-- **Diversification des ennemis, lot 2 : lanceur de pierres** (section 5 de `docs/ROADMAP.md`), en attente de validation :
+- **Diversification des ennemis, lot 2 : lanceur de pierres** (section 5 de `docs/ROADMAP.md`), validé par le porteur du projet le 27/10/2026 (commit local, non poussé) :
   - `scenes/enemies/stone_thrower.gd` et `.tscn`, caractéristiques `data/units/thrower.tres` : 22 PV, 6 dégâts, portée 110 px, lancer toutes les 2,2 s environ (écart aléatoire de -0,3 à +0,4 s, premier lancer décalé de 0,4 à 1,6 s : jamais de tirs synchronisés), préparation de 0,55 s (lueur rouge et tremblement), vitesse 58 ; butin 1 à 2 vivres, 1 à 2 matériaux, 12 % de savoir ;
   - comportement : repère le groupe à 130 px avec une ligne de tir libre, s'approche jusqu'à 85 px sans quitter 5 cases autour de son repaire ; plus près que 44 px, recul de 0,7 s si la voie est libre et qu'il reste aux abords du repaire (sinon il tient bon), au plus toutes les 2,5 s ; sans ligne de tir 3 s ou groupe trop loin du repaire : retour au repaire (soin lent), puis repos ;
   - pierre ennemie (mode « position figée » de `sling_stone.gd`) : vise la position de sa cible au départ, sans la suivre, à 170 px/s ; petit repère rouge au sol à l'endroit visé ; blesse la première unité du groupe rencontrée en vol, une seule fois ; retombe sans dégâts à l'arrivée ; arrêtée par les obstacles ;
