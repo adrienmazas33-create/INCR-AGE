@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : voie C, étape 6 (falaises du plateau témoin) faite, puis retouchée le 27/10/2026 (escalier lisible, lèvre d'herbe, rebords), en attente de validation (commits locaux, non poussés, pas de tag). Troupes organiques (lot 1), lots 1 à 4 de la diversification de l'armée et voie C, étapes 1 à 5, validés et publiés. Audio terminé et validé.**
+**État : voie C, étape 6 (falaises du plateau témoin) faite, retouchée (escalier lisible, lèvre d'herbe, rebords), validée et publiée (pas de tag). Troupes organiques (lot 1), lots 1 à 4 de la diversification de l'armée et voie C, étapes 1 à 5, validés et publiés. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -297,7 +297,7 @@ Voir les priorités 2 et 3 du plan artistique.
   - crête du bus Ambiance à -48 dB, contre -35 à -39 dB avant ;
   - combat : 10 coups, 9 sons écartés, aucune erreur ;
   - écoute : **validée** par le porteur du projet le 22/10/2026.
-- **Retouches de l'étape 6** (tiles seulement), 27/10/2026 :
+- **Retouches de l'étape 6** (tuiles seulement), 27/10/2026, validées avec l'étape 6 :
   - tour de non-régression complet : 149,8 s, 2 replacements forcés (1 à 2 attendus), aucune case non atteinte, aucune erreur ;
   - captures relues avant/après sur l'escalier du plateau, le bord sud-est et le campement : l'escalier se lit de nouveau du premier coup d'œil, le ruban vert et le filet violacé ont disparu, les rebords isolés ne se détachent plus comme des blocs clairs ;
   - 60 FPS (moyenne 59,4 à 60,5 selon les essais), 10 232 nœuds, inchangé ;
@@ -306,7 +306,7 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
-- **Voie C, étape 6 : falaises, escalier et rebords** (section 15 de `docs/WORLD_ART_PLAN.md`), en attente de validation (commit local, non poussé) :
+- **Voie C, étape 6 : falaises, escalier et rebords** (section 15 de `docs/WORLD_ART_PLAN.md`), validée par le porteur du projet le 27/10/2026 (retouches comprises) et publiée :
   - `cliffs.png` (26 tuiles) dessinée par le nouvel outil `tools/draw_cliffs.gd` : faces haute et basse en strates (3 variantes chacune), coins saillants arrondis, coins rentrants, escalier et ses joues, ombre au pied, rebords ouest, est et nord ; couleurs contrôlées contre la palette ;
   - seconde zone témoin (`ZoneTemoin.CLIFF_ZONE`) : le grand plateau nord-est entier et ses abords, avec aussi notre herbe, nos chemins, nos arbres et nos décalques ; bascule F2 comme pour la zone du camp (l'essai LPC n'y change rien) ;
   - purement visuel : carte, collisions et règles inchangées ; le camp capturable reste en place ;

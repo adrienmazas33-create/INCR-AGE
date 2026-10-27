@@ -322,7 +322,7 @@ Ils sont petits (au plus 11 × 7 px), sans contour et peu contrastés. Les coule
 - L'effet est volontairement discret : de petites touches de vie (feuilles et champignons en lisière, cailloux près des chemins, fleurs isolées) entre de larges zones calmes.
 - Les touffes se fondent dans l'herbe, qui en contient déjà ; les champignons rouges sont la touche la plus visible.
 
-## 15. Voie C, étape 6 : falaises, escalier et rebords (27/10/2026, en attente de validation)
+## 15. Voie C, étape 6 : falaises, escalier et rebords (27/10/2026, validée, retouches comprises)
 
 **Livrable** : `assets/art/tiles/cliffs.png`, planche de 8 × 4 tuiles de 32 px, dessinée dans `tools/draw_cliffs.gd` (nouvel outil, même méthode que les étapes précédentes : tracés, joints, silhouettes et petits motifs placés à la main ; le calcul se limite à l'éclairage, en haut à gauche) :
 - face haute (sous le plateau, avec la lèvre d'herbe qui déborde) et face basse (pied, éboulis), 3 variantes chacune ;
