@@ -163,13 +163,13 @@ Pour rompre la ligne droite d'une longue face, on ajoute :
 Le bord de la forêt devient ainsi un contour végétal, plus du tout un rectangle.
 
 **Décalques au sol** (sans collision, posés en grappes) :
-- touffes d'herbe (6) ;
+- touffes d'herbe (6 ; 3 faites à l'étape 5) ;
 - fleurs (4 couleurs) ;
 - cailloux (4) ;
 - feuilles mortes (2) ;
 - champignons (2) ;
 - trous ou terriers (1) ;
-- ossements (1, pour la touche préhistorique).
+- ossements (1, pour la touche préhistorique). Écartés de l'étape 5 (avec les terriers), pour ne pas évoquer du butin ou une interaction.
 
 **Règles de placement**
 - En grappes, jamais en semis régulier.

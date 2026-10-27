@@ -26,6 +26,107 @@ const INK := {
 	# Eau (N la plus profonde à I la plus claire) et écume.
 	"N": Color8(29, 59, 82), "M": Color8(36, 85, 122), "L": Color8(47, 111, 150),
 	"J": Color8(74, 143, 176), "I": Color8(125, 182, 200), "F": Color8(207, 232, 230),
+	# Fleur mauve, champignon.
+	"p": Color8(201, 163, 214), "Z": Color8(196, 87, 63),
+}
+
+## Étape 5 : décalques au sol, dessinés pixel par pixel (« . » : transparent). Petits, peu contrastés,
+## sans contour, posés à plat sous les personnages : rien ne doit ressembler à un obstacle ou à du butin.
+## Chacun est centré en bas d'une case de 16 x 16 de decals.png, dans cet ordre.
+const DECALS := {
+	"tuft_a": [
+		"....d....",
+		".c..c..c.",
+		"..c.bc.c.",
+		"..bcbbcb.",
+		".abbabba.",
+		"..aakaa..",
+	],
+	"tuft_b": [
+		"c...c....c.",
+		".b.cb..cb..",
+		".bbabcbab.c",
+		"aabaabbaab.",
+		".aakaakaa..",
+	],
+	"tuft_c": [
+		"..d....",
+		"..c..d.",
+		".cb..c.",
+		".b.cb..",
+		"abbbba.",
+		".akka..",
+	],
+	"flowers_yellow": [
+		".y.......",
+		"yoy...y..",
+		".y...yoy.",
+		".b.y..y..",
+		".bbob.b..",
+		"..abbba..",
+	],
+	"flowers_white": [
+		"....w....",
+		"...wyw.w.",
+		"w...w.wyw",
+		"wyw.b..w.",
+		".w..b.b..",
+		".b.abba..",
+		"..abba...",
+	],
+	"flowers_mauve": [
+		"..p....",
+		".pwp.p.",
+		"..p.pwp",
+		"..b..p.",
+		".ab.b..",
+		"..abba.",
+	],
+	"pebbles_a": [
+		".RR......",
+		"Rrrq..Rr.",
+		".qQ...qQ.",
+		"...Rr....",
+		"...qQ....",
+	],
+	"pebbles_b": [
+		"..Rr....",
+		"Rrq.RRr.",
+		"qQ..rqQ.",
+		"....QQ..",
+	],
+	"leaves_a": [
+		"..o4......",
+		".443..5o..",
+		"..3...44..",
+		"....o4.3..",
+		"...43.....",
+	],
+	"leaves_b": [
+		"4o.......",
+		"34..o5...",
+		"...443.4o",
+		".5o..3.3.",
+		"..3......",
+	],
+	"mushrooms_a": [
+		".ZZZ....",
+		"ZwZZZ...",
+		"333..ZZ.",
+		".55.ZwZZ",
+		".55.333.",
+		"a55a.5..",
+		"..a.a5a.",
+	],
+	"mushrooms_b": [
+		"..44....",
+		".4554...",
+		".2332.44",
+		"..55.455",
+		"..55.233",
+		".a55a.5.",
+		"......5.",
+	],
 }
 const WATER_BASE := "L"
 ## Animation de l'eau : 4 images (6 par seconde en jeu), qui bouclent.
@@ -199,6 +300,23 @@ func _init() -> void:
 	_check_palette(banks)
 	banks.save_png(OUT + "water_on_grass.png")
 	print("draw_tiles : water_fill.png (%d images), water_on_grass.png (16 tuiles x %d images)" % [FRAMES, FRAMES])
+	# Étape 5 : décalques au sol, une case de 16 x 16 chacun.
+	var decals := Image.create(16 * DECALS.size(), 16, false, Image.FORMAT_RGBA8)
+	var i := 0
+	for key: String in DECALS:
+		var rows: Array = DECALS[key]
+		var w: int = rows[0].length()
+		for y in rows.size():
+			var row: String = rows[y]
+			if row.length() != w:
+				push_error("draw_tiles : décalque %s, ligne %d de longueur différente" % [key, y])
+			for x in row.length():
+				if row[x] != ".":
+					decals.set_pixel(i * 16 + (16 - w) / 2 + x, 15 - rows.size() + y, INK[row[x]])
+		i += 1
+	_check_palette(decals)
+	decals.save_png(OUT + "decals.png")
+	print("draw_tiles : decals.png (%d décalques)" % DECALS.size())
 	quit()
 
 

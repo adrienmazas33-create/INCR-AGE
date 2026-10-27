@@ -287,3 +287,37 @@ L'étape 1 ne change que l'herbe (prairie et sol des forêts compris) ; le reste
 - Restent dans l'ancien style : huttes, feu, pont, rochers, caisses, totem, roseaux.
 - Les ombres des arbres ne se voient qu'en lisière, la forêt dense les couvre.
 - La canopée continue et les arbres de lisière posés devant (fiche, section 8) ne sont pas encore faits : pour l'instant, c'est toujours un arbre par case.
+
+## 14. Voie C, étape 5 : décalques au sol (27/10/2026, en attente de validation)
+
+**Livrable** : `assets/art/tiles/decals.png`, 12 décalques dessinés pixel par pixel dans `tools/draw_tiles.gd`, une case de 16 × 16 chacun :
+- 3 touffes d'herbe aux silhouettes différentes ;
+- 3 bouquets de fleurs : jaune, blanc, mauve ;
+- 2 groupes de cailloux ;
+- 2 amas de feuilles mortes ;
+- 2 groupes de champignons, l'un rouge, l'autre brun.
+
+Ils sont petits (au plus 11 × 7 px), sans contour et peu contrastés. Les couleurs sont contrôlées contre la palette. Ossements et terriers sont écartés de ce lot, pour ne pas évoquer du butin ou une interaction. Les tuiles des étapes 1 à 4 sont inchangées au pixel près.
+
+**Placement** (zone témoin, rendu TUILES INCR-AGE), dans `scripts/world/zone_temoin.gd` :
+- Grappes de 2 à 4 décalques, en décalage libre au pixel près, sans alignement sur la grille.
+- Placement reproductible : même résultat à chaque lancement.
+- Le contenu d'une grappe dépend de son voisinage :
+  - **lisière** (à deux cases au plus d'une forêt ou d'un arbre, au-delà de la canopée qui couvre la première) : feuilles mortes surtout, quelques touffes, au plus un groupe de champignons ;
+  - **bord de chemin** : cailloux et touffes ;
+  - **terrain ouvert** : touffes, et parfois un bouquet d'une seule couleur.
+- Deux grappes sont toujours à plus de deux cases l'une de l'autre : les zones calmes sont préservées.
+- Seules l'herbe et la prairie nues reçoivent des décalques. Rien sur l'eau, le pont, les chemins ou le camp.
+- Rien non plus autour des décors bâtis de la carte (huttes, feu, rondins, bois, séchoir, caisses, totem), ni autour des bâtiments des **trois stades** du village, même avant leur construction.
+- Résultat : 22 grappes, 68 décalques sur les 897 cases de la zone.
+- Les décalques sont dessinés dans le calque du sol déjà existant, sous les personnages : aucun nœud ajouté, nombre de nœuds inchangé.
+
+**Captures** dans `docs/art/zone_temoin/etape5/` (mêmes endroits, mêmes zooms) :
+- `avant_camp.png` et `apres_camp.png` (camp, zoom moyen) ;
+- `avant_lisiere.png` et `apres_lisiere.png` (lisière au sud-est du camp, zoom proche) ;
+- `avant_ouest.png` et `apres_ouest.png` (ouest du camp, zoom moyen) ;
+- `apres_village.png` : village au stade VILLAGE.
+
+**Constat**
+- L'effet est volontairement discret : de petites touches de vie (feuilles et champignons en lisière, cailloux près des chemins, fleurs isolées) entre de larges zones calmes.
+- Les touffes se fondent dans l'herbe, qui en contient déjà ; les champignons rouges sont la touche la plus visible.

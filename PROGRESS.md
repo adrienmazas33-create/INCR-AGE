@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : voie C, étapes 1 à 4 validées et publiées. En cours : étape 5 (décalques au sol en grappes). F2 fait défiler nos tuiles, le rendu original et l'essai LPC dans la zone témoin. Audio terminé et validé.**
+**État : voie C, étape 5 (12 décalques au sol en grappes) faite, en commit local, en attente de validation (non poussée). Étapes 1 à 4 validées et publiées. F2 fait défiler nos tuiles, le rendu original et l'essai LPC dans la zone témoin. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -234,6 +234,11 @@ Voir les priorités 2 et 3 du plan artistique.
   - raccord de boucle : aucun saut entre la fin et le début ; en jeu, après 105 s, la lecture est repartie du début (position 5,5 s), en boucle ;
   - 60 FPS au camp et en combat avec la musique ; rendu en 9 s par l'outil, une fois pour toutes ;
   - écoute : **validée** par le porteur du projet le 22/10/2026.
+- **Voie C, étape 5 (décalques)**, en jeu, fichier de test isolé :
+  - captures avant et après aux mêmes endroits et zooms (camp, lisière, ouest du camp) ; village au stade VILLAGE : rien sous les bâtiments ;
+  - bascule F2 vérifiée par une vraie touche simulée : TUILES INCR-AGE, puis RENDU ORIGINAL, ESSAI LPC, et retour à TUILES INCR-AGE, avec le bandeau ;
+  - 60 FPS de moyenne à tous les essais, nombre de nœuds inchangé, aucune erreur ;
+  - **non vérifié, à ta charge** : la lisibilité pendant un combat dans la zone (aucun repaire de sangliers n'y est situé), l'appréciation artistique de la densité et du placement.
 - **Ajustements audio**, en jeu :
   - 45 s près de la rivière : 3 chants d'oiseaux, à intervalles différents ;
   - crête du bus Ambiance à -48 dB, contre -35 à -39 dB avant ;
@@ -243,6 +248,10 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
+- **Voie C, étape 5 : décalques au sol** (section 14 de `docs/WORLD_ART_PLAN.md`), en attente de validation :
+  - `decals.png` : 3 touffes, 3 bouquets (jaune, blanc, mauve), 2 groupes de cailloux, 2 amas de feuilles mortes, 2 groupes de champignons, dessinés pixel par pixel dans `tools/draw_tiles.gd`, couleurs contrôlées ; ni ossements ni terriers ;
+  - placement reproductible en grappes de 2 à 4, selon le voisinage (lisière, bord de chemin, terrain ouvert), espacées d'au moins deux cases ; rien sur l'eau, le pont, les chemins, le camp, ni près des bâtiments des trois stades ; 22 grappes, 68 décalques ; aucun nœud ajouté ;
+  - outil de test : `--press=F2` simule une touche.
 - **Voie C, étape 4 : arbres, buissons, souche et ombres** (section 13 de `docs/WORLD_ART_PLAN.md`), validée et publiée :
   - `nature.png` et `nature.json` : 3 feuillus, 1 sapin, 2 buissons (dont un à baies), 1 souche, et leurs ombres à part ; dessinés dans `tools/draw_nature.gd` (silhouettes, écorce, taches et baies placées à la main ; éclairage et contour calculés), couleurs contrôlées ; arbres de 2 à 3 cases de haut ;
   - zone témoin : forêts, arbres et buissons isolés remplacés par les nôtres (dessins d'origine masqués, collisions inchangées), deux souches décoratives ; 60 FPS ;
@@ -473,6 +482,7 @@ Depuis la racine du dépôt, `godot` désigne l'exécutable console.
   - `--zoom=n` : choisir le palier de zoom ;
   - `--walk=move_up:1.5` : déplacement au clavier simulé ;
   - `--route=58,17/79,30/58,58` : parcours piloté par plus court chemin ;
+  - `--press=F2` : touches simulées (noms Godot, séparés par des virgules) ;
   - `--click=100,18/s60,120:0.5` : vrais clics de souris, sur une case (`x,y`) ou un point d'écran en pixels logiques (`sx,y`) ; `:s` n'attend que s secondes, sinon l'outil attend l'arrêt du héros. La case doit être visible à l'écran ;
   - `--give=food:30,materials:10,knowledge:2` : donner des ressources ;
   - `--buy=recruit,damage` : acheter au lancement ;

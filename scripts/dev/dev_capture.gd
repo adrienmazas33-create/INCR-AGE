@@ -6,6 +6,7 @@ extends Node
 ##   Godot --path . -- --route=58,52/57,46/55,41 --capture=C:/tmp/fin.png
 ##   Godot --path . -- --give=food:30,materials:10 --buy=recruit,damage --capture=C:/tmp/camp.png
 ##   Godot --path . -- --at=58,52 --click=70,60/s600,30:0.5 --capture=C:/tmp/clic.png
+##   Godot --path . -- --press=F2 --capture=C:/tmp/f2.png   (touches simulées, séparées par des virgules)
 ## --click simule de vrais clics de souris : tuile « x,y » ou point d'écran « sx,y » (pixels logiques),
 ## « :s » pour n'attendre que s secondes avant l'étape suivante (sinon jusqu'à l'arrêt du héros).
 ## --route conduit le héros d'une tuile à l'autre (comme au clavier) et signale les étapes non atteintes.
@@ -24,12 +25,13 @@ var _buys := []
 var _avg_fps := 0.0
 var _mover: ClickMover
 var _clicks := []
+var _presses := []
 
 
 static func attach_if_requested(parent: Node, hero: Node2D, camera: GameCamera, mover: ClickMover = null) -> void:
 	var args := OS.get_cmdline_user_args()
 	if not Array(args).any(func(a: String) -> bool:
-			return a.begins_with("--capture") or a.begins_with("--walk") or a.begins_with("--at") or a.begins_with("--route") or a.begins_with("--buy") or a.begins_with("--click")):
+			return a.begins_with("--capture") or a.begins_with("--walk") or a.begins_with("--at") or a.begins_with("--route") or a.begins_with("--buy") or a.begins_with("--click") or a.begins_with("--press")):
 		return
 	var dev := DevCapture.new()
 	dev._hero = hero
@@ -55,6 +57,8 @@ func _parse(args: PackedStringArray) -> void:
 			"--route":
 				for wp in kv[1].split("/"):
 					_route.append(_tile_center(wp))
+			"--press":
+				_presses = Array(kv[1].split(","))
 			"--click":
 				_clicks = Array(kv[1].split("/"))
 			"--hero-hp":
@@ -83,6 +87,8 @@ func _run() -> void:
 		await get_tree().create_timer(0.25).timeout
 	for c in _clicks:
 		await _click(c)
+	for key_name in _presses:
+		await _press(key_name)
 	for step in _steps:
 		Input.action_press(step[0])
 		await get_tree().create_timer(step[1]).timeout
@@ -161,6 +167,19 @@ func _path(map: MapData, from: Vector2i, to: Vector2i) -> Array[Vector2i]:
 		out.push_front(c)
 		c = prev[c]
 	return out
+
+
+## Appui puis relâche d'une touche (nom Godot, ex. « F2 »), comme au clavier.
+func _press(key_name: String) -> void:
+	for pressed in [true, false]:
+		var key := InputEventKey.new()
+		key.physical_keycode = OS.find_keycode_from_string(key_name)
+		key.keycode = key.physical_keycode
+		key.pressed = pressed
+		get_viewport().push_input(key)
+		await get_tree().process_frame
+	print("DevCapture : touche %s" % key_name)
+	await get_tree().create_timer(0.3).timeout
 
 
 ## Clic gauche (mouvement, appui, relâche) envoyé à la fenêtre de jeu, interface comprise.

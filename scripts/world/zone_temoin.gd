@@ -20,6 +20,7 @@ const OUR_DIRT_EDGES := preload("res://assets/art/tiles/dirt_on_grass.png")
 const GRASS_KINDS := [MapData.Ground.GRASS, MapData.Ground.MEADOW, MapData.Ground.FOREST]
 const DIRT_KINDS := [MapData.Ground.PATH, MapData.Ground.SAND]
 const NATURE := preload("res://assets/art/tiles/nature.png")
+const DECALS := preload("res://assets/art/tiles/decals.png")
 const OUR_WATER := preload("res://assets/art/tiles/water_fill.png")
 const OUR_WATER_EDGES := preload("res://assets/art/tiles/water_on_grass.png")
 const WATER_KINDS := [MapData.Ground.WATER, MapData.Ground.BRIDGE]
@@ -60,6 +61,8 @@ var _trees: Array[Node2D] = []
 var _our_trees: Array[Node2D] = []
 var _hidden_bushes: Array[CanvasItem] = []
 var _nature := {}
+## Décalques au sol : [numéro dans decals.png, position des pieds en pixels], calculés une fois.
+var _decals: Array = []
 var _mode := Mode.INCR
 var _hud: Hud
 var _overlay: TileMapLayer
@@ -89,6 +92,7 @@ func setup(map: MapData, entities: Node2D, hud: Hud = null, overlay: TileMapLaye
 	_collect_old_trees.call_deferred()
 	_plant_trees()
 	_plant_our_trees()
+	_place_decals()
 	_water.draw.connect(_draw_water)
 	add_child(_water)
 
@@ -294,6 +298,9 @@ func _draw_incr() -> void:
 			var mask := _corners(vx, vy, DIRT_KINDS)
 			if mask != 0 and mask != 15:
 				draw_texture_rect_region(OUR_DIRT_EDGES, dest, Rect2(mask % 4 * T, mask / 4 * T, T, T))
+	# Décalques au sol (étape 5), posés à plat par-dessus le sol et sous les personnages.
+	for d: Array in _decals:
+		draw_texture_rect_region(DECALS, Rect2(d[1] - Vector2(8, 15), Vector2(16, 16)), Rect2(d[0] * 16, 0, 16, 16))
 
 
 ## Eau et berges (calque à part, seul redessiné à chaque image de l'animation).
@@ -370,3 +377,103 @@ func _in_zone(p: Vector2) -> bool:
 
 static func _hash(c: Vector2i) -> int:
 	return absi((c.x * 73856093) ^ (c.y * 19349663)) % 1000
+
+
+# --- Décalques au sol (voie C, étape 5) -------------------------------------------------------
+
+## Numéros dans decals.png : touffes 0 à 2, fleurs 3 (jaune), 4 (blanche), 5 (mauve), cailloux 6 et 7,
+## feuilles mortes 8 et 9, champignons 10 et 11.
+const DECAL_TUFTS := [0, 1, 2]
+const DECAL_FLOWERS := [3, 4, 5]
+## Probabilité (sur 1000) qu'une case lance une grappe, selon son voisinage.
+const SEED_EDGE := 300
+const SEED_PATH := 80
+const SEED_OPEN := 100
+## Décors de la carte autour desquels on ne pose rien (huttes, feu, rondins, bois, séchoir, caisses, totem).
+const BUSY_PROPS := "hFlwkcI"
+
+
+## Grappes irrégulières et reproductibles (même résultat à chaque lancement) :
+## - en lisière (à deux cases au plus des forêts et des arbres, au-delà de la canopée qui couvre la
+##   première) : feuilles mortes, quelques champignons, touffes ;
+## - le long des chemins : quelques cailloux et touffes ;
+## - en terrain ouvert : touffes et, parfois, un bouquet d'une seule couleur.
+## Les grappes sont espacées d'au moins deux cases, pour garder des zones calmes. Rien sur l'eau, le pont,
+## les chemins et le camp, ni près des bâtiments des trois stades du village.
+func _place_decals() -> void:
+	var blocked := {}
+	for stage: int in CampVillage.STAGE_PROPS:
+		for item: Array in CampVillage.STAGE_PROPS[stage]:
+			var p: Vector2i = item[1]
+			for y in range(p.y - 2, p.y + 2):
+				for x in range(p.x - 2, p.x + 3):
+					blocked[Vector2i(x, y)] = true
+	for y in range(ZONE.position.y, ZONE.end.y):
+		for x in range(ZONE.position.x, ZONE.end.x):
+			var c := Vector2i(x, y)
+			var ch := _map.char_at(c)
+			if ch.length() == 1 and BUSY_PROPS.contains(ch):
+				for dy in range(-1, 2):
+					for dx in range(-1, 2):
+						blocked[c + Vector2i(dx, dy)] = true
+	var is_tree := func(n: Vector2i) -> bool:
+		return _map.ground_at(n) == MapData.Ground.FOREST or _map.char_at(n) in ["t", "p"]
+	var is_path := func(n: Vector2i) -> bool:
+		return _map.ground_at(n) == MapData.Ground.PATH
+	var seeds: Array[Vector2i] = []
+	for y in range(ZONE.position.y, ZONE.end.y):
+		for x in range(ZONE.position.x, ZONE.end.x):
+			var c := Vector2i(x, y)
+			if not _decal_ok(c, blocked):
+				continue
+			var edge := _near(c, is_tree, 2)
+			var path := _near(c, is_path)
+			var chance := SEED_EDGE if edge else (SEED_PATH if path else SEED_OPEN)
+			if _hash(c + Vector2i(31, 17)) >= chance:
+				continue
+			var crowded := false
+			for s in seeds:
+				crowded = crowded or (absi(s.x - c.x) <= 2 and absi(s.y - c.y) <= 2)
+			if crowded:
+				continue
+			seeds.append(c)
+			_cluster(c, edge, path, blocked)
+	print_verbose("ZoneTemoin : %d grappes, %d décalques" % [seeds.size(), _decals.size()])
+
+
+func _cluster(c: Vector2i, edge: bool, path: bool, blocked: Dictionary) -> void:
+	var count := 2 + _hash(c + Vector2i(3, 5)) % 3
+	var flower: int = DECAL_FLOWERS[_hash(c + Vector2i(11, 2)) % 3]
+	var mushroom_done := false
+	for k in count:
+		var h := _hash(c + Vector2i(k * 7 + 1, k * 13 + 4))
+		var at := Vector2(c * T) + Vector2(T * 0.5, T * 0.6) + Vector2(h % 29 - 14, (h / 29) % 17 - 8)
+		if not _decal_ok(Vector2i(at / T), blocked):
+			continue
+		var kind: int
+		if edge:
+			kind = [8, 9, 0, 8, 9, 2, 10, 11][h % 8]
+			if kind >= 10:
+				if mushroom_done:
+					kind = 8 + h % 2
+				mushroom_done = true
+		elif path:
+			kind = [6, 7, 0, 2][h % 4]
+		else:
+			kind = flower if h % 5 == 0 else DECAL_TUFTS[h % 3]
+		_decals.append([kind, at.round()])
+
+
+## Case où un décalque peut se poser : herbe ou prairie nue de la zone, hors des abords bâtis.
+func _decal_ok(c: Vector2i, blocked: Dictionary) -> bool:
+	return ZONE.has_point(c) and not blocked.has(c) and _map.char_at(c) in [".", "\""] \
+		and _map.ground_at(c) in [MapData.Ground.GRASS, MapData.Ground.MEADOW]
+
+
+## Vrai si une case à moins de `radius` cases (hors la case elle-même) vérifie `test`.
+func _near(c: Vector2i, test: Callable, radius := 1) -> bool:
+	for dy in range(-radius, radius + 1):
+		for dx in range(-radius, radius + 1):
+			if (dx != 0 or dy != 0) and test.call(c + Vector2i(dx, dy)):
+				return true
+	return false
