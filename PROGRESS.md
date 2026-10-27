@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : lot 4, revenu du camp capturé, validé et publié (pas de tag). Lots 1 à 3 (frondeur, lanceur, camp capturable) et voie C validés et publiés. Audio terminé et validé.**
+**État : troupes organiques, lot 1, fait, en commit local, en attente de validation (non poussé, pas de tag). Lots 1 à 4 de la diversification de l'armée et voie C validés et publiés. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -234,6 +234,12 @@ Voir les priorités 2 et 3 du plan artistique.
   - raccord de boucle : aucun saut entre la fin et le début ; en jeu, après 105 s, la lecture est repartie du début (position 5,5 s), en boucle ;
   - 60 FPS au camp et en combat avec la musique ; rendu en 9 s par l'outil, une fois pour toutes ;
   - écoute : **validée** par le porteur du projet le 22/10/2026.
+- **Troupes organiques (lot 1)**, en jeu, sauvegardes isolées (copie d'une partie de test à 8 compagnons, 5 lances et 3 frondes) :
+  - tour complet de la carte, même parcours, avant et après, dans les mêmes conditions : 149,8 s dans les deux cas, **60 FPS** (moyenne 59,9 avant, 60,6 après : la machine a retrouvé ses 60 FPS, la mesure en attente est faite) ; **4 replacements forcés contre 6** avant ; aucune erreur de script ;
+  - colonne en marche (captures avant et après, côte à côte) : l'ancienne grille parfaite par deux devient une colonne irrégulière, sans membre isolé ni chevauchement ;
+  - halte : places légèrement décalées, coups d'œil alentour visibles ; arrivée échelonnée observée (écarts encore différents 0,6 s après l'arrêt) ;
+  - combat : lanceur isolé abattu par le groupe mixte (3 pierres de fronde arrivées), aucun replacement forcé ;
+  - **à ta charge** : ressenti en mouvement (le balancement et les départs échelonnés ne se voient qu'en jeu), dosage des variations (trop discrètes ou trop fortes).
 - **Revenu du camp (lot 4)**, en jeu, sauvegardes isolées :
   - accumulation et plafond (période raccourcie à 0,5 s, héros loin du mât) : 16 périodes, réserve arrêtée à 10 vivres et 10 matériaux ; tas visible au pied de la bannière (capture lue) ;
   - conservation : réserve retrouvée au redémarrage ;
@@ -262,7 +268,7 @@ Voir les priorités 2 et 3 du plan artistique.
   - groupe mixte (5 lances, 3 frondes) sur le plateau : premier lanceur abattu, aucun incident ; combat au repaire est sans régression des frondeurs (6 pierres arrivées avec 3 frondeurs ; l'essai du lot 1 en comptait 6) ;
   - sauvegardes : chargement d'une sauvegarde version 2 avec rôles mixtes sans changement ;
   - tour complet (5 lances, 3 frondes) : 159 s, 6 replacements forcés comme au lot 1, mêmes endroits ; 1 pierre ennemie lancée en passant sur le plateau ;
-  - **performances** : l'ordinateur tournait ce jour-là à environ 29 FPS quel que soit le code (vérifié : code du lot 1 seul, partie neuve, rendu d'origine, tous vers 29 FPS) ; à conditions égales, aucun écart notable entre le lot 1 et le lot 2 (29,7 contre 29,3 FPS au camp avec 8 compagnons) ; à remesurer quand la machine retrouve ses 60 FPS ;
+  - **performances** : l'ordinateur tournait ce jour-là à environ 29 FPS quel que soit le code (vérifié : code du lot 1 seul, partie neuve, rendu d'origine, tous vers 29 FPS) ; à conditions égales, aucun écart notable entre le lot 1 et le lot 2 (29,7 contre 29,3 FPS au camp avec 8 compagnons) ; remesuré depuis (troupes organiques, lot 1) : 60 FPS sur le tour complet ;
   - **à ta charge** : sensation de jeu et équilibrage (dangerosité, fréquence des lancers, utilité de l'esquive), lisibilité du repère rouge et de la pierre, choix des emplacements des rencontres.
 - **Frondeur allié (diversification de l'armée, lot 1)**, en jeu, sauvegardes de test séparées (ta partie n'a pas été touchée) :
   - recrutement : 5 recrues avec le rôle choisi (fronde, lance, fronde, fronde, lance), la 6e refusée à 8 compagnons ; rôles enregistrés (version 2) ;
@@ -289,6 +295,13 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
+- **Troupes organiques, lot 1** (priorité 3 de `docs/ROADMAP.md`), en attente de validation (commit local, non poussé) :
+  - le suivi reste celui d'avant (trace du héros, mêmes garde-fous contre les blocages) ; seules les places et les rythmes varient ;
+  - allure propre à chaque compagnon, tirée une fois pour toutes d'après son numéro (`Party._give_gait`) : vitesse de marche ±5 %, avance ou retard dans la colonne ±4 px, écart à la trace 5 à 11 px au lieu de 8, et un lent balancement de ces deux places (±2,5 px, période de 5 à 9 s) ;
+  - départ échelonné : quand le héros repart d'une halte, chacun se met en route avec 0 à 0,3 s de retard ; arrivée échelonnée : chacun gagne sa place de halte avec 0 à 0,45 s de délai ;
+  - halte : places décalées de quelques pixels, tirées à chaque halte ; de temps à autre (3 à 7 s), un compagnon fait un petit pas autour de sa place (4 px au plus, jamais à travers un obstacle) ou regarde un moment ailleurs, puis se retourne vers le héros ;
+  - combat : chaque compagnon garde un léger écart d'angle et de distance dans l'éventail, toujours à portée de son arme ;
+  - tirages déterministes : une même partie rejoue les mêmes gestes (tests reproductibles) ; rien d'enregistré, sauvegarde inchangée.
 - **Lot 4 : revenu du camp capturé** (section 5 de `docs/ROADMAP.md`), validé par le porteur du projet et publié :
   - réglages choisis avec toi : 1 vivre et 1 matériau toutes les 60 s de jeu, réserve au camp conquis, plafond de 10 de chaque ;
   - accumulation seulement pendant le jeu (`EnemyCamp._income`) : rien jeu fermé, et la minute en cours repart de zéro au lancement suivant ; aucun revenu tant que le camp n'est pas capturé ;
@@ -431,7 +444,7 @@ Voir les priorités 2 et 3 du plan artistique.
 1. **Feuille de route `docs/ROADMAP.md`**, ordre revu le 22/10/2026 (rien de tout cela n'est développé) :
    1. ambiance sonore : lot A validé (tag `audio-a`), lot B (pas, ambiances) validé (tag `audio-b`) ; lot C (première musique) validé (tag `audio-c`) ; rééquilibrage de la musique et panneau des volumes validés (tag `audio-c2`) ; plus tard, variantes du thème par époque ;
    2. art du monde jouable : d'abord une zone témoin soignée autour du campement, en partant de vrais assets pixel art ;
-   3. comportement plus organique des troupes ;
+   3. comportement plus organique des troupes : lot 1 fait, en attente de validation ;
    4. carte du monde et mini-carte, plus tard.
    Également reportée : l'amélioration VITESSE. Un lot à la fois, avec arrêt pour validation.
 2. **Chantier artistique** :

@@ -35,7 +35,21 @@ var _foe: Combatant
 var stuck_time := 0.0
 ## Retard sur sa place le long de la trace (renseigné par le groupe).
 var trail_lag := 0.0
+## Allure propre (donnée par le groupe, voir Party._give_gait) : vitesse de marche, avance et écart dans
+## la colonne avec leur balancement, délais de départ et d'arrivée à la halte, place dans l'éventail.
+var pace := 1.0
+var gap_shift := 0.0
+var lateral_shift := 0.0
+var sway_period := 7.0
+var sway_phase := 0.0
+var start_delay := 0.0
+var idle_delay := 0.0
+var fan_shift := 0.0
+var reach_shift := 0.0
 var _ko_time := 0.0
+## Coup d'œil alentour à la halte : direction et temps restant.
+var _glance := Vector2.ZERO
+var _glance_time := 0.0
 
 
 func _ready() -> void:
@@ -68,7 +82,7 @@ func _physics_process(delta: float) -> void:
 	var desired := Vector2.ZERO
 	if dist > 2.0:
 		# En retard sur sa place : il trottine franchement ; sinon arrivée douce.
-		var speed := stats.move_speed * SPRINT if trail_lag > SPRINT_LAG and not _foe else stats.move_speed * clampf(dist / arrive_radius, 0.0, 1.0)
+		var speed := stats.move_speed * pace * (SPRINT if trail_lag > SPRINT_LAG and not _foe else clampf(dist / arrive_radius, 0.0, 1.0))
 		desired = to / dist * speed
 	desired += party.separation(self)
 	_move = _move.move_toward(desired, acceleration * delta)
@@ -94,8 +108,15 @@ func _animate(delta: float) -> void:
 	elif _move.length() > CharacterSprite.WALK_THRESHOLD:
 		_anim().face(_move)
 	elif party.hero_idle:
-		_anim().face(party.hero.global_position - global_position)
+		_glance_time -= delta
+		_anim().face(_glance if _glance_time > 0.0 else party.hero.global_position - global_position)
 	_anim().animate(_move, ANIM_SPEED, delta)
+
+
+## Regarde un moment dans la direction donnée (halte), puis se retourne vers le héros.
+func glance(dir: Vector2, duration: float) -> void:
+	_glance = dir
+	_glance_time = duration
 
 
 func _on_hit(_from: Vector2) -> void:

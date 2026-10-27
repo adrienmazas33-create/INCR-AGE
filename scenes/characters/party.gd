@@ -67,6 +67,28 @@ const LEASH_RADIUS := 150.0
 ## Ouverture de l'éventail des alliés autour d'un ennemi (radians, de part et d'autre du héros).
 const COMBAT_FAN := 1.3
 
+## Allure propre à chaque compagnon (troupes organiques) : tirée une fois pour toutes d'après son numéro,
+## elle casse la géométrie du groupe sans toucher au suivi de la trace (mêmes garde-fous qu'avant).
+## Avance ou retard propre sur la trace, écart propre à la trace, et balancement lent des deux (px).
+const GAP_JITTER := 4.0
+const LATERAL_JITTER := 3.0
+const SWAY := 2.5
+## Période du balancement (s), entre ces bornes.
+const SWAY_PERIOD := Vector2(5.0, 9.0)
+## Écart de vitesse de marche propre (fraction).
+const PACE_JITTER := 0.05
+## Départ échelonné quand le héros repart après une halte, et arrivée échelonnée à la halte (s, au plus).
+const START_STAGGER := 0.3
+const IDLE_STAGGER := 0.45
+## Place à la halte : décalage tiré à chaque halte (px), petits pas sur place et coups d'œil alentour.
+const SLOT_JITTER := 5.0
+const FIDGET_EVERY := Vector2(3.0, 7.0)
+const FIDGET_STEP := 4.0
+const GLANCE_CHANCE := 0.5
+## Éventail de combat : angle (rad) et distance (px) propres à chacun.
+const FAN_JITTER := 0.12
+const REACH_JITTER := 3.0
+
 var hero: Hero
 var followers: Array[Follower] = []
 var hero_idle := false
@@ -86,12 +108,21 @@ var _slots: Array[Vector2] = []
 var _world: World
 ## Allié -> rang dans le groupe (voir _update_ranks).
 var _ranks := {}
+## Horloge du balancement, et temps de marche depuis la dernière halte (départ échelonné).
+var _time := 0.0
+var _move_time := 0.0
+## Petits pas à la halte : index de l'allié -> décalage actuel, et attente avant le suivant.
+var _fidget := {}
+var _fidget_wait := {}
+## Tirages de la halte (déterministes : une même partie rejoue les mêmes gestes).
+var _rng := RandomNumberGenerator.new()
 
 
 func setup(p_hero: Hero, world: World, count := 3) -> void:
 	hero = p_hero
 	_world = world
 	add_to_group("party")
+	_rng.seed = 1789
 	_trail = PackedVector2Array([hero.global_position])
 	# Rôles enregistrés (ou combattants par défaut), alignés sur le nombre de compagnons.
 	GameState.fit_roles(count)
@@ -104,6 +135,7 @@ func add_follower(at: Vector2, role := GameState.DEFAULT_ROLE) -> Follower:
 	var f := FOLLOWER.instantiate() as Follower
 	f.party = self
 	f.index = followers.size()
+	_give_gait(f)
 	f.assign_role(role)
 	f.get_node("Sprite").texture = _skin(f.index, role)
 	f.position = at
@@ -128,6 +160,22 @@ func switch_role(i: int) -> void:
 	GameState.set_role(i, role)
 	_update_ranks()
 	_slots = _compute_idle_slots()
+
+
+## Allure propre au compagnon, tirée d'après son numéro : le même compagnon garde la même allure
+## d'une partie à l'autre et quel que soit son rôle.
+func _give_gait(f: Follower) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 7919 * (f.index + 1)
+	f.pace = 1.0 + rng.randf_range(-PACE_JITTER, PACE_JITTER)
+	f.gap_shift = rng.randf_range(-GAP_JITTER, GAP_JITTER)
+	f.lateral_shift = rng.randf_range(-LATERAL_JITTER, LATERAL_JITTER)
+	f.sway_period = rng.randf_range(SWAY_PERIOD.x, SWAY_PERIOD.y)
+	f.sway_phase = rng.randf() * TAU
+	f.start_delay = rng.randf() * START_STAGGER
+	f.idle_delay = rng.randf() * IDLE_STAGGER
+	f.fan_shift = rng.randf_range(-FAN_JITTER, FAN_JITTER)
+	f.reach_shift = rng.randf_range(-REACH_JITTER, REACH_JITTER)
 
 
 func _skin(i: int, role: String) -> Texture2D:
@@ -164,31 +212,48 @@ func _physics_process(delta: float) -> void:
 		if _trail.size() > TRAIL_MAX:
 			_trail.remove_at(0)
 			_base += 1
+	_time += delta
 	if hero.velocity.length() > 5.0:
 		_idle_time = 0.0
+		_move_time += delta
 		_heading = hero.velocity.normalized()
 	else:
 		_idle_time += delta
 	var was_idle := hero_idle
 	hero_idle = _idle_time > IDLE_DELAY
+	if hero_idle:
+		_move_time = 0.0
 	if hero_idle and not was_idle:
 		_slots = _compute_idle_slots()
+		_fidget.clear()
+		_fidget_wait.clear()
+	if hero_idle:
+		_update_fidgets(delta)
 	for f in followers:
 		stats["max_gap"] = maxf(stats["max_gap"], f.global_position.distance_to(p))
 
 
 func target_for(f: Follower) -> Vector2:
-	if hero_idle and f.index < _slots.size() and _slots[f.index] != Vector2.INF \
-			and f.global_position.distance_to(hero.global_position) < IDLE_REACH \
-			and _clear(f.global_position, hero.global_position + _slots[f.index]):
+	# Halte : chacun gagne sa place à son tour (délai propre), puis y fait de petits pas.
+	var slot := hero.global_position + _slot(f)
+	if is_resting(f) and slot.is_finite() and f.global_position.distance_to(hero.global_position) < IDLE_REACH \
+			and _clear(f.global_position, slot + _fidget.get(f.index, Vector2.ZERO)):
 		f.trail_lag = 0.0
-		return hero.global_position + _slots[f.index]
-	var gap := _gap(_rank(f))
+		return slot + _fidget.get(f.index, Vector2.ZERO)
+	# Départ échelonné : quand le héros repart d'une halte, chacun se met en route à son tour, s'il est
+	# encore près de lui.
+	if not hero_idle and _move_time < f.start_delay and f.global_position.distance_to(hero.global_position) < IDLE_REACH:
+		f.trail_lag = 0.0
+		return f.global_position
+	# Place dans la colonne : avance et écart propres, qui se balancent lentement.
+	var sway := _time * TAU / f.sway_period + f.sway_phase
+	var gap := _gap(_rank(f)) + f.gap_shift + sin(sway) * SWAY
+	var file := FILE_OFFSET + f.lateral_shift + cos(sway) * SWAY
 	# Suivi de trajectoire : viser un point de la trace un peu en avant de sa propre position,
 	# jamais en ligne droite vers sa place (sinon il coupe les virages et bute sur les falaises).
 	# Un allié qui force sans avancer revient exactement sur la trace, avec une visée plus courte.
 	var hindered := f.stuck_time > UNSTICK_TIME
-	var lateral := 0.0 if hindered else (FILE_OFFSET if _rank(f) % 2 else -FILE_OFFSET)
+	var lateral := 0.0 if hindered else (file if _rank(f) % 2 else -file)
 	var ahead := _length_to_hero(_track(f))
 	f.trail_lag = maxf(ahead - gap, 0.0)
 	if ahead <= gap:
@@ -227,13 +292,14 @@ func combat_spot(f: Follower, foe: Combatant) -> Vector2:
 	var melee := followers.size() - ranged
 	if f.is_ranged():
 		var k := _rank(f) - melee
-		dir = dir.rotated(0.0 if ranged < 2 else lerpf(-0.8, 0.8, float(k) / (ranged - 1)))
-		return foe.global_position + dir * (foe.stats.body_radius + f.stats.body_radius + f.stats.attack_range * 0.75)
+		dir = dir.rotated((0.0 if ranged < 2 else lerpf(-0.8, 0.8, float(k) / (ranged - 1))) + f.fan_shift)
+		return foe.global_position + dir * (foe.stats.body_radius + f.stats.body_radius + f.stats.attack_range * 0.75 + f.reach_shift)
 	var r := _rank(f)
-	dir = dir.rotated(0.0 if melee < 2 else lerpf(-COMBAT_FAN, COMBAT_FAN, float(r) / (melee - 1)))
+	dir = dir.rotated((0.0 if melee < 2 else lerpf(-COMBAT_FAN, COMBAT_FAN, float(r) / (melee - 1))) + f.fan_shift)
 	# Au-delà de quatre combattants, un sur deux se tient au second rang pour ne pas s'empiler.
+	# Chacun garde un léger écart d'angle et de distance : l'éventail n'est pas tiré au cordeau.
 	var depth := 8.0 if melee > 4 and r % 2 else 0.0
-	return foe.global_position + dir * (foe.stats.body_radius + f.stats.body_radius + f.stats.attack_range * 0.6 + depth)
+	return foe.global_position + dir * (foe.stats.body_radius + f.stats.body_radius + f.stats.attack_range * 0.6 + depth + absf(f.reach_shift) * 0.5)
 
 
 ## Après un combat ou une relève, l'allié reprend la trace là où il se trouve.
@@ -282,6 +348,34 @@ func point_behind(dist: float) -> Vector2:
 		remaining -= seg
 		prev = _trail[i]
 	return prev
+
+
+## Halte du compagnon : le héros est arrêté depuis assez longtemps pour lui (arrivée échelonnée).
+func is_resting(f: Follower) -> bool:
+	return hero_idle and _idle_time > IDLE_DELAY + f.idle_delay
+
+
+## Place de l'allié à la halte, relative au héros ; Vector2.INF si elle est inaccessible.
+func _slot(f: Follower) -> Vector2:
+	return _slots[f.index] if f.index < _slots.size() else Vector2.INF
+
+
+## Halte : de temps à autre, chaque compagnon arrivé à sa place fait un petit pas autour d'elle (jamais
+## au-delà de FIDGET_STEP, ni à travers un obstacle) ou jette un coup d'œil alentour.
+func _update_fidgets(delta: float) -> void:
+	for f in followers:
+		var wait: float = _fidget_wait.get(f.index, _rng.randf_range(FIDGET_EVERY.x, FIDGET_EVERY.y)) - delta
+		if wait <= 0.0:
+			wait = _rng.randf_range(FIDGET_EVERY.x, FIDGET_EVERY.y)
+			var slot := hero.global_position + _slot(f)
+			if not f.is_alive() or not is_resting(f) or not slot.is_finite():
+				pass
+			elif _rng.randf() < GLANCE_CHANCE:
+				f.glance(Vector2.from_angle(_rng.randf() * TAU), _rng.randf_range(0.8, 1.8))
+			else:
+				var step := Vector2.from_angle(_rng.randf() * TAU) * _rng.randf_range(FIDGET_STEP * 0.5, FIDGET_STEP)
+				_fidget[f.index] = step if _clear(slot, slot + step * 2.0) else Vector2.ZERO
+		_fidget_wait[f.index] = wait
 
 
 func debug_summary() -> String:
@@ -354,15 +448,17 @@ func _slot_offset(i: int) -> Vector2:
 	return back * slot.x + back.orthogonal() * slot.y
 
 
-## Places à l'arrêt, calculées une fois ; une place hors d'atteinte directe (mur, falaise) est écartée.
+## Places à l'arrêt, calculées une fois par halte ; chacune est légèrement décalée (tirage de la halte),
+## pour un petit groupe moins géométrique. Une place hors d'atteinte directe (mur, falaise) est écartée.
 func _compute_idle_slots() -> Array[Vector2]:
 	var space := hero.get_world_2d().direct_space_state
 	var out: Array[Vector2] = []
 	for f in followers:
+		var offset := _slot_offset(_rank(f)) + Vector2(_rng.randf_range(-1.0, 1.0), _rng.randf_range(-1.0, 1.0)) * SLOT_JITTER
 		var from := hero.global_position + Vector2(0, -3)
-		var to := from + _slot_offset(_rank(f))
+		var to := from + offset
 		var query := PhysicsRayQueryParameters2D.create(from, to + (to - from).normalized() * 6.0, WORLD_MASK)
-		out.append(Vector2.INF if not space.intersect_ray(query).is_empty() else _slot_offset(_rank(f)))
+		out.append(Vector2.INF if not space.intersect_ray(query).is_empty() else offset)
 	return out
 
 
