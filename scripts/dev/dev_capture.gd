@@ -26,12 +26,15 @@ var _avg_fps := 0.0
 var _mover: ClickMover
 var _clicks := []
 var _presses := []
+var _set_roles := []
+var _hurts := []
+var _sling_test := ""
 
 
 static func attach_if_requested(parent: Node, hero: Node2D, camera: GameCamera, mover: ClickMover = null) -> void:
 	var args := OS.get_cmdline_user_args()
 	if not Array(args).any(func(a: String) -> bool:
-			return a.begins_with("--capture") or a.begins_with("--walk") or a.begins_with("--at") or a.begins_with("--route") or a.begins_with("--buy") or a.begins_with("--click") or a.begins_with("--press")):
+			return a.begins_with("--capture") or a.begins_with("--walk") or a.begins_with("--at") or a.begins_with("--route") or a.begins_with("--buy") or a.begins_with("--click") or a.begins_with("--press") or a.begins_with("--set-role") or a.begins_with("--hurt") or a.begins_with("--sling-test")):
 		return
 	var dev := DevCapture.new()
 	dev._hero = hero
@@ -61,6 +64,12 @@ func _parse(args: PackedStringArray) -> void:
 				_presses = Array(kv[1].split(","))
 			"--click":
 				_clicks = Array(kv[1].split("/"))
+			"--sling-test":
+				_sling_test = kv[1] if kv.size() > 1 else "clear"
+			"--hurt":
+				_hurts = Array(kv[1].split(","))
+			"--set-role":
+				_set_roles = Array(kv[1].split(","))
 			"--hero-hp":
 				_hero.health.current = float(kv[1])
 			"--give":
@@ -82,9 +91,28 @@ func _ready() -> void:
 
 func _run() -> void:
 	await get_tree().create_timer(0.3).timeout
-	for id in _buys:
-		print("DevCapture : achat %s -> %s" % [id, "ok" if Upgrades.buy(id) else "refusé"])
+	for id: String in _buys:
+		# « recruit:sling » : la recrue achetée sera un frondeur (rôle choisi comme au panneau du camp).
+		var parts := id.split(":")
+		if parts.size() > 1:
+			GameState.set_next_recruit_role(parts[1])
+		print("DevCapture : achat %s -> %s" % [id, "ok" if Upgrades.buy(parts[0]) else "refusé"])
 		await get_tree().create_timer(0.25).timeout
+	# « --set-role=2:sling,5:spear » : réaffectations au camp (comme un clic sur la bande TROUPE).
+	var party_node := get_tree().get_first_node_in_group("party") as Party
+	# « --hurt=1:10,2:0 » : vie du compagnon 1 ramenée à 10, compagnon 2 mis K.O. (avant réaffectation).
+	for entry: String in _hurts:
+		var h := entry.split(":")
+		var f := party_node.followers[int(h[0])]
+		f.health.take_damage(f.health.current - float(h[1]))
+	for entry: String in _set_roles:
+		var q := entry.split(":")
+		var i := int(q[0])
+		if party_node and i < party_node.followers.size() and party_node.followers[i].role != q[1]:
+			party_node.switch_role(i)
+		print("DevCapture : rôle du compagnon %d -> %s" % [i, GameState.roles[i] if i < GameState.roles.size() else "?"])
+	if _sling_test != "":
+		await _test_sling()
 	for c in _clicks:
 		await _click(c)
 	for key_name in _presses:
@@ -113,6 +141,8 @@ func _run() -> void:
 	if ambience:
 		print("DevCapture : ambiances " + ambience.debug_summary())
 	print("DevCapture : sons joués %s" % AudioManager.counts)
+	print("DevCapture : frondes : %d pierre(s) arrivée(s), %d arrêtée(s) par un obstacle, dégâts du dernier tir %.2f" % [SlingStone.landed,
+		SlingStone.blocked, SlingStone.last_damage])
 	print("DevCapture : musique %s" % AudioManager.music_summary())
 	if _capture_path != "":
 		for i in 3:
@@ -167,6 +197,32 @@ func _path(map: MapData, from: Vector2i, to: Vector2i) -> Array[Vector2i]:
 		out.push_front(c)
 		c = prev[c]
 	return out
+
+
+## Tir de fronde forcé (sans contrôle de vue) du héros vers le sanglier vivant le plus proche : vérifie
+## qu'un obstacle sur la trajectoire arrête la pierre sans dégâts, et qu'une pierre libre touche une fois.
+func _test_sling() -> void:
+	var boar: Combatant = null
+	for e in get_tree().get_nodes_in_group(&"enemies"):
+		# « --sling-test=blocked » : seulement un sanglier caché derrière un obstacle ; sinon, le plus proche.
+		var hidden := e is Combatant and not Targeting.has_sight(_hero, _hero.global_position, e.global_position)
+		if _sling_test == "blocked" and not hidden:
+			continue
+		if e is Combatant and (boar == null or _hero.global_position.distance_to(e.global_position) < _hero.global_position.distance_to(boar.global_position)):
+			boar = e
+	if boar == null:
+		print("DevCapture : test de fronde sans sanglier")
+		return
+	var sight := Targeting.has_sight(_hero, _hero.global_position, boar.global_position)
+	var before := boar.health.current
+	var landed := SlingStone.landed
+	var blocked := SlingStone.blocked
+	SlingStone.launch(_hero, boar, 5.0, null)
+	await get_tree().create_timer(1.5).timeout
+	print("DevCapture : test de fronde : vue directe %s, distance %d px ; pierre %s ; vie du sanglier %d -> %s" % [
+		"oui" if sight else "non", int(_hero.global_position.distance_to(boar.global_position)),
+		"arrêtée par un obstacle" if SlingStone.blocked > blocked else ("arrivée" if SlingStone.landed > landed else "perdue"),
+		before, str(int(boar.health.current)) if is_instance_valid(boar) else "disparu"])
 
 
 ## Appui puis relâche d'une touche (nom Godot, ex. « F2 »), comme au clavier.

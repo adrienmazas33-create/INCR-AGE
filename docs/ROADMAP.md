@@ -157,3 +157,19 @@ Détail des tests : `PROGRESS.md`.
 - Commencer par un seul personnage (le héros) comme prototype à valider, avant de produire le reste.
 
 **À ne pas faire maintenant** : aucune refonte des personnages avant que cette méthode soit validée.
+
+## 5. Diversification de l'armée
+
+**Lot 1 — Frondeur allié : FAIT, en attente de validation** (détail dans `PROGRESS.md`)
+- Troupe à distance : tir automatique à la fronde (portée environ 88 px, cadence 1,5 s), pierre visible en cloche, arrêtée par les obstacles, dégâts appliqués une seule fois.
+- Plus fragile que le combattant : 28 PV contre 40. Améliorations FORCE et VIGUEUR appliquées.
+- Derrière les combattants dans la colonne. En combat, il se place à portée, du côté du héros, et s'arrête pour tirer. Limites de poursuite inchangées.
+- Au camp, la bande TROUPE du panneau permet de choisir le rôle de la prochaine recrue et de réaffecter chaque compagnon (gratuit et réversible pour ce lot). La limite reste de 8 compagnons.
+- Sauvegarde version 2, avec les rôles ; les anciennes sauvegardes sont reprises, leurs compagnons devenant des combattants.
+
+**Prévu, non développé**
+1. Ennemi à distance.
+2. Premier camp capturable.
+3. Revenu pendant le jeu uniquement : rien ne progresse jeu fermé.
+
+Toujours écartés de ce chantier : gardien, soigneur, revenu passif.

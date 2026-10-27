@@ -30,7 +30,7 @@ func _ready() -> void:
 	_hud = Hud.new()
 	add_child(_hud)
 	var panel := CampPanel.new()
-	panel.setup(_hero, _world.camp_position)
+	panel.setup(_hero, _world.camp_position, _party)
 	_hud.add_panel(panel)
 	# Zone témoin du chantier artistique : F2 fait défiler rendu original, essai LPC et nos tuiles.
 	var zone := ZoneTemoin.new()

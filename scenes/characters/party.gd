@@ -3,6 +3,8 @@ extends Node
 ## Groupe du héros : enregistre sa trace de pas et donne à chaque allié sa place.
 ## En marche, ils suivent la trace en colonne par deux (donc toujours par un chemin praticable :
 ## escaliers, ponts). À l'arrêt, ils se rangent en petit groupe derrière le héros.
+## Dans la colonne et au repos, les combattants à la lance passent devant, les frondeurs derrière
+## (rang dans le groupe) ; en combat, les frondeurs se placent à portée de tir, du côté du héros.
 ## Futur point d'entrée des ordres collectifs.
 
 const FOLLOWER := preload("res://scenes/characters/follower.tscn")
@@ -15,6 +17,17 @@ const SKINS: Array[Texture2D] = [
 	preload("res://assets/art/follower_5.png"),
 	preload("res://assets/art/follower_6.png"),
 	preload("res://assets/art/follower_7.png"),
+]
+## Mêmes compagnons en frondeurs : sans lance, fronde en main (planches provisoires).
+const SLING_SKINS: Array[Texture2D] = [
+	preload("res://assets/art/slinger_0.png"),
+	preload("res://assets/art/slinger_1.png"),
+	preload("res://assets/art/slinger_2.png"),
+	preload("res://assets/art/slinger_3.png"),
+	preload("res://assets/art/slinger_4.png"),
+	preload("res://assets/art/slinger_5.png"),
+	preload("res://assets/art/slinger_6.png"),
+	preload("res://assets/art/slinger_7.png"),
 ]
 const TRAIL_STEP := 4.0
 const TRAIL_MAX := 400
@@ -71,6 +84,8 @@ var _heading := Vector2.DOWN
 ## Places à l'arrêt, relatives au héros ; Vector2.INF = place inaccessible.
 var _slots: Array[Vector2] = []
 var _world: World
+## Allié -> rang dans le groupe (voir _update_ranks).
+var _ranks := {}
 
 
 func setup(p_hero: Hero, world: World, count := 3) -> void:
@@ -78,22 +93,59 @@ func setup(p_hero: Hero, world: World, count := 3) -> void:
 	_world = world
 	add_to_group("party")
 	_trail = PackedVector2Array([hero.global_position])
+	# Rôles enregistrés (ou combattants par défaut), alignés sur le nombre de compagnons.
+	GameState.fit_roles(count)
 	for i in count:
-		add_follower(hero.global_position + _slot_offset(i))
+		add_follower(hero.global_position + _slot_offset(i), GameState.roles[i])
 
 
-## Ajoute un compagnon à `at` (recrutement) ; il rejoint la trace du groupe depuis là.
-func add_follower(at: Vector2) -> Follower:
+## Ajoute un compagnon à `at` (recrutement) avec le rôle donné ; il rejoint la trace du groupe depuis là.
+func add_follower(at: Vector2, role := GameState.DEFAULT_ROLE) -> Follower:
 	var f := FOLLOWER.instantiate() as Follower
 	f.party = self
 	f.index = followers.size()
-	f.get_node("Sprite").texture = SKINS[f.index % SKINS.size()]
+	f.assign_role(role)
+	f.get_node("Sprite").texture = _skin(f.index, role)
 	f.position = at
+	if GameState.roles.size() <= f.index:
+		GameState.roles.append(role)
 	_world.add_entity(f)
 	followers.append(f)
+	_update_ranks()
 	rejoin_trail(f)
 	_slots = _compute_idle_slots()
 	return f
+
+
+## Réaffectation au camp : le compagnon `i` passe de la lance à la fronde, ou l'inverse. Gratuit et
+## réversible ; aucune unité créée, vie gardée en proportion, un compagnon à terre le reste.
+func switch_role(i: int) -> void:
+	if i < 0 or i >= followers.size():
+		return
+	var f := followers[i]
+	var role := "spear" if f.is_ranged() else "sling"
+	f.convert_role(role, _skin(i, role))
+	GameState.set_role(i, role)
+	_update_ranks()
+	_slots = _compute_idle_slots()
+
+
+func _skin(i: int, role: String) -> Texture2D:
+	return (SLING_SKINS if role == "sling" else SKINS)[i % SKINS.size()]
+
+
+## Rang de chaque allié dans le groupe : les combattants d'abord, dans l'ordre, puis les frondeurs.
+## Il donne la place dans la colonne, au repos et dans l'éventail de combat.
+func _update_ranks() -> void:
+	_ranks.clear()
+	for ranged in [false, true]:
+		for f in followers:
+			if f.is_ranged() == ranged:
+				_ranks[f] = _ranks.size()
+
+
+func _rank(f: Follower) -> int:
+	return _ranks.get(f, f.index)
 
 
 func _physics_process(delta: float) -> void:
@@ -104,7 +156,7 @@ func _physics_process(delta: float) -> void:
 		_base += _trail.size()
 		_trail = PackedVector2Array([p])
 		for f in followers:
-			f.teleport(p + _slot_offset(f.index))
+			f.teleport(p + _slot_offset(_rank(f)))
 			_cursor[f.index] = _base
 		_slots = _compute_idle_slots()
 	elif p.distance_to(last) >= TRAIL_STEP:
@@ -131,12 +183,12 @@ func target_for(f: Follower) -> Vector2:
 			and _clear(f.global_position, hero.global_position + _slots[f.index]):
 		f.trail_lag = 0.0
 		return hero.global_position + _slots[f.index]
-	var gap := _gap(f.index)
+	var gap := _gap(_rank(f))
 	# Suivi de trajectoire : viser un point de la trace un peu en avant de sa propre position,
 	# jamais en ligne droite vers sa place (sinon il coupe les virages et bute sur les falaises).
 	# Un allié qui force sans avancer revient exactement sur la trace, avec une visée plus courte.
 	var hindered := f.stuck_time > UNSTICK_TIME
-	var lateral := 0.0 if hindered else (FILE_OFFSET if f.index % 2 else -FILE_OFFSET)
+	var lateral := 0.0 if hindered else (FILE_OFFSET if _rank(f) % 2 else -FILE_OFFSET)
 	var ahead := _length_to_hero(_track(f))
 	f.trail_lag = maxf(ahead - gap, 0.0)
 	if ahead <= gap:
@@ -164,14 +216,23 @@ func foe_for(f: Follower, current: Combatant) -> Combatant:
 
 
 ## Place de combat autour de l'ennemi : du côté du héros, chaque allié sur son propre angle
-## (éventail de ±50°), pour qu'ils ne s'empilent pas et restent lisibles.
+## (éventail de ±75° pour les combattants, ±45° pour les frondeurs), pour qu'ils ne s'empilent pas et
+## restent lisibles. Les frondeurs se tiennent aux trois quarts de leur portée : derrière les combattants.
 func combat_spot(f: Follower, foe: Combatant) -> Vector2:
 	var toward_hero := hero.global_position - foe.global_position
 	var dir := toward_hero.normalized() if toward_hero.length() > 0.1 else Vector2.LEFT
-	var n := followers.size()
-	dir = dir.rotated(0.0 if n < 2 else lerpf(-COMBAT_FAN, COMBAT_FAN, float(f.index) / (n - 1)))
-	# Au-delà de quatre alliés, un sur deux se tient au second rang pour ne pas s'empiler.
-	var depth := 8.0 if n > 4 and f.index % 2 else 0.0
+	var ranged := 0
+	for other in followers:
+		ranged += 1 if other.is_ranged() else 0
+	var melee := followers.size() - ranged
+	if f.is_ranged():
+		var k := _rank(f) - melee
+		dir = dir.rotated(0.0 if ranged < 2 else lerpf(-0.8, 0.8, float(k) / (ranged - 1)))
+		return foe.global_position + dir * (foe.stats.body_radius + f.stats.body_radius + f.stats.attack_range * 0.75)
+	var r := _rank(f)
+	dir = dir.rotated(0.0 if melee < 2 else lerpf(-COMBAT_FAN, COMBAT_FAN, float(r) / (melee - 1)))
+	# Au-delà de quatre combattants, un sur deux se tient au second rang pour ne pas s'empiler.
+	var depth := 8.0 if melee > 4 and r % 2 else 0.0
 	return foe.global_position + dir * (foe.stats.body_radius + f.stats.body_radius + f.stats.attack_range * 0.6 + depth)
 
 
@@ -205,7 +266,7 @@ func should_regroup(f: Follower, stuck_time: float) -> bool:
 
 func regroup(f: Follower) -> void:
 	_events.append("allié %d en %s (héros %s)" % [f.index, Vector2i(f.global_position / TileIds.SIZE), Vector2i(hero.global_position / TileIds.SIZE)])
-	f.teleport(_on_trail(_gap(f.index), 0.0))
+	f.teleport(_on_trail(_gap(_rank(f)), 0.0))
 	rejoin_trail(f)
 	stats["teleports"] += 1
 
@@ -225,10 +286,13 @@ func point_behind(dist: float) -> Vector2:
 
 func debug_summary() -> String:
 	var gaps := []
+	var roles := []
 	for f in followers:
 		gaps.append(int(f.global_position.distance_to(hero.global_position)))
-	return "groupe : écarts actuels %s px, écart max %d px, %d retour(s) forcé(s)%s" % [gaps, stats["max_gap"], stats["teleports"],
-		"" if _events.is_empty() else "\n  " + "\n  ".join(_events)]
+		roles.append("%s %d/%d PV%s" % ["fronde" if f.is_ranged() else "lance", f.health.current, f.health.max_health,
+			"" if f.is_alive() else " (K.O.)"])
+	return "groupe : écarts actuels %s px, écart max %d px, %d retour(s) forcé(s)%s\n  compagnons : %s" % [gaps,
+		stats["max_gap"], stats["teleports"], "" if _events.is_empty() else "\n  " + "\n  ".join(_events), ", ".join(roles)]
 
 
 func _gap(i: int) -> float:
@@ -296,9 +360,9 @@ func _compute_idle_slots() -> Array[Vector2]:
 	var out: Array[Vector2] = []
 	for f in followers:
 		var from := hero.global_position + Vector2(0, -3)
-		var to := from + _slot_offset(f.index)
+		var to := from + _slot_offset(_rank(f))
 		var query := PhysicsRayQueryParameters2D.create(from, to + (to - from).normalized() * 6.0, WORLD_MASK)
-		out.append(Vector2.INF if not space.intersect_ray(query).is_empty() else _slot_offset(f.index))
+		out.append(Vector2.INF if not space.intersect_ray(query).is_empty() else _slot_offset(_rank(f)))
 	return out
 
 

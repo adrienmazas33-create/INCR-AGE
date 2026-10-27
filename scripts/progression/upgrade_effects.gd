@@ -40,7 +40,7 @@ func _on_bought(id: String, _level: int) -> void:
 	match id:
 		"recruit":
 			var at := _camp + Vector2(randf_range(-16.0, 16.0), 24.0)
-			var recruit := _party.add_follower(at)
+			var recruit := _party.add_follower(at, GameState.next_recruit_role)
 			recruit.glow(GOLD, 1.2)
 			CombatFx.burst(at + Vector2(0, -10), GOLD)
 		"damage":

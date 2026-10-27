@@ -1,6 +1,7 @@
 extends Node
 ## Sauvegarde locale de la progression (lot 3C) : ressources, améliorations (dont compagnons et stade
-## du camp, qui en découlent), dernière position valide du héros. Fichier JSON dans user://.
+## du camp, qui en découlent), rôle de chaque compagnon (version 2), dernière position valide du héros.
+## Fichier JSON dans user://.
 ##
 ## Fiabilité :
 ## - écriture dans un fichier temporaire, relu et vérifié, puis l'ancienne sauvegarde devient la copie
@@ -15,7 +16,9 @@ extends Node
 
 signal saved(path: String)
 
-const FORMAT_VERSION := 1
+## Version 2 : rôles des compagnons (lance ou fronde). Une sauvegarde version 1 est reprise telle quelle,
+## tous ses compagnons devenant des combattants à la lance.
+const FORMAT_VERSION := 2
 const DEFAULT_PATH := "user://save.json"
 ## Délai après un gain de ressources avant d'enregistrer (regroupe les ramassages).
 const RESOURCE_DEBOUNCE := 4.0
@@ -44,7 +47,7 @@ func _init() -> void:
 		elif arg == "--no-save":
 			enabled = false
 		elif arg.begins_with("--give") or arg.begins_with("--buy") or arg.begins_with("--at") or arg.begins_with("--route") \
-				or arg.begins_with("--click"):
+				or arg.begins_with("--click") or arg.begins_with("--set-role"):
 			test_run = true
 	if test_run and path == DEFAULT_PATH:
 		enabled = false
@@ -89,6 +92,7 @@ func start() -> void:
 	_active = true
 	GameState.upgrade_bought.connect(func(_id, _level): save_now())
 	GameState.resource_changed.connect(func(_kind, _total): _mark_dirty())
+	GameState.roles_changed.connect(save_now)
 
 
 func save_now() -> bool:
@@ -154,6 +158,8 @@ func _snapshot() -> Dictionary:
 		# Déduits des améliorations ; enregistrés pour lecture et contrôle de cohérence.
 		"companions": Upgrades.companion_count(),
 		"camp_stage": Upgrades.camp_stage(),
+		"roles": GameState.roles.duplicate(),
+		"next_recruit_role": GameState.next_recruit_role,
 		"hero": null,
 	}
 	var pos: Variant = hero_position_provider.call() if hero_position_provider.is_valid() else null
@@ -180,10 +186,24 @@ func _apply(data: Dictionary) -> void:
 	if _is_number(data.get("companions")) and int(data["companions"]) != expected:
 		push_warning("SaveGame : nombre de compagnons enregistré (%d) incohérent, %d retenu d'après les améliorations"
 			% [int(data["companions"]), expected])
+	# Rôles : un par compagnon ; une valeur absente ou inconnue devient le rôle par défaut (lance),
+	# une liste trop courte est complétée, une liste trop longue raccourcie.
+	GameState.roles.clear()
+	var roles: Variant = data.get("roles", [])
+	if roles is Array:
+		for role: Variant in roles:
+			GameState.roles.append(role if role is String and role in GameState.ROLES else GameState.DEFAULT_ROLE)
+	GameState.fit_roles(expected)
+	var next: Variant = data.get("next_recruit_role", GameState.DEFAULT_ROLE)
+	GameState.next_recruit_role = next if next is String and next in GameState.ROLES else GameState.DEFAULT_ROLE
 
 
-## Mise à niveau des anciennes versions du format (aucune pour l'instant : version 1).
+## Mise à niveau des anciennes versions du format. Version 1 (avant les frondeurs) : pas de rôles,
+## tous les compagnons deviennent des combattants à la lance ; le reste est repris tel quel.
 func _migrate(data: Dictionary) -> Dictionary:
+	if int(data.get("version", 0)) < 2:
+		data["roles"] = []
+		data["version"] = 2
 	return data
 
 

@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : voie C, étape 5 (12 décalques au sol en grappes) faite, en commit local, en attente de validation (non poussée). Étapes 1 à 4 validées et publiées. F2 fait défiler nos tuiles, le rendu original et l'essai LPC dans la zone témoin. Audio terminé et validé.**
+**État : diversification de l'armée, lot 1 (frondeur allié) fait, en commit local, en attente de validation (non poussé, pas de tag). Voie C, étape 5 (décalques) faite, commit local distinct, en attente de validation (non poussée). Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -9,7 +9,7 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 - Jeu : double-clic sur `lancer_jeu.bat`. Éditeur : `lancer_jeu.bat editeur`.
 - Ou à la main : Godot 4.7.2 → Importer → `project.godot` → F5.
 - Godot a été installé par `winget install GodotEngine.GodotEngine` (4.7.2 stable).
-- Contrôles : ZQSD, WASD ou flèches pour se déplacer, ou clic gauche sur le sol ; molette pour zoomer ; V (ou le bouton à note de musique en bas à droite) pour les volumes ; F2 pour faire défiler les rendus de la zone témoin (nos tuiles, original, essai LPC) ; F11 pour le plein écran ; Échap pour quitter.
+- Contrôles : ZQSD, WASD ou flèches pour se déplacer, ou clic gauche sur le sol ; molette pour zoomer ; V (ou le bouton à note de musique en bas à droite) pour les volumes ; au camp, bande TROUPE du panneau du feu (clic sur un compagnon : lance ou fronde ; clic sur la case libre : rôle de la prochaine recrue) ; F2 pour faire défiler les rendus de la zone témoin (nos tuiles, original, essai LPC) ; F11 pour le plein écran ; Échap pour quitter.
 - Couper les effets d'ambiance : lancer avec `-- --no-fx`, ou passer `ambient_effects` à `false` dans `scripts/autoload/game_settings.gd`.
 - Combat : rien à presser. Le héros et ses compagnons frappent seuls les ennemis à portée ; le joueur choisit où se battre par ses déplacements. `-- --no-hitstop` coupe la micro-pause d'impact.
 - Améliorations : s'approcher du feu de camp ouvre le panneau ; cliquer (ou toucher) une ligne, ou touches 1 à 4. Un repère doré flotte au-dessus du feu quand un achat est possible.
@@ -234,6 +234,17 @@ Voir les priorités 2 et 3 du plan artistique.
   - raccord de boucle : aucun saut entre la fin et le début ; en jeu, après 105 s, la lecture est repartie du début (position 5,5 s), en boucle ;
   - 60 FPS au camp et en combat avec la musique ; rendu en 9 s par l'outil, une fois pour toutes ;
   - écoute : **validée** par le porteur du projet le 22/10/2026.
+- **Frondeur allié (diversification de l'armée, lot 1)**, en jeu, sauvegardes de test séparées (ta partie n'a pas été touchée) :
+  - recrutement : 5 recrues avec le rôle choisi (fronde, lance, fronde, fronde, lance), la 6e refusée à 8 compagnons ; rôles enregistrés (version 2) ;
+  - réaffectation dans un groupe complet par de vrais clics sur la bande TROUPE : trois compagnons convertis, héros immobile, toujours 8 compagnons ; un compagnon à 10/40 PV passe à 7/28 (même proportion), un compagnon K.O. reste K.O. ;
+  - restauration : rôles retrouvés à l'identique au relancement ;
+  - combat au repaire est avec 5 frondeurs et 3 combattants : 2 sangliers abattus, 11 pierres arrivées, butin ramassé ; frondeurs en retrait à portée, derrière les combattants ; retour avec le héros ensuite (écart maximal 109 px, aucun retour forcé) ;
+  - obstacles : tir forcé vers un sanglier caché (trois positions) : pierre arrêtée, aucun dégât ; tir libre : une seule touche de 5 PV ;
+  - améliorations : FORCE x2, tir de 6,5 (5 x 1,30) ; VIGUEUR, frondeur à 32 PV max (28 x 1,15), combattant à 46 ;
+  - anciennes sauvegardes : version 1 reprise (7 compagnons tous combattants, ressources et améliorations intactes, réécrite en version 2) ; rôles invalides ramenés à « lance » ;
+  - tour complet avec 8 compagnons (5 lances, 3 frondes) : 150 s, 60 FPS, 6 replacements forcés (5 au dernier tour tout en lances), aux mêmes endroits et rangs de queue de colonne, désormais occupés par les frondeurs ;
+  - aucune fuite à la fermeture après correction (une attaque par défaut était créée inutilement) ; un message « resources still in use » observé une fois lors d'un tir de test, non reproduit ;
+  - **à ta charge** : sensation de jeu et équilibrage (utilité sans supériorité systématique), lisibilité des pierres en mouvement à l'œil, usage réel de la bande TROUPE à la souris.
 - **Voie C, étape 5 (décalques)**, en jeu, fichier de test isolé :
   - captures avant et après aux mêmes endroits et zooms (camp, lisière, ouest du camp) ; village au stade VILLAGE : rien sous les bâtiments ;
   - bascule F2 vérifiée par une vraie touche simulée : TUILES INCR-AGE, puis RENDU ORIGINAL, ESSAI LPC, et retour à TUILES INCR-AGE, avec le bandeau ;
@@ -248,6 +259,14 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
+- **Diversification de l'armée, lot 1 : frondeur allié** (section 5 de `docs/ROADMAP.md`), en attente de validation :
+  - caractéristiques `data/units/slinger.tres` : 28 PV (40 pour le combattant), 5 dégâts, portée 88 px, cadence 1,5 s, élan de 0,3 s, recul faible ; même vitesse et même régénération ;
+  - `scripts/combat/ranged_attack.gd` (même interface que l'attaque de mêlée, pas de tir sans vue directe) et `scripts/combat/sling_stone.gd` (pierre visible en légère cloche avec son ombre, qui suit sa cible ; arrêtée par tout obstacle du monde, bâtiments, arbres, falaises et aussi l'eau comme les vues directes du combat ; dégâts une seule fois ; durée de vie 1 s ; cible tombée ou disparue sans erreur) ; FORCE et VIGUEUR appliquées ;
+  - suivi (`party.gd`) : rang dans le groupe, combattants devant et frondeurs derrière dans la colonne et au repos ; en combat, place à trois quarts de portée du côté du héros (éventail de ±45°) ; arrêt pour tirer dès que la cible est à portée et en vue ; limites d'engagement et de poursuite inchangées ; un groupe sans frondeur se place exactement comme avant ;
+  - camp : bande TROUPE dans le panneau du feu (`scenes/ui/troop_strip.gd`), huit cases ; clic sur un compagnon pour changer son rôle (gratuit, réversible, vie gardée en proportion, K.O. conservé, aucune unité créée), clic sur la case libre pour le rôle de la prochaine recrue ; coûts de recrutement inchangés ; limite de 8 compagnons ;
+  - sauvegarde version 2 : rôles et rôle de la prochaine recrue ; version 1 migrée (tous combattants) ; valeurs absentes ou invalides ramenées à « lance » ; protections existantes conservées ;
+  - graphismes provisoires : planches `slinger_0` à `7` (générées par `tools/generate_art.gd` : sans lance, fronde en main, sacoche de pierres ; les autres images sont inchangées), pierre et icônes dessinées dans le code ; pas de son nouveau (le coup sur l'ennemi utilise le son existant) ;
+  - outil de test : `--buy=recruit:sling`, `--set-role=i:sling`, `--hurt=i:pv`, `--sling-test` (ou `=blocked`).
 - **Voie C, étape 5 : décalques au sol** (section 14 de `docs/WORLD_ART_PLAN.md`), en attente de validation :
   - `decals.png` : 3 touffes, 3 bouquets (jaune, blanc, mauve), 2 groupes de cailloux, 2 amas de feuilles mortes, 2 groupes de champignons, dessinés pixel par pixel dans `tools/draw_tiles.gd`, couleurs contrôlées ; ni ossements ni terriers ;
   - placement reproductible en grappes de 2 à 4, selon le voisinage (lisière, bord de chemin, terrain ouvert), espacées d'au moins deux cases ; rien sur l'eau, le pont, les chemins, le camp, ni près des bâtiments des trois stades ; 22 grappes, 68 décalques ; aucun nœud ajouté ;
@@ -331,6 +350,9 @@ Voir les priorités 2 et 3 du plan artistique.
 - Indicateur de direction du campement (`scenes/ui/camp_compass.gd`) : validé le 22/10/2026 et publié (tag `camp-compass`).
 
 ## Problèmes connus / limites
+
+- Frondeur : sa pierre s'arrête aussi sur l'eau (même règle que les vues directes du combat). Il ne tire donc pas par-dessus une rivière ; à revoir si tu le souhaites.
+- Frondeur : graphismes provisoires (planche du compagnon sans lance, fronde et sacoche) ; pas de son propre au tir.
 
 - Performances : jamais mesurées sur secteur (ordinateur sur batterie pendant les lots 3B et 3C). Au lot 3B, 26 à 50 FPS selon les moments ; au lot 3C, 60 FPS stables, toujours sur batterie.
 - Sauvegarde :
@@ -483,6 +505,7 @@ Depuis la racine du dépôt, `godot` désigne l'exécutable console.
   - `--walk=move_up:1.5` : déplacement au clavier simulé ;
   - `--route=58,17/79,30/58,58` : parcours piloté par plus court chemin ;
   - `--press=F2` : touches simulées (noms Godot, séparés par des virgules) ;
+  - `--buy=recruit:sling` : la recrue achetée sera un frondeur ; `--set-role=2:sling,5:spear` : réaffectations au camp ; `--hurt=1:10,2:0` : vie d'un compagnon (0 : K.O.) ; `--sling-test` (ou `=blocked`) : tir de fronde forcé vers le sanglier le plus proche (ou caché), pour vérifier dégâts et obstacles ;
   - `--click=100,18/s60,120:0.5` : vrais clics de souris, sur une case (`x,y`) ou un point d'écran en pixels logiques (`sx,y`) ; `:s` n'attend que s secondes, sinon l'outil attend l'arrêt du héros. La case doit être visible à l'écran ;
   - `--give=food:30,materials:10,knowledge:2` : donner des ressources ;
   - `--buy=recruit,damage` : acheter au lancement ;

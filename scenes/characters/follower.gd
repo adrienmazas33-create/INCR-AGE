@@ -3,6 +3,13 @@ extends Combatant
 ## Allié qui accompagne le héros. Le groupe (Party) lui indique où aller et quel ennemi combattre :
 ## seulement ceux qui menacent le héros de près, jamais une poursuite au loin.
 ## Mis K.O., il reste à terre quelques secondes puis se relève (aucune perte définitive).
+## Deux rôles : combattant à la lance (mêlée) ou frondeur (tir à distance, plus fragile). Le frondeur
+## s'arrête dès qu'il a sa cible à portée et en vue, et tire sans avancer au contact.
+
+const ROLE_STATS := {
+	"spear": preload("res://data/units/ally.tres"),
+	"sling": preload("res://data/units/slinger.tres"),
+}
 
 @export var acceleration := 1100.0
 ## Distance sous laquelle l'allié ralentit à l'approche de sa place.
@@ -18,7 +25,9 @@ const SPRINT := 1.25
 
 var party: Party
 var index := 0
-var attack := AutoAttack.new()
+var role := GameState.DEFAULT_ROLE
+## Attaque du rôle (mêlée ou fronde), créée par assign_role ou, à défaut, à l'entrée en jeu.
+var attack: AutoAttack
 
 var _move := Vector2.ZERO
 var _foe: Combatant
@@ -31,6 +40,8 @@ var _ko_time := 0.0
 
 func _ready() -> void:
 	super()
+	if attack == null:
+		attack = AutoAttack.new()
 	attack.unit = self
 	add_child(attack)
 	_anim().offset_phase(index * 0.37)
@@ -49,6 +60,9 @@ func _physics_process(delta: float) -> void:
 	if previous_foe and _foe == null:
 		party.rejoin_trail(self)
 	var goal := party.combat_spot(self, _foe) if _foe else party.target_for(self)
+	# Frondeur : cible à portée et en vue, il reste où il est pour tirer.
+	if _foe and is_ranged() and attack.in_range(_foe) and Targeting.has_sight(self, global_position, _foe.global_position):
+		goal = global_position
 	var to := goal - global_position
 	var dist := to.length()
 	var desired := Vector2.ZERO
@@ -109,6 +123,33 @@ func _revive(fraction: float) -> void:
 
 func revive_full() -> void:
 	_revive(1.0)
+
+
+func is_ranged() -> bool:
+	return role == "sling"
+
+
+## Rôle donné avant l'entrée en jeu (création par le groupe) : caractéristiques et attaque.
+func assign_role(new_role: String) -> void:
+	role = new_role
+	stats = ROLE_STATS[role]
+	attack = RangedAttack.new() if is_ranged() else AutoAttack.new()
+
+
+## Réaffectation au camp, en jeu : nouvelles caractéristiques et nouvelle attaque, apparence changée.
+## La vie garde sa proportion (vie maximale du nouveau rôle, améliorations comprises) et un allié
+## à terre le reste : la conversion ne soigne pas et ne relève pas.
+func convert_role(new_role: String, skin: Texture2D) -> void:
+	if new_role == role:
+		return
+	attack.queue_free()
+	assign_role(new_role)
+	attack.unit = self
+	add_child(attack)
+	health.regen_per_second = stats.regen_per_second
+	health.set_maximum(_max_health())
+	sprite.texture = skin
+	_foe = null
 
 
 ## Replace l'allié sans transition (appelé par le groupe).

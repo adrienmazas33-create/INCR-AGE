@@ -652,6 +652,9 @@ const VILLAGERS := [
 const CLUB_WOOD := [Color8(150, 100, 58), Color8(98, 62, 36)]
 const CLUB_STONE := [Color8(196, 186, 170), Color8(140, 128, 120), Color8(92, 82, 82)]
 const SPEAR_TIP := [Color8(210, 214, 222), Color8(140, 146, 160)]
+## Fronde des frondeurs : lanière de cuir (claire, ombrée) et sacoche de pierres à la taille.
+const SLING_CORD := [Color8(196, 150, 96), Color8(120, 82, 50)]
+const SLING_POUCH := [Color8(150, 106, 64), Color8(96, 64, 38)]
 
 
 func _gen_hero() -> void:
@@ -663,6 +666,8 @@ func _gen_hero() -> void:
 		var colors := HERO_COLORS.duplicate()
 		colors.merge(v["colors"], true)
 		_save(_character_sheet(colors, v["beard"], v["band"], "spear", false), "follower_%d.png" % i)
+		# Frondeurs : même apparence, sans lance, fronde en main et sacoche de pierres.
+		_save(_slinger_pouch(_character_sheet(colors, v["beard"], v["band"], "sling", false)), "slinger_%d.png" % i)
 	for i in VILLAGERS.size():
 		var colors := HERO_COLORS.duplicate()
 		colors.merge(VILLAGERS[i], true)
@@ -758,6 +763,14 @@ func _weapon(img: Image, kind: String, view: int, hand: Vector2i) -> void:
 			if k == 2:
 				_px(img, Vector2i(p) + Vector2i(1, 0), SPEAR_TIP[1])
 				_px(img, Vector2i(p) - Vector2i(1, 0), SPEAR_TIP[1])
+	elif kind == "sling":
+		# Fronde : lanière de cuir qui pend de la main, poche refermée sur une pierre grise.
+		var end := hand + (Vector2i(-3, 5) if view == 2 else Vector2i(1, 6))
+		_line(img, hand, end, SLING_CORD[0], SLING_CORD[1])
+		_px(img, end, CLUB_STONE[1])
+		_px(img, end + Vector2i(1, 0), CLUB_STONE[2])
+		_px(img, end + Vector2i(0, 1), CLUB_STONE[2])
+		_px(img, end + Vector2i(0, -1), CLUB_STONE[0])
 	else:
 		# Massue : manche en biais vers le haut, tête de pierre au bout.
 		var head := hand + (Vector2i(5, -5) if view == 2 else Vector2i(1, -7))
@@ -2024,4 +2037,18 @@ func _digits() -> Image:
 					cell.set_pixel(1 + x, 1 + y, Color.WHITE)
 		_outline(cell, OUTLINE)
 		img.blit_rect(cell, Rect2i(0, 0, 6, 8), Vector2i(i * 6, 0))
+	return img
+
+
+## Sacoche de pierres sur la hanche gauche du frondeur, sur chaque image de la planche (face, dos, profil).
+func _slinger_pouch(img: Image) -> Image:
+	for row in 3:
+		for col in 6:
+			var bob: int = [0, 1, 0, -1, 0, -1][col]
+			var at := Vector2i(col * 32, row * 32) + (Vector2i(11, 21) if row < 2 else Vector2i(10, 21)) + Vector2i(0, bob)
+			for y in 3:
+				for x in 3:
+					if x + y < 4:
+						_px(img, at + Vector2i(x, y), SLING_POUCH[0] if y == 0 else SLING_POUCH[1])
+			_px(img, at + Vector2i(1, -1), CLUB_STONE[0])
 	return img
