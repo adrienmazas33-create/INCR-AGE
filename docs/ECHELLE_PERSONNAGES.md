@@ -9,6 +9,10 @@ Réponse courte : oui, si l'on veut le rendu de l'essai LPC — mais **les perso
 grandir seuls**. Ce document chiffre le problème, compare trois combinaisons cohérentes et propose un
 essai avant décision.
 
+**Verdict de l'essai (27/10/2026)** : à 47 px, les personnages ont une bonne taille à l'écran ; ce
+sont **les huttes et les arbres qui paraissent trop petits**. La décision porte donc sur le décor :
+le monde doit grandir d'environ 1,7 à 1,8 pour retrouver des proportions justes. C'est l'option C.
+
 ## 1. Mesures (état actuel)
 
 | Élément | Taille | Rapport au héros |
@@ -100,4 +104,24 @@ répond à la question avec de vrais pixels :
 
 ## 6. Décision
 
-- [ ] à remplir après l'essai
+**Tranché le 27/10/2026 après l'essai jouable** (branche `bionic/essai-lpc`, archivée par le tag
+`essai-lpc`, commit `77104b8` ; détail dans `docs/ESSAI_LPC.md` sur ce tag, et capture
+`docs/art/echelle/essai_lpc_avant_apres.png`).
+
+- Les personnages à **47 px** (cadres de 64) sont à la bonne taille : lisibles, bien à l'échelle de
+  l'écran, le groupe de quatre se lit d'un coup d'œil.
+- Les **huttes (64 px) et les arbres (80 à 96 px)** paraissent trop petits à côté. À 47 px de
+  personnage, une hutte devrait faire environ **110 à 130 px** et un arbre **150 à 190 px**.
+- Conclusion : **option C**. Le décor doit grandir, les personnages restent à cette échelle.
+
+Ce que cela implique, dans l'ordre :
+
+1. **Le décor d'abord** — huttes, maison longue, palissade, feu, totem, caisses, séchoir, rochers,
+   roseaux, torches, bannière (25 décors) et les 7 végétaux. C'est le lot le plus visible.
+2. **Le plan du camp** — composé pour des huttes de 2 cases ; avec des huttes de 4 cases, tout est à
+   refaire.
+3. **Les constantes en pixels** — portées, laisses, rayons, distances de détection.
+4. **La densité de la carte** — 5 500 arbres à l'échelle 1,8 font un mur ; forêts à éclaircir,
+   sentiers à élargir.
+5. **Les personnages** — 20 planches de 18 images à redessiner, ou à remplacer par un pack. C'est le
+   point bloquant : ni les LPC (CC-BY-SA / GPL) ni mes dessins ne règlent la question proprement.
