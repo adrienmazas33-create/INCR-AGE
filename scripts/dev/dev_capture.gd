@@ -29,12 +29,13 @@ var _presses := []
 var _set_roles := []
 var _hurts := []
 var _sling_test := ""
+var _kill_camp := false
 
 
 static func attach_if_requested(parent: Node, hero: Node2D, camera: GameCamera, mover: ClickMover = null) -> void:
 	var args := OS.get_cmdline_user_args()
 	if not Array(args).any(func(a: String) -> bool:
-			return a.begins_with("--capture") or a.begins_with("--walk") or a.begins_with("--at") or a.begins_with("--route") or a.begins_with("--buy") or a.begins_with("--click") or a.begins_with("--press") or a.begins_with("--set-role") or a.begins_with("--hurt") or a.begins_with("--sling-test")):
+			return a.begins_with("--capture") or a.begins_with("--walk") or a.begins_with("--at") or a.begins_with("--route") or a.begins_with("--buy") or a.begins_with("--click") or a.begins_with("--press") or a.begins_with("--set-role") or a.begins_with("--hurt") or a.begins_with("--sling-test") or a.begins_with("--kill-camp")):
 		return
 	var dev := DevCapture.new()
 	dev._hero = hero
@@ -64,6 +65,8 @@ func _parse(args: PackedStringArray) -> void:
 				_presses = Array(kv[1].split(","))
 			"--click":
 				_clicks = Array(kv[1].split("/"))
+			"--kill-camp":
+				_kill_camp = true
 			"--sling-test":
 				_sling_test = kv[1] if kv.size() > 1 else "clear"
 			"--hurt":
@@ -111,6 +114,12 @@ func _run() -> void:
 		if party_node and i < party_node.followers.size() and party_node.followers[i].role != q[1]:
 			party_node.switch_role(i)
 		print("DevCapture : rôle du compagnon %d -> %s" % [i, GameState.roles[i] if i < GameState.roles.size() else "?"])
+	# « --kill-camp » : défenseurs du camp du plateau abattus d'un coup (test de capture).
+	if _kill_camp:
+		var spawner := get_tree().current_scene.get_node("EnemySpawner") as EnemySpawner
+		for unit: Combatant in spawner.camp_defenders(EnemyCamp.ID):
+			unit.health.take_damage(9999.0)
+		print("DevCapture : défenseurs du camp abattus")
 	if _sling_test != "":
 		await _test_sling()
 	for c in _clicks:
@@ -144,6 +153,11 @@ func _run() -> void:
 	print("DevCapture : frondes : %d pierre(s) arrivée(s), %d arrêtée(s) par un obstacle, dégâts du dernier tir %.2f" % [SlingStone.landed,
 		SlingStone.blocked, SlingStone.last_damage])
 	var throwers := get_tree().get_nodes_in_group(&"enemies").filter(func(e: Node) -> bool: return e is StoneThrower)
+	var camp := get_tree().current_scene.get_node_or_null("EnemyCamp") as EnemyCamp
+	if camp:
+		print("DevCapture : camp du plateau : état %s, %d capture(s) déclenchée(s), %d défenseur(s) debout" % [
+			["ENNEMI", "LIBERE", "CAPTURE"][camp.state], EnemyCamp.captures,
+			(get_tree().current_scene.get_node("EnemySpawner") as EnemySpawner).camp_defenders_alive(EnemyCamp.ID)])
 	print("DevCapture : lanceurs : %d debout ; pierres ennemies : %d lancée(s), %d touché(es), %d retombée(s) sans toucher" % [
 		throwers.size(), SlingStone.enemy_thrown, SlingStone.enemy_hits, SlingStone.enemy_missed])
 	print("DevCapture : musique %s" % AudioManager.music_summary())

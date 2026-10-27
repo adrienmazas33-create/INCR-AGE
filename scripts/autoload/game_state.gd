@@ -6,6 +6,8 @@ signal resource_changed(kind: String, total: int)
 signal upgrade_bought(id: String, level: int)
 ## Rôle d'un compagnon changé au camp, ou rôle de la prochaine recrue choisi.
 signal roles_changed
+## Camp ennemi capturé (capture définitive).
+signal camp_captured(id: String)
 
 const KINDS := ["food", "materials", "knowledge"]
 ## Rôles des compagnons : combattant à la lance (rôle historique) ou frondeur.
@@ -19,6 +21,8 @@ var upgrades := {}
 var roles: Array[String] = []
 ## Rôle donné à la prochaine recrue.
 var next_recruit_role := DEFAULT_ROLE
+## Camps ennemis capturés (identifiants, voir EnemyCamp).
+var captured_camps: Array[String] = []
 
 
 func add(kind: String, amount := 1) -> void:
@@ -45,7 +49,7 @@ func set_upgrade(id: String, new_level: int) -> void:
 
 func summary() -> String:
 	return "vivres %d, matériaux %d, savoir %d ; améliorations %s ; rôles %s" % [resources["food"], resources["materials"],
-		resources["knowledge"], upgrades, roles]
+		resources["knowledge"], upgrades, roles] + (" ; camps capturés %s" % [captured_camps] if not captured_camps.is_empty() else "")
 
 
 func set_role(index: int, role: String) -> void:
@@ -65,3 +69,13 @@ func fit_roles(count: int) -> void:
 	while roles.size() < count:
 		roles.append(DEFAULT_ROLE)
 	roles.resize(count)
+
+
+func is_camp_captured(id: String) -> bool:
+	return id in captured_camps
+
+
+func capture_camp(id: String) -> void:
+	if not is_camp_captured(id):
+		captured_camps.append(id)
+		camp_captured.emit(id)

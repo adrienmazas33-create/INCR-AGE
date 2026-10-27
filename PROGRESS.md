@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : voie C, étapes 1 à 5 validées ; diversification de l'armée et des ennemis, lots 1 (frondeur allié) et 2 (lanceur de pierres) validés ; tout est publié. Audio terminé et validé.**
+**État : lot 3, premier camp ennemi capturable, fait, en commit local, en attente de validation (non poussé, pas de tag). Lots 1 (frondeur) et 2 (lanceur) et voie C validés et publiés. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -234,6 +234,16 @@ Voir les priorités 2 et 3 du plan artistique.
   - raccord de boucle : aucun saut entre la fin et le début ; en jeu, après 105 s, la lecture est repartie du début (position 5,5 s), en boucle ;
   - 60 FPS au camp et en combat avec la musique ; rendu en 9 s par l'outil, une fois pour toutes ;
   - écoute : **validée** par le porteur du projet le 22/10/2026.
+- **Camp capturable (lot 3)**, en jeu, sauvegardes isolées :
+  - défenseurs vivants : héros posé sur le repère (compagnons K.O.), le camp reste ENNEMI, aucune capture ;
+  - défenseurs abattus (`--kill-camp`) : LIBÉRÉ, puis CAPTURÉ dès que le héros rejoint le repère ; départ et retour sur le repère : toujours 1 seule capture ;
+  - capture par un vrai combat (5 lances, 3 frondes) : les deux défenseurs vaincus (le second après avoir contourné le menhir), puis capture au repère ;
+  - enregistrement immédiat : processus coupé net après la capture, sans sauvegarde de sortie, le fichier contient le camp capturé ;
+  - restauration : camp CAPTURÉ dès le chargement, 0 défenseur, 0 capture rejouée ; seul le lanceur isolé est debout ;
+  - anciennes sauvegardes (version 2 sans camp, version 1) : camp ENNEMI avec ses 2 défenseurs, ressources, améliorations et rôles intacts ;
+  - réapparition hors du camp : avec le camp capturé, le lanceur isolé abattu réapparaît au bout d'environ 45 s ; les défenseurs du camp ne réapparaissent pas ;
+  - captures des trois états (ennemi, libéré, capturé) lues ; aucune erreur de script ;
+  - **à ta charge** : lisibilité du repère et de la conquête, emplacement et difficulté du camp, intérêt de la règle « défenseurs revenus si l'on part trop longtemps ».
 - **Lanceur de pierres (diversification des ennemis, lot 2)**, en jeu, sauvegardes de test séparées :
   - détection, préparation et lancer : le lanceur isolé repère le héros, s'approche à environ 85 px, prépare (lueur rouge) et lance ; capture de la préparation et d'un coup reçu par le héros ;
   - esquive : héros seul (compagnons mis K.O. par l'outil de test) ; immobile, 2 pierres sur 2 touchent ; en va-et-vient latéral, 1 touche et 1 retombe sans dégâts ;
@@ -272,6 +282,14 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
+- **Lot 3 : premier camp ennemi capturable** (section 5 de `docs/ROADMAP.md`), en attente de validation :
+  - **où** : sur le grand plateau nord-est. Du camp, prendre le pont nord, puis l'escalier du plateau en (100, 25) ; le repère central est en case (99, 15), quatre cases au-dessus de l'escalier en remontant un peu vers la gauche ; défendu par les deux lanceurs du plateau, cases (96, 14) et (104, 12) ;
+  - **états** (`scripts/world/enemy_camp.gd`) : ENNEMI tant qu'un défenseur est debout (mât et bannière violette du clan rival, os croisés) ; LIBÉRÉ quand tous sont à terre (bandeau « CAMP LIBERE », mât abattu, anneau doré qui pulse au sol et flèche dorée au-dessus du repère) ; CAPTURÉ quand le héros rejoint le repère (à moins de 18 px) : bannière dorée frappée d'un soleil, rayons dorés, arpège d'achat, bandeau « CAMP CONQUIS », une seule fois ;
+  - décor provisoire dessiné, sans collision (piquets coiffés d'os, foyer éteint, mât) : aucun passage bloqué ; géographie et collisions inchangées ;
+  - **capture définitive** : enregistrée aussitôt (champ facultatif `captured_camps` de la sauvegarde version 2) ; au chargement, le camp capturé est affiché tel quel, sans rejouer la conquête, et ses défenseurs ne sont plus jamais créés ;
+  - **règle avant la capture** (aucun ennemi enregistré individuellement) : un défenseur abattu réapparaît comme les autres ennemis (45 s, hors de vue du joueur), et le camp redevient alors ENNEMI ; une partie fermée avant la capture retrouve tous ses défenseurs au lancement suivant. Pour capturer, il faut donc abattre les deux défenseurs puis rejoindre le repère sans quitter longtemps la zone ;
+  - les autres repaires (sangliers, lanceur isolé) gardent leur fonctionnement ;
+  - outil de test : `--kill-camp` abat les défenseurs du camp ; le bilan donne l'état du camp et le nombre de captures déclenchées.
 - **Diversification des ennemis, lot 2 : lanceur de pierres** (section 5 de `docs/ROADMAP.md`), validé par le porteur du projet le 27/10/2026 (publié) :
   - `scenes/enemies/stone_thrower.gd` et `.tscn`, caractéristiques `data/units/thrower.tres` : 22 PV, 6 dégâts, portée 110 px, lancer toutes les 2,2 s environ (écart aléatoire de -0,3 à +0,4 s, premier lancer décalé de 0,4 à 1,6 s : jamais de tirs synchronisés), préparation de 0,55 s (lueur rouge et tremblement), vitesse 58 ; butin 1 à 2 vivres, 1 à 2 matériaux, 12 % de savoir ;
   - comportement : repère le groupe à 130 px avec une ligne de tir libre, s'approche jusqu'à 85 px sans quitter 5 cases autour de son repaire ; plus près que 44 px, recul de 0,7 s si la voie est libre et qu'il reste aux abords du repaire (sinon il tient bon), au plus toutes les 2,5 s ; sans ligne de tir 3 s ou groupe trop loin du repaire : retour au repaire (soin lent), puis repos ;

@@ -39,6 +39,15 @@ func _ready() -> void:
 	# Sous la couche des ponts et nénuphars d'origine, qui restent visibles par-dessus notre eau.
 	_world.move_child(zone, _world.get_node("Overlay").get_index())
 	zone.setup(_world.map, _world.entity_layer(), _hud, _world.get_node("Overlay"))
+	# Camp ennemi capturable du plateau nord-est (lot 3) : décor au sol sous les personnages, mât trié en profondeur.
+	var camp_ground := Node2D.new()
+	camp_ground.name = "CampGround"
+	_world.add_child(camp_ground)
+	_world.move_child(camp_ground, _world.entity_layer().get_index())
+	var enemy_camp := EnemyCamp.new()
+	enemy_camp.name = "EnemyCamp"
+	add_child(enemy_camp)
+	enemy_camp.setup(spawner, _hero, _hud, camp_ground, _world.entity_layer())
 	var ambience := Ambience.new()
 	ambience.name = "Ambience"
 	add_child(ambience)

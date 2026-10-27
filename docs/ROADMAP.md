@@ -173,8 +173,12 @@ Détail des tests : `PROGRESS.md`.
 - Lignes de tir distinctes des obstacles au déplacement : l'eau n'arrête plus une pierre (ni celle du lanceur, ni celle du frondeur allié).
 - Deux rencontres fixes : un lanceur isolé (case 64, 23), deux lanceurs sur le grand plateau nord-est (cases 96, 14 et 104, 12).
 
-**Prévu, non développé**
-1. Premier camp capturable (les lanceurs du plateau pourront en devenir les défenseurs).
-2. Revenu pendant le jeu uniquement : rien ne progresse jeu fermé.
+**Lot 3 — Premier camp capturable : FAIT, en attente de validation** (détail dans `PROGRESS.md`)
+- Camp du clan rival sur le grand plateau nord-est, défendu par les deux lanceurs du plateau. Repère central en case (99, 15), accès par l'escalier en (100, 25).
+- Trois états : ennemi (bannière violette), libéré (mât abattu, repère doré), capturé (bannière dorée, rayons, arpège, bandeau « CAMP CONQUIS »).
+- Capture définitive, enregistrée aussitôt ; défenseurs plus jamais recréés ; aucun menu ni touche.
 
-Toujours écartés de ce chantier : gardien, soigneur, revenu passif.
+**Prévu, non développé**
+1. Revenu pendant le jeu uniquement, tiré des camps capturés : rien ne progresse jeu fermé.
+
+Toujours écartés de ce chantier : gardien, soigneur, revenu passif, garnison, reconquête, construction.

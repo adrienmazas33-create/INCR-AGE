@@ -1,6 +1,7 @@
 extends Node
 ## Sauvegarde locale de la progression (lot 3C) : ressources, améliorations (dont compagnons et stade
-## du camp, qui en découlent), rôle de chaque compagnon (version 2), dernière position valide du héros.
+## du camp, qui en découlent), rôle de chaque compagnon (version 2), camps ennemis capturés (champ
+## facultatif de la version 2), dernière position valide du héros.
 ## Fichier JSON dans user://.
 ##
 ## Fiabilité :
@@ -93,6 +94,7 @@ func start() -> void:
 	GameState.upgrade_bought.connect(func(_id, _level): save_now())
 	GameState.resource_changed.connect(func(_kind, _total): _mark_dirty())
 	GameState.roles_changed.connect(save_now)
+	GameState.camp_captured.connect(func(_id: String) -> void: save_now())
 
 
 func save_now() -> bool:
@@ -160,6 +162,7 @@ func _snapshot() -> Dictionary:
 		"camp_stage": Upgrades.camp_stage(),
 		"roles": GameState.roles.duplicate(),
 		"next_recruit_role": GameState.next_recruit_role,
+		"captured_camps": GameState.captured_camps.duplicate(),
 		"hero": null,
 	}
 	var pos: Variant = hero_position_provider.call() if hero_position_provider.is_valid() else null
@@ -196,6 +199,14 @@ func _apply(data: Dictionary) -> void:
 	GameState.fit_roles(expected)
 	var next: Variant = data.get("next_recruit_role", GameState.DEFAULT_ROLE)
 	GameState.next_recruit_role = next if next is String and next in GameState.ROLES else GameState.DEFAULT_ROLE
+	# Camps capturés : champ facultatif (absent des sauvegardes plus anciennes : aucun camp pris) ;
+	# seuls les identifiants de camps connus sont repris, sans doublon.
+	GameState.captured_camps.clear()
+	var camps: Variant = data.get("captured_camps", [])
+	if camps is Array:
+		for id: Variant in camps:
+			if id is String and id in EnemyCamp.KNOWN and not id in GameState.captured_camps:
+				GameState.captured_camps.append(id)
 
 
 ## Mise à niveau des anciennes versions du format. Version 1 (avant les frondeurs) : pas de rôles,
