@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : lot 3, premier camp ennemi capturable, validé et publié. Lots 1 (frondeur) et 2 (lanceur) et voie C validés et publiés. Audio terminé et validé.**
+**État : lot 4, revenu du camp capturé, fait, en commit local, en attente de validation (non poussé, pas de tag). Lots 1 à 3 (frondeur, lanceur, camp capturable) et voie C validés et publiés. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -234,6 +234,13 @@ Voir les priorités 2 et 3 du plan artistique.
   - raccord de boucle : aucun saut entre la fin et le début ; en jeu, après 105 s, la lecture est repartie du début (position 5,5 s), en boucle ;
   - 60 FPS au camp et en combat avec la musique ; rendu en 9 s par l'outil, une fois pour toutes ;
   - écoute : **validée** par le porteur du projet le 22/10/2026.
+- **Revenu du camp (lot 4)**, en jeu, sauvegardes isolées :
+  - accumulation et plafond (période raccourcie à 0,5 s, héros loin du mât) : 16 périodes, réserve arrêtée à 10 vivres et 10 matériaux ; tas visible au pied de la bannière (capture lue) ;
+  - conservation : réserve retrouvée au redémarrage ;
+  - récupération : héros au mât, ressources +10/+10, réserve vidée, 1 seule récolte ; processus coupé net juste après une récolte : ressources et réserve vide bien enregistrées ;
+  - camp ennemi (non capturé) : aucune réserve ;
+  - sauvegarde trafiquée : 999 ramené à 10, valeur invalide et camp inconnu ignorés ;
+  - **à ta charge** : ressenti du montant et du rythme, lisibilité du tas.
 - **Camp capturable (lot 3)**, en jeu, sauvegardes isolées :
   - défenseurs vivants : héros posé sur le repère (compagnons K.O.), le camp reste ENNEMI, aucune capture ;
   - défenseurs abattus (`--kill-camp`) : LIBÉRÉ, puis CAPTURÉ dès que le héros rejoint le repère ; départ et retour sur le repère : toujours 1 seule capture ;
@@ -282,6 +289,13 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
+- **Lot 4 : revenu du camp capturé** (section 5 de `docs/ROADMAP.md`), en attente de validation :
+  - réglages choisis avec toi : 1 vivre et 1 matériau toutes les 60 s de jeu, réserve au camp conquis, plafond de 10 de chaque ;
+  - accumulation seulement pendant le jeu (`EnemyCamp._income`) : rien jeu fermé, et la minute en cours repart de zéro au lancement suivant ; aucun revenu tant que le camp n'est pas capturé ;
+  - récupération : le héros debout, à moins de 40 px du mât, reçoit toute la réserve d'un coup (éclats, son de ramassage) ; la réserve est vidée au même instant (pas de double compte) et la partie aussitôt enregistrée ;
+  - visuel : tas d'icônes de butin au pied du mât, une icône pour trois unités, quatre au plus par ressource ;
+  - sauvegarde : champ facultatif `camp_stock` (réserve par camp capturé) ; quantités bornées au plafond, valeurs invalides et camps inconnus ou non capturés ignorés ; anciennes sauvegardes : réserve vide ;
+  - outil de test : `--income-period=0.5` raccourcit la période ; le bilan donne la réserve et le nombre de récoltes.
 - **Lot 3 : premier camp ennemi capturable** (section 5 de `docs/ROADMAP.md`), validé par le porteur du projet et publié :
   - **où** : sur le grand plateau nord-est. Du camp, prendre le pont nord, puis l'escalier du plateau en (100, 25) ; le repère central est en case (99, 15), quatre cases au-dessus de l'escalier en remontant un peu vers la gauche ; défendu par les deux lanceurs du plateau, cases (96, 14) et (104, 12) ;
   - **états** (`scripts/world/enemy_camp.gd`) : ENNEMI tant qu'un défenseur est debout (mât et bannière violette du clan rival, os croisés) ; LIBÉRÉ quand tous sont à terre (bandeau « CAMP LIBERE », mât abattu, anneau doré qui pulse au sol et flèche dorée au-dessus du repère) ; CAPTURÉ quand le héros rejoint le repère (à moins de 18 px) : bannière dorée frappée d'un soleil, rayons dorés, arpège d'achat, bandeau « CAMP CONQUIS », une seule fois ;

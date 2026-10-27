@@ -163,6 +163,7 @@ func _snapshot() -> Dictionary:
 		"roles": GameState.roles.duplicate(),
 		"next_recruit_role": GameState.next_recruit_role,
 		"captured_camps": GameState.captured_camps.duplicate(),
+		"camp_stock": GameState.camp_stock.duplicate(true),
 		"hero": null,
 	}
 	var pos: Variant = hero_position_provider.call() if hero_position_provider.is_valid() else null
@@ -207,6 +208,16 @@ func _apply(data: Dictionary) -> void:
 		for id: Variant in camps:
 			if id is String and id in EnemyCamp.KNOWN and not id in GameState.captured_camps:
 				GameState.captured_camps.append(id)
+	# Réserves des camps capturés (lot 4, champ facultatif) : quantités bornées au plafond, camps pris seulement.
+	GameState.camp_stock.clear()
+	var stocks: Variant = data.get("camp_stock", {})
+	if stocks is Dictionary:
+		for id: Variant in stocks:
+			if id is String and id in GameState.captured_camps and stocks[id] is Dictionary:
+				for kind: String in EnemyCamp.INCOME:
+					var value: Variant = stocks[id].get(kind, 0)
+					if _is_number(value) and float(value) >= 1.0:
+						GameState.add_camp_stock(id, kind, int(clampf(float(value), 0.0, EnemyCamp.STOCK_CAP)), EnemyCamp.STOCK_CAP)
 
 
 ## Mise à niveau des anciennes versions du format. Version 1 (avant les frondeurs) : pas de rôles,

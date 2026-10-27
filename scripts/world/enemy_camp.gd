@@ -30,8 +30,22 @@ const STONE := Color8(139, 130, 124)
 const STONE_DARK := Color8(82, 74, 82)
 const SHADOW := Color(26 / 255.0, 26 / 255.0, 46 / 255.0, 0.35)
 
+## Revenu du camp capturé (lot 4), seulement pendant le jeu : à chaque période, la réserve du camp reçoit
+## ces quantités, sans dépasser le plafond ; le héros la récupère en passant près du mât.
+const INCOME := {"food": 1, "materials": 1}
+const STOCK_CAP := 10
+const COLLECT_RADIUS := 40.0
+## Tas de la réserve, au pied du mât (décalage), et image de chaque ressource dans pickups.png.
+const PILE := Vector2(14, 4)
+const PICKUPS := preload("res://assets/art/fx/pickups.png")
+const PICKUP_LOOT := preload("res://scenes/loot/pickup.gd")
+const PICKUP_FRAME := {"food": 0, "materials": 1}
+
 ## Captures déclenchées pendant la partie (outil de test : jamais plus d'une).
 static var captures := 0
+## Période du revenu en secondes de jeu (l'outil de test peut la raccourcir), et récoltes faites.
+static var income_period := 60.0
+static var collections := 0
 
 var state := State.ENEMY
 
@@ -42,6 +56,7 @@ var _center := Vector2.ZERO
 var _ground := Node2D.new()
 var _pole := Node2D.new()
 var _time := 0.0
+var _income_time := 0.0
 
 
 ## `ground_parent` : couche dessinée sous les personnages ; `entities` : couche triée en profondeur.
@@ -67,6 +82,7 @@ func center() -> Vector2:
 func _process(delta: float) -> void:
 	_time += delta
 	if state == State.CAPTURED:
+		_income(delta)
 		return
 	var alive := _spawner.camp_defenders_alive(ID)
 	var next := State.LIBERATED if alive == 0 else State.ENEMY
@@ -94,12 +110,45 @@ func _capture() -> void:
 	_pole.queue_redraw()
 
 
+## Revenu : le temps de jeu fait grossir la réserve (jamais jeu fermé : la période en cours repart de
+## zéro au lancement) ; le héros debout près du mât la récupère d'un coup, puis la partie est enregistrée.
+func _income(delta: float) -> void:
+	_income_time += delta
+	if _income_time >= income_period:
+		_income_time -= income_period
+		var changed := false
+		for kind: String in INCOME:
+			changed = GameState.add_camp_stock(ID, kind, INCOME[kind], STOCK_CAP) or changed
+		if changed:
+			_ground.queue_redraw()
+	var stock: Dictionary = GameState.camp_stock.get(ID, {})
+	if stock.is_empty() or not _hero.is_alive() or _hero.global_position.distance_to(_center) > COLLECT_RADIUS:
+		return
+	var taken := GameState.take_camp_stock(ID)
+	for kind: String in taken:
+		if taken[kind] > 0:
+			GameState.add(kind, taken[kind])
+			CombatFx.sparkle(_center + PILE + Vector2(0, -6), PICKUP_LOOT.SPARKLE[kind])
+	collections += 1
+	AudioManager.play(&"pickup", _center)
+	SaveGame.save_now()
+	_ground.queue_redraw()
+
+
 func _px(ci: CanvasItem, p: Vector2, s: Vector2, c: Color) -> void:
 	ci.draw_rect(Rect2(p.round(), s), c)
 
 
 ## Sol : piquets courts, foyer éteint ; repère doré qui pulse quand le camp est libéré.
 func _draw_ground() -> void:
+	# Réserve du camp capturé : petit tas d'icônes de butin, une icône pour trois unités (quatre au plus).
+	var stock: Dictionary = GameState.camp_stock.get(ID, {})
+	var slot := 0
+	for kind: String in INCOME:
+		for i in mini(ceili(stock.get(kind, 0) / 3.0), 4):
+			var at := PILE + Vector2((slot % 4) * 6 - 6, -(slot / 4) * 5 - 6)
+			_ground.draw_texture_rect_region(PICKUPS, Rect2(at, Vector2(12, 12)), Rect2(PICKUP_FRAME[kind] * 12, 0, 12, 12))
+			slot += 1
 	for s in STAKES:
 		_px(_ground, s + Vector2(-1, 0), Vector2(5, 2), SHADOW)
 		_px(_ground, s + Vector2(-1, -12), Vector2(3, 12), WOOD_DARK)

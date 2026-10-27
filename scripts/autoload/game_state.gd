@@ -23,6 +23,8 @@ var roles: Array[String] = []
 var next_recruit_role := DEFAULT_ROLE
 ## Camps ennemis capturés (identifiants, voir EnemyCamp).
 var captured_camps: Array[String] = []
+## Réserve de chaque camp capturé (lot 4) : camp -> {"food": n, "materials": n}, à récupérer sur place.
+var camp_stock := {}
 
 
 func add(kind: String, amount := 1) -> void:
@@ -49,7 +51,7 @@ func set_upgrade(id: String, new_level: int) -> void:
 
 func summary() -> String:
 	return "vivres %d, matériaux %d, savoir %d ; améliorations %s ; rôles %s" % [resources["food"], resources["materials"],
-		resources["knowledge"], upgrades, roles] + (" ; camps capturés %s" % [captured_camps] if not captured_camps.is_empty() else "")
+		resources["knowledge"], upgrades, roles] + (" ; camps capturés %s, réserves %s" % [captured_camps, camp_stock] if not captured_camps.is_empty() else "")
 
 
 func set_role(index: int, role: String) -> void:
@@ -79,3 +81,19 @@ func capture_camp(id: String) -> void:
 	if not is_camp_captured(id):
 		captured_camps.append(id)
 		camp_captured.emit(id)
+
+
+## Ajoute `amount` de `kind` à la réserve du camp, sans dépasser `cap` ; renvoie vrai si elle a changé.
+func add_camp_stock(id: String, kind: String, amount: int, cap: int) -> bool:
+	var stock: Dictionary = camp_stock.get(id, {})
+	var before: int = stock.get(kind, 0)
+	stock[kind] = mini(before + amount, cap)
+	camp_stock[id] = stock
+	return stock[kind] != before
+
+
+## Vide la réserve du camp et la renvoie (ressource -> quantité).
+func take_camp_stock(id: String) -> Dictionary:
+	var stock: Dictionary = camp_stock.get(id, {})
+	camp_stock.erase(id)
+	return stock

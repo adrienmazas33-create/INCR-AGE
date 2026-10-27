@@ -178,7 +178,11 @@ Détail des tests : `PROGRESS.md`.
 - Trois états : ennemi (bannière violette), libéré (mât abattu, repère doré), capturé (bannière dorée, rayons, arpège, bandeau « CAMP CONQUIS »).
 - Capture définitive, enregistrée aussitôt ; défenseurs plus jamais recréés ; aucun menu ni touche.
 
-**Prévu, non développé**
-1. Revenu pendant le jeu uniquement, tiré des camps capturés : rien ne progresse jeu fermé.
+**Lot 4 — Revenu du camp capturé : FAIT, en attente de validation** (détail dans `PROGRESS.md`)
+- Seulement pendant le jeu : 1 vivre et 1 matériau par minute de jeu, mis en réserve au camp conquis, plafond de 10 de chaque ; rien jeu fermé.
+- Le héros récupère toute la réserve en passant près du mât ; tas d'icônes visible au pied de la bannière.
 
-Toujours écartés de ce chantier : gardien, soigneur, revenu passif, garnison, reconquête, construction.
+**Prévu, non développé**
+Rien d'autre pour l'instant dans ce chantier ; prochaines pistes à décider ensemble (autres camps, équilibrage avec 8 compagnons, amélioration VITESSE…).
+
+Toujours écartés de ce chantier : gardien, soigneur, revenu jeu fermé, garnison, reconquête, construction.
