@@ -288,7 +288,7 @@ L'étape 1 ne change que l'herbe (prairie et sol des forêts compris) ; le reste
 - Les ombres des arbres ne se voient qu'en lisière, la forêt dense les couvre.
 - La canopée continue et les arbres de lisière posés devant (fiche, section 8) ne sont pas encore faits : pour l'instant, c'est toujours un arbre par case.
 
-## 14. Voie C, étape 5 : décalques au sol (27/10/2026, en attente de validation)
+## 14. Voie C, étape 5 : décalques au sol (27/10/2026, validée)
 
 **Livrable** : `assets/art/tiles/decals.png`, 12 décalques dessinés pixel par pixel dans `tools/draw_tiles.gd`, une case de 16 × 16 chacun :
 - 3 touffes d'herbe aux silhouettes différentes ;

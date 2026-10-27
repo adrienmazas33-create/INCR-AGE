@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : diversification de l'armée et des ennemis, lots 1 (frondeur allié) et 2 (lanceur de pierres) validés, en commits locaux non poussés : ils suivent le commit de la voie C, étape 5, encore en attente de validation. Audio terminé et validé.**
+**État : voie C, étapes 1 à 5 validées ; diversification de l'armée et des ennemis, lots 1 (frondeur allié) et 2 (lanceur de pierres) validés ; tout est publié. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -272,7 +272,7 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
-- **Diversification des ennemis, lot 2 : lanceur de pierres** (section 5 de `docs/ROADMAP.md`), validé par le porteur du projet le 27/10/2026 (commit local, non poussé) :
+- **Diversification des ennemis, lot 2 : lanceur de pierres** (section 5 de `docs/ROADMAP.md`), validé par le porteur du projet le 27/10/2026 (publié) :
   - `scenes/enemies/stone_thrower.gd` et `.tscn`, caractéristiques `data/units/thrower.tres` : 22 PV, 6 dégâts, portée 110 px, lancer toutes les 2,2 s environ (écart aléatoire de -0,3 à +0,4 s, premier lancer décalé de 0,4 à 1,6 s : jamais de tirs synchronisés), préparation de 0,55 s (lueur rouge et tremblement), vitesse 58 ; butin 1 à 2 vivres, 1 à 2 matériaux, 12 % de savoir ;
   - comportement : repère le groupe à 130 px avec une ligne de tir libre, s'approche jusqu'à 85 px sans quitter 5 cases autour de son repaire ; plus près que 44 px, recul de 0,7 s si la voie est libre et qu'il reste aux abords du repaire (sinon il tient bon), au plus toutes les 2,5 s ; sans ligne de tir 3 s ou groupe trop loin du repaire : retour au repaire (soin lent), puis repos ;
   - pierre ennemie (mode « position figée » de `sling_stone.gd`) : vise la position de sa cible au départ, sans la suivre, à 170 px/s ; petit repère rouge au sol à l'endroit visé ; blesse la première unité du groupe rencontrée en vol, une seule fois ; retombe sans dégâts à l'arrivée ; arrêtée par les obstacles ;
@@ -281,7 +281,7 @@ Voir les priorités 2 et 3 du plan artistique.
   - apparence provisoire : planche `rival_thrower.png` (peau de bête sombre et violacée, bandeau d'os, pierre en main), générée par `tools/generate_art.gd` ; les autres images sont inchangées ;
   - **rencontres** (définies dans `scripts/world/enemy_spawner.gd`, carte inchangée) : un lanceur isolé dans la prairie fleurie au pied de la colline nord, case (64, 23), au nord du camp par le chemin ; deux lanceurs sur le grand plateau nord-est, cases (96, 14) et (104, 12), accès par l'escalier en (100, 25) ;
   - **pour tester** : du camp, remonter le chemin vers le nord jusqu'à la colline (lanceur isolé à droite du chemin) ; puis traverser le pont nord et monter l'escalier du plateau nord-est. Outil de test : `-- --at=62,26` (près du lanceur isolé), `-- --at=100,19` (plateau) ; `--hurt=0:0,1:0,2:0` met les compagnons K.O. pour affronter seul un lanceur.
-- **Diversification de l'armée, lot 1 : frondeur allié** (section 5 de `docs/ROADMAP.md`), validé par le porteur du projet le 27/10/2026 (commit local, non poussé) :
+- **Diversification de l'armée, lot 1 : frondeur allié** (section 5 de `docs/ROADMAP.md`), validé par le porteur du projet le 27/10/2026 (publié) :
   - caractéristiques `data/units/slinger.tres` : 28 PV (40 pour le combattant), 5 dégâts, portée 88 px, cadence 1,5 s, élan de 0,3 s, recul faible ; même vitesse et même régénération ;
   - `scripts/combat/ranged_attack.gd` (même interface que l'attaque de mêlée, pas de tir sans vue directe) et `scripts/combat/sling_stone.gd` (pierre visible en légère cloche avec son ombre, qui suit sa cible ; arrêtée par tout obstacle du monde, bâtiments, arbres, falaises et aussi l'eau comme les vues directes du combat ; dégâts une seule fois ; durée de vie 1 s ; cible tombée ou disparue sans erreur) ; FORCE et VIGUEUR appliquées ;
   - suivi (`party.gd`) : rang dans le groupe, combattants devant et frondeurs derrière dans la colonne et au repos ; en combat, place à trois quarts de portée du côté du héros (éventail de ±45°) ; arrêt pour tirer dès que la cible est à portée et en vue ; limites d'engagement et de poursuite inchangées ; un groupe sans frondeur se place exactement comme avant ;
@@ -289,7 +289,7 @@ Voir les priorités 2 et 3 du plan artistique.
   - sauvegarde version 2 : rôles et rôle de la prochaine recrue ; version 1 migrée (tous combattants) ; valeurs absentes ou invalides ramenées à « lance » ; protections existantes conservées ;
   - graphismes provisoires : planches `slinger_0` à `7` (générées par `tools/generate_art.gd` : sans lance, fronde en main, sacoche de pierres ; les autres images sont inchangées), pierre et icônes dessinées dans le code ; pas de son nouveau (le coup sur l'ennemi utilise le son existant) ;
   - outil de test : `--buy=recruit:sling`, `--set-role=i:sling`, `--hurt=i:pv`, `--sling-test` (ou `=blocked`).
-- **Voie C, étape 5 : décalques au sol** (section 14 de `docs/WORLD_ART_PLAN.md`), en attente de validation :
+- **Voie C, étape 5 : décalques au sol** (section 14 de `docs/WORLD_ART_PLAN.md`), validée le 27/10/2026 et publiée :
   - `decals.png` : 3 touffes, 3 bouquets (jaune, blanc, mauve), 2 groupes de cailloux, 2 amas de feuilles mortes, 2 groupes de champignons, dessinés pixel par pixel dans `tools/draw_tiles.gd`, couleurs contrôlées ; ni ossements ni terriers ;
   - placement reproductible en grappes de 2 à 4, selon le voisinage (lisière, bord de chemin, terrain ouvert), espacées d'au moins deux cases ; rien sur l'eau, le pont, les chemins, le camp, ni près des bâtiments des trois stades ; 22 grappes, 68 décalques ; aucun nœud ajouté ;
   - outil de test : `--press=F2` simule une touche.

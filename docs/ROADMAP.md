@@ -160,14 +160,14 @@ Détail des tests : `PROGRESS.md`.
 
 ## 5. Diversification de l'armée
 
-**Lot 1 — Frondeur allié : FAIT et validé** (commit local, non poussé) (détail dans `PROGRESS.md`)
+**Lot 1 — Frondeur allié : FAIT et validé** (publié) (détail dans `PROGRESS.md`)
 - Troupe à distance : tir automatique à la fronde (portée environ 88 px, cadence 1,5 s), pierre visible en cloche, arrêtée par les obstacles, dégâts appliqués une seule fois.
 - Plus fragile que le combattant : 28 PV contre 40. Améliorations FORCE et VIGUEUR appliquées.
 - Derrière les combattants dans la colonne. En combat, il se place à portée, du côté du héros, et s'arrête pour tirer. Limites de poursuite inchangées.
 - Au camp, la bande TROUPE du panneau permet de choisir le rôle de la prochaine recrue et de réaffecter chaque compagnon (gratuit et réversible pour ce lot). La limite reste de 8 compagnons.
 - Sauvegarde version 2, avec les rôles ; les anciennes sauvegardes sont reprises, leurs compagnons devenant des combattants.
 
-**Lot 2 — Lanceur de pierres (ennemi à distance) : FAIT et validé** (commit local, non poussé) (détail dans `PROGRESS.md`)
+**Lot 2 — Lanceur de pierres (ennemi à distance) : FAIT et validé** (publié) (détail dans `PROGRESS.md`)
 - Ennemi d'un clan rival : garde ses distances, brève préparation visible, pierre vers une position figée au départ (esquivable), dégâts seulement au contact d'un membre du groupe, une seule fois.
 - Recul bref et borné quand on l'approche, seulement si la voie est libre ; abandon et retour au repaire quand le groupe s'éloigne ; tirs désynchronisés.
 - Lignes de tir distinctes des obstacles au déplacement : l'eau n'arrête plus une pierre (ni celle du lanceur, ni celle du frondeur allié).
