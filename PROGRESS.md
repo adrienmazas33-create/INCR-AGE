@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : lot 3, premier camp ennemi capturable, validé (commit local, non poussé). Lots 1 (frondeur) et 2 (lanceur) et voie C validés et publiés. Audio terminé et validé.**
+**État : lot 3, premier camp ennemi capturable, validé et publié. Lots 1 (frondeur) et 2 (lanceur) et voie C validés et publiés. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -282,7 +282,7 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
-- **Lot 3 : premier camp ennemi capturable** (section 5 de `docs/ROADMAP.md`), validé par le porteur du projet (commit local, non poussé) :
+- **Lot 3 : premier camp ennemi capturable** (section 5 de `docs/ROADMAP.md`), validé par le porteur du projet et publié :
   - **où** : sur le grand plateau nord-est. Du camp, prendre le pont nord, puis l'escalier du plateau en (100, 25) ; le repère central est en case (99, 15), quatre cases au-dessus de l'escalier en remontant un peu vers la gauche ; défendu par les deux lanceurs du plateau, cases (96, 14) et (104, 12) ;
   - **états** (`scripts/world/enemy_camp.gd`) : ENNEMI tant qu'un défenseur est debout (mât et bannière violette du clan rival, os croisés) ; LIBÉRÉ quand tous sont à terre (bandeau « CAMP LIBERE », mât abattu, anneau doré qui pulse au sol et flèche dorée au-dessus du repère) ; CAPTURÉ quand le héros rejoint le repère (à moins de 18 px) : bannière dorée frappée d'un soleil, rayons dorés, arpège d'achat, bandeau « CAMP CONQUIS », une seule fois ;
   - décor provisoire dessiné, sans collision (piquets coiffés d'os, foyer éteint, mât) : aucun passage bloqué ; géographie et collisions inchangées ;
