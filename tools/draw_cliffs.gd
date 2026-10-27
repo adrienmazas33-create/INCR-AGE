@@ -178,9 +178,11 @@ func _face(v: int) -> Image:
 		for y in 2 * T:
 			var col: Variant = null
 			if y < lines[0]:
-				# Lèvre : bord du plateau qui déborde ; dessus éclairé, dessous sombre.
-				col = INK["b"] if y < 2 else (INK["a"] if y == lines[0] - 1 else INK["g"])
-				if y == lines[0] - 1 and lines[0] - FACE_LINES[0] >= 2:
+				# Lèvre : herbe qui déborde. Pas de bande claire continue : à 2 px de haut sur toute la
+				# longueur, elle se lisait comme un ruban vert posé sur la pierre. L'herbe garde la teinte
+				# du sol, avec deux rangs d'ombre au bord, et des brins qui pendent (voir plus bas).
+				col = INK["a"] if y >= lines[0] - 2 else INK["g"]
+				if y == lines[0] - 1:
 					col = INK["k"]
 			elif y > lines[5]:
 				col = SHADOW
@@ -188,6 +190,10 @@ func _face(v: int) -> Image:
 				col = INK["1"]
 			else:
 				col = _rock(v, x, y, lines)
+			# Brins qui pendent sous la lèvre : cassure irrégulière au lieu d'une arête tirée au cordeau.
+			var blade := _blade(x, v)
+			if blade > 0 and y >= lines[0] and y < lines[0] + blade:
+				col = INK["k"] if y == lines[0] + blade - 1 else INK["a"]
 			if col != null:
 				img.set_pixel(x, y, col)
 	return img
@@ -259,7 +265,7 @@ func _corner(src: Image, top: bool, right: bool) -> Image:
 				if c.a < 1.0:
 					continue
 				var grass := c in [INK["k"], INK["a"], INK["g"], INK["b"]]
-				img.set_pixel(x, y, (INK["a"] if right else INK["b"]) if grass else (INK["2"] if right else INK["5"]))
+				img.set_pixel(x, y, INK["a"] if grass else (INK["1"] if right else INK["5"]))
 			elif d == e + 1 and right:
 				var c := img.get_pixel(x, y)
 				if c in [INK["4"], INK["5"], INK["6"]]:
@@ -298,22 +304,28 @@ func _stairs() -> Image:
 		for y in 2 * T:
 			var col: Variant = null
 			if y < 3:
-				col = [INK["b"], INK["g"], INK["a"]][y]
+				# Même lèvre que les faces : herbe du sol, puis deux rangs d'ombre (plus de vert clair).
+				col = [INK["g"], INK["a"], INK["k"]][y]
 			elif y < STEP_FLOOR:
 				var k := STEPS.size() - 1
 				while k > 0 and y < STEPS[k] + _wave(STEP_WAVES[k], x):
 					k -= 1
-				var d: int = y - STEPS[k] - _wave(STEP_WAVES[k], x)
+				var top: int = STEPS[k] + _wave(STEP_WAVES[k], x)
+				var bottom: int = (STEPS[k + 1] + _wave(STEP_WAVES[k + 1], x)) if k + 1 < STEPS.size() else STEP_FLOOR
+				var d: int = y - top
+				var h: int = maxi(bottom - top, 4)
+				# Dessus de marche clair, contremarche sourde : c'est ce contraste qui fait lire l'escalier.
+				# Avant, marches et paroi étaient de la même valeur et l'escalier disparaissait dans la roche.
 				if d < 0:
-					col = INK["3"]
-				elif d <= 1:
+					col = INK["2"]
+				elif d <= 3:
+					col = INK["5"]
+				elif d == 4:
 					col = INK["4"]
-				elif d == 2:
-					col = INK["5"] if x >= 8 and x <= 23 else INK["4"]
-				elif d == 3:
+				elif d < h - 1:
 					col = INK["2"]
 				else:
-					col = INK["3"]
+					col = INK["1"]
 			elif y == STEP_FLOOR:
 				col = INK["2"]
 			elif y == STEP_FLOOR + 1:
@@ -337,7 +349,7 @@ func _cheek(top: bool, right: bool) -> Image:
 		for d in width:
 			var col: Color
 			if top and y < 3:
-				col = [INK["b"], INK["g"], INK["a"]][y]
+				col = [INK["g"], INK["a"], INK["k"]][y]
 			elif y in cracks:
 				col = INK["2"]
 			elif d == width - 1:
@@ -371,7 +383,11 @@ func _rim(side: int, v: int) -> Image:
 		var width := _wave(RIM_WIDTH[v], along)
 		for d in width + 1:
 			var col: Color
+			# Le passage herbe -> pierre se fait par deux verts d'ombre : un gris-mauve y faisait un
+			# filet violacé le long de tout le rebord.
 			if d == width:
+				col = INK["k"]
+			elif d == width - 1:
 				col = INK["a"]
 			elif along in RIM_JOINTS[v] and d > 0:
 				col = INK["2"]
@@ -379,8 +395,6 @@ func _rim(side: int, v: int) -> Image:
 				col = [INK["2"], INK["3"], INK["4"], INK["3"], INK["3"], INK["2"]][mini(d, 5)]
 			else:
 				col = [INK["4"], INK["5"], INK["4"], INK["4"], INK["3"], INK["2"]][mini(d, 5)]
-			if d == width - 1 and d > 1:
-				col = INK["2"]
 			match side:
 				0: img.set_pixel(d, along, col)
 				1: img.set_pixel(T - 1 - d, along, col)
@@ -400,6 +414,17 @@ func _stamp(img: Image, rows: Array, ox: int, oy: int) -> void:
 			var ch := row[x]
 			if ch != "." and ox + x < img.get_width() and oy + y < img.get_height():
 				img.set_pixel(ox + x, oy + y, INK[ch])
+
+
+## Longueur (0 à 2 px) du brin d'herbe qui pend sous la lèvre à cette colonne, tirée une fois pour
+## toutes et sans motif répétitif lisible.
+func _blade(x: int, v: int) -> int:
+	var h := (x * 31 + v * 17 + (x * x) % 7) % 13
+	if h < 3:
+		return 2
+	if h < 8:
+		return 1
+	return 0
 
 
 ## Valeur du tracé à `x` : points de passage reliés en ligne droite.

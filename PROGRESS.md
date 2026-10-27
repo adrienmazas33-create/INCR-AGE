@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : voie C, étape 6 (falaises du plateau témoin), faite, en commit local, en attente de validation (non poussé, pas de tag). Troupes organiques (lot 1), lots 1 à 4 de la diversification de l'armée et voie C, étapes 1 à 5, validés et publiés. Audio terminé et validé.**
+**État : voie C, étape 6 (falaises du plateau témoin) faite, puis retouchée le 27/10/2026 (escalier lisible, lèvre d'herbe, rebords), en attente de validation (commits locaux, non poussés, pas de tag). Troupes organiques (lot 1), lots 1 à 4 de la diversification de l'armée et voie C, étapes 1 à 5, validés et publiés. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -297,6 +297,11 @@ Voir les priorités 2 et 3 du plan artistique.
   - crête du bus Ambiance à -48 dB, contre -35 à -39 dB avant ;
   - combat : 10 coups, 9 sons écartés, aucune erreur ;
   - écoute : **validée** par le porteur du projet le 22/10/2026.
+- **Retouches de l'étape 6** (tiles seulement), 27/10/2026 :
+  - tour de non-régression complet : 149,8 s, 2 replacements forcés (1 à 2 attendus), aucune case non atteinte, aucune erreur ;
+  - captures relues avant/après sur l'escalier du plateau, le bord sud-est et le campement : l'escalier se lit de nouveau du premier coup d'œil, le ruban vert et le filet violacé ont disparu, les rebords isolés ne se détachent plus comme des blocs clairs ;
+  - 60 FPS (moyenne 59,4 à 60,5 selon les essais), 10 232 nœuds, inchangé ;
+  - **non vérifié** : l'appréciation artistique par un humain, et le rendu à d'autres paliers de zoom.
 - **Non vérifié** : vrai clic de souris et toucher sur écran tactile (clics simulés seulement), sensation de contrôle à la souris ; sensations de contrôle, de caméra et de combat par un humain, clic réel dans le panneau (achats testés par commande), toucher sur écran tactile, écran 120/144 Hz, plein écran.
 
 ## En cours
@@ -306,6 +311,12 @@ Voir les priorités 2 et 3 du plan artistique.
   - seconde zone témoin (`ZoneTemoin.CLIFF_ZONE`) : le grand plateau nord-est entier et ses abords, avec aussi notre herbe, nos chemins, nos arbres et nos décalques ; bascule F2 comme pour la zone du camp (l'essai LPC n'y change rien) ;
   - purement visuel : carte, collisions et règles inchangées ; le camp capturable reste en place ;
   - régénérer la planche : `godot --headless --path . --script res://tools/draw_cliffs.gd`, puis `--import`.
+  - **retouches de lisibilité du 27/10/2026** (relecture des captures en jeu ; `tools/draw_cliffs.gd` et `cliffs.png` seulement, carte, collisions et zone témoin inchangées) :
+    - **escalier** : dessus de marche clair (palette 5) sur contremarche sombre (2, ombre 1). Avant, marches et paroi étaient de la même valeur et l'escalier disparaissait dans la roche ;
+    - **lèvre d'herbe** : plus de bande verte claire continue — à 2 px de haut sur toute la longueur, elle se lisait comme un ruban posé sur la pierre. L'herbe garde la teinte du sol, avec deux rangs d'ombre et des brins qui pendent (`_blade`) ;
+    - **rebords** : le passage herbe → pierre se fait par deux verts d'ombre (`k` puis `a`). Un gris-mauve y faisait un filet violacé le long du bord est ; les coins saillants prennent une arête sombre (`1`) au lieu du mauve (`2`) ;
+    - haut de l'escalier et joues : même lèvre que les faces, plus de vert clair ;
+    - contrôle de palette toujours vert ; planche régénérée puis `--import`.
 - **Troupes organiques, lot 1** (priorité 3 de `docs/ROADMAP.md`), validé par le porteur du projet et publié :
   - le suivi reste celui d'avant (trace du héros, mêmes garde-fous contre les blocages) ; seules les places et les rythmes varient ;
   - allure propre à chaque compagnon, tirée une fois pour toutes d'après son numéro (`Party._give_gait`) : vitesse de marche ±5 %, avance ou retard dans la colonne ±4 px, écart à la trace 5 à 11 px au lieu de 8, et un lent balancement de ces deux places (±2,5 px, période de 5 à 9 s) ;
