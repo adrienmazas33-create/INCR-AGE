@@ -2,6 +2,13 @@ class_name EnemySpawner
 extends Node
 ## Place les ennemis aux repaires marqués sur la carte et les fait réapparaître lentement,
 ## jamais sous les yeux du joueur.
+## Les rencontres de lanceurs de pierres sont des repaires fixes définis ici (la carte n'est pas modifiée).
+
+const THROWER := preload("res://scenes/enemies/stone_thrower.tscn")
+## Rencontres fixes de lanceurs (cases) : un lanceur isolé dans la prairie fleurie au pied de la colline
+## nord (pour découvrir son attaque), et deux lanceurs espacés sur le grand plateau nord-est (pour
+## travailler l'approche). Loin des repaires de sangliers et de la sortie du camp.
+const THROWER_DENS: Array[Vector2i] = [Vector2i(64, 23), Vector2i(96, 14), Vector2i(104, 12)]
 
 const BOAR := preload("res://scenes/enemies/boar.tscn")
 ## Caractère de carte -> variante.
@@ -26,6 +33,10 @@ func setup(world: World, hero: Node2D) -> void:
 			var den := {"pos": Vector2(c * TileIds.SIZE) + Vector2(16, 24), "variant": ch, "unit": null, "timer": 0.0}
 			_dens.append(den)
 			_spawn(den)
+	for c in THROWER_DENS:
+		var den := {"pos": Vector2(c * TileIds.SIZE) + Vector2(16, 24), "variant": "thrower", "unit": null, "timer": 0.0}
+		_dens.append(den)
+		_spawn(den)
 
 
 func _process(delta: float) -> void:
@@ -38,12 +49,21 @@ func _process(delta: float) -> void:
 
 
 func _spawn(den: Dictionary) -> void:
+	if den["variant"] == "thrower":
+		var thrower := THROWER.instantiate() as StoneThrower
+		thrower.position = den["pos"]
+		_track(den, thrower)
+		return
 	var v: Dictionary = VARIANTS[den["variant"]]
 	var boar := BOAR.instantiate() as Boar
 	boar.stats = v["stats"]
 	boar.get_node("Sprite").texture = v["skin"]
 	boar.position = den["pos"]
-	_world.add_entity(boar)
-	den["unit"] = boar
+	_track(den, boar)
+
+
+func _track(den: Dictionary, unit: Node2D) -> void:
+	_world.add_entity(unit)
+	den["unit"] = unit
 	den["timer"] = RESPAWN_DELAY
-	boar.tree_exited.connect(func(): den["timer"] = RESPAWN_DELAY)
+	unit.tree_exited.connect(func(): den["timer"] = RESPAWN_DELAY)

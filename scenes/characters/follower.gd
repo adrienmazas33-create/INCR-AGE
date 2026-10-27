@@ -60,8 +60,8 @@ func _physics_process(delta: float) -> void:
 	if previous_foe and _foe == null:
 		party.rejoin_trail(self)
 	var goal := party.combat_spot(self, _foe) if _foe else party.target_for(self)
-	# Frondeur : cible à portée et en vue, il reste où il est pour tirer.
-	if _foe and is_ranged() and attack.in_range(_foe) and Targeting.has_sight(self, global_position, _foe.global_position):
+	# Frondeur : cible à portée et ligne de tir libre, il reste où il est pour tirer.
+	if _foe and is_ranged() and attack.in_range(_foe) and Targeting.shot_blocker(self, global_position, _foe.global_position) == null:
 		goal = global_position
 	var to := goal - global_position
 	var dist := to.length()

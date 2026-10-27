@@ -1,14 +1,15 @@
 class_name RangedAttack
 extends AutoAttack
 ## Tir à la fronde : même interface que l'attaque de mêlée (le groupe et l'unité n'y voient pas de
-## différence). Pas de tir sans vue directe sur la cible. Le geste d'élan précède le départ d'une pierre
+## différence). Pas de tir sans ligne de tir libre vers la cible. Le geste d'élan précède le départ d'une pierre
 ## visible (SlingStone) ; les dégâts tombent à son arrivée, une seule fois, avec l'amélioration FORCE.
+## Ligne de tir : une pierre passe au-dessus de l'eau, pas à travers un décor solide (Targeting.shot_blocker).
 
 
 func try_attack(target: Combatant) -> void:
 	if target == null or _cooldown > 0.0 or _windup >= 0.0 or not in_range(target):
 		return
-	if not Targeting.has_sight(unit, unit.global_position, target.global_position):
+	if Targeting.shot_blocker(unit, unit.global_position, target.global_position) != null:
 		return
 	_target = target
 	_windup = unit.stats.attack_windup

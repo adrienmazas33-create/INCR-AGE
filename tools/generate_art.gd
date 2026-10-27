@@ -655,6 +655,10 @@ const SPEAR_TIP := [Color8(210, 214, 222), Color8(140, 146, 160)]
 ## Fronde des frondeurs : lanière de cuir (claire, ombrée) et sacoche de pierres à la taille.
 const SLING_CORD := [Color8(196, 150, 96), Color8(120, 82, 50)]
 const SLING_POUCH := [Color8(150, 106, 64), Color8(96, 64, 38)]
+## Clan rival (lanceurs de pierres ennemis) : cheveux noirs, peau de bête sombre et violacée (aucun
+## compagnon ne porte ces teintes), bandeau d'os clair ; une pierre en main.
+const RIVAL := {"h": Color8(30, 24, 28), "H": Color8(62, 50, 58), "f": Color8(78, 62, 84), "F": Color8(52, 40, 58),
+	"g": Color8(108, 88, 116), "n": Color8(226, 220, 200)}
 
 
 func _gen_hero() -> void:
@@ -668,6 +672,9 @@ func _gen_hero() -> void:
 		_save(_character_sheet(colors, v["beard"], v["band"], "spear", false), "follower_%d.png" % i)
 		# Frondeurs : même apparence, sans lance, fronde en main et sacoche de pierres.
 		_save(_slinger_pouch(_character_sheet(colors, v["beard"], v["band"], "sling", false)), "slinger_%d.png" % i)
+	var rival := HERO_COLORS.duplicate()
+	rival.merge(RIVAL, true)
+	_save(_character_sheet(rival, true, true, "stone", false), "rival_thrower.png")
 	for i in VILLAGERS.size():
 		var colors := HERO_COLORS.duplicate()
 		colors.merge(VILLAGERS[i], true)
@@ -763,6 +770,10 @@ func _weapon(img: Image, kind: String, view: int, hand: Vector2i) -> void:
 			if k == 2:
 				_px(img, Vector2i(p) + Vector2i(1, 0), SPEAR_TIP[1])
 				_px(img, Vector2i(p) - Vector2i(1, 0), SPEAR_TIP[1])
+	elif kind == "stone":
+		# Pierre tenue en main, prête à être lancée.
+		for p: Vector2i in [Vector2i(0, -1), Vector2i(1, -1), Vector2i(-1, 0), Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1)]:
+			_px(img, hand + p, CLUB_STONE[0] if p.y < 0 else (CLUB_STONE[1] if p.y == 0 else CLUB_STONE[2]))
 	elif kind == "sling":
 		# Fronde : lanière de cuir qui pend de la main, poche refermée sur une pierre grise.
 		var end := hand + (Vector2i(-3, 5) if view == 2 else Vector2i(1, 6))

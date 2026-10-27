@@ -7,8 +7,6 @@ extends Combatant
 
 enum State { WANDER, CHASE, WINDUP, CHARGE, RECOVER, FLEE, RETURN, DEAD }
 
-const PICKUP := preload("res://scenes/loot/pickup.gd")
-
 @export var aggro_radius := 80.0
 @export var leash_radius := 7.0 * 32.0
 @export var charge_trigger := 80.0
@@ -176,18 +174,7 @@ func _on_died() -> void:
 
 
 func _drop_loot() -> void:
-	var items := []
-	for kind in stats.drops:
-		var span: Array = stats.drops[kind]
-		for i in _rng.randi_range(span[0], span[1]):
-			items.append(kind)
-	if _rng.randf() < stats.knowledge_chance:
-		items.append("knowledge")
-	for kind in items:
-		var p := PICKUP.new()
-		p.position = global_position + Vector2(0, -2)
-		p.launch(kind, Vector2.from_angle(_rng.randf() * TAU) * _rng.randf_range(30.0, 70.0), _rng.randf_range(110.0, 160.0))
-		get_parent().add_child(p)
+	Loot.drop(stats, global_position, get_parent(), _rng)
 
 
 func _animate(delta: float) -> void:

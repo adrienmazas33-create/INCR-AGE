@@ -61,6 +61,8 @@ func _ready() -> void:
 	mover.name = "ClickMover"
 	add_child(mover)
 	mover.setup(_hero, PathGrid.new(_world.map, _world.camp_position), _world.effects)
+	Targeting.map = _world.map
+	Targeting.terrain_body = (_world.get_node("Collision") as StaticBody2D).get_rid()
 	CombatFx.layer = _world.effects
 	CombatFx.camera = _camera
 	_camera.target = _hero

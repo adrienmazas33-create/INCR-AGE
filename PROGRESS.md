@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : diversification de l'armée, lot 1 (frondeur allié) fait, en commit local, en attente de validation (non poussé, pas de tag). Voie C, étape 5 (décalques) faite, commit local distinct, en attente de validation (non poussée). Audio terminé et validé.**
+**État : diversification des ennemis, lot 2 (lanceur de pierres) fait, en commit local, en attente de validation (non poussé, pas de tag). Frondeur allié (lot 1) validé et voie C étape 5 en attente : commits locaux, non poussés. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -234,6 +234,19 @@ Voir les priorités 2 et 3 du plan artistique.
   - raccord de boucle : aucun saut entre la fin et le début ; en jeu, après 105 s, la lecture est repartie du début (position 5,5 s), en boucle ;
   - 60 FPS au camp et en combat avec la musique ; rendu en 9 s par l'outil, une fois pour toutes ;
   - écoute : **validée** par le porteur du projet le 22/10/2026.
+- **Lanceur de pierres (diversification des ennemis, lot 2)**, en jeu, sauvegardes de test séparées :
+  - détection, préparation et lancer : le lanceur isolé repère le héros, s'approche à environ 85 px, prépare (lueur rouge) et lance ; capture de la préparation et d'un coup reçu par le héros ;
+  - esquive : héros seul (compagnons mis K.O. par l'outil de test) ; immobile, 2 pierres sur 2 touchent ; en va-et-vient latéral, 1 touche et 1 retombe sans dégâts ;
+  - pas de double dégât : à chaque essai, pierres ennemies touchées <= pierres lancées (1/1, 2/2, 1 sur 2) ; tir allié libre : une seule touche de 5 PV ;
+  - obstacles : sur le plateau, un menhir coupe la ligne de tir du second lanceur, qui ne lance pas ; tirs alliés forcés vers un sanglier caché : pierre arrêtée, aucun dégât ;
+  - recul : observé quand un compagnon l'approche (puis reprise du combat) ; recul contre un obstacle non observé en situation (voir limites) ;
+  - limites de poursuite : héros parti à 17 cases au sud, le lanceur repasse en retour, rejoint son repaire et se met au repos ;
+  - mort, butin et réapparition : lanceur isolé abattu en 3 s par 3 combattants (2 vivres, 1 matériau ramassés), réapparu environ 45 s plus tard, héros éloigné ;
+  - groupe mixte (5 lances, 3 frondes) sur le plateau : premier lanceur abattu, aucun incident ; combat au repaire est sans régression des frondeurs (6 pierres arrivées avec 3 frondeurs ; l'essai du lot 1 en comptait 6) ;
+  - sauvegardes : chargement d'une sauvegarde version 2 avec rôles mixtes sans changement ;
+  - tour complet (5 lances, 3 frondes) : 159 s, 6 replacements forcés comme au lot 1, mêmes endroits ; 1 pierre ennemie lancée en passant sur le plateau ;
+  - **performances** : l'ordinateur tournait ce jour-là à environ 29 FPS quel que soit le code (vérifié : code du lot 1 seul, partie neuve, rendu d'origine, tous vers 29 FPS) ; à conditions égales, aucun écart notable entre le lot 1 et le lot 2 (29,7 contre 29,3 FPS au camp avec 8 compagnons) ; à remesurer quand la machine retrouve ses 60 FPS ;
+  - **à ta charge** : sensation de jeu et équilibrage (dangerosité, fréquence des lancers, utilité de l'esquive), lisibilité du repère rouge et de la pierre, choix des emplacements des rencontres.
 - **Frondeur allié (diversification de l'armée, lot 1)**, en jeu, sauvegardes de test séparées (ta partie n'a pas été touchée) :
   - recrutement : 5 recrues avec le rôle choisi (fronde, lance, fronde, fronde, lance), la 6e refusée à 8 compagnons ; rôles enregistrés (version 2) ;
   - réaffectation dans un groupe complet par de vrais clics sur la bande TROUPE : trois compagnons convertis, héros immobile, toujours 8 compagnons ; un compagnon à 10/40 PV passe à 7/28 (même proportion), un compagnon K.O. reste K.O. ;
@@ -259,7 +272,16 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
-- **Diversification de l'armée, lot 1 : frondeur allié** (section 5 de `docs/ROADMAP.md`), en attente de validation :
+- **Diversification des ennemis, lot 2 : lanceur de pierres** (section 5 de `docs/ROADMAP.md`), en attente de validation :
+  - `scenes/enemies/stone_thrower.gd` et `.tscn`, caractéristiques `data/units/thrower.tres` : 22 PV, 6 dégâts, portée 110 px, lancer toutes les 2,2 s environ (écart aléatoire de -0,3 à +0,4 s, premier lancer décalé de 0,4 à 1,6 s : jamais de tirs synchronisés), préparation de 0,55 s (lueur rouge et tremblement), vitesse 58 ; butin 1 à 2 vivres, 1 à 2 matériaux, 12 % de savoir ;
+  - comportement : repère le groupe à 130 px avec une ligne de tir libre, s'approche jusqu'à 85 px sans quitter 5 cases autour de son repaire ; plus près que 44 px, recul de 0,7 s si la voie est libre et qu'il reste aux abords du repaire (sinon il tient bon), au plus toutes les 2,5 s ; sans ligne de tir 3 s ou groupe trop loin du repaire : retour au repaire (soin lent), puis repos ;
+  - pierre ennemie (mode « position figée » de `sling_stone.gd`) : vise la position de sa cible au départ, sans la suivre, à 170 px/s ; petit repère rouge au sol à l'endroit visé ; blesse la première unité du groupe rencontrée en vol, une seule fois ; retombe sans dégâts à l'arrivée ; arrêtée par les obstacles ;
+  - lignes de tir (`Targeting.shot_blocker`) : forêts et faces de falaise (cases de la carte) et décors physiques ; l'eau ne les arrête plus. S'applique aussi aux pierres du frondeur allié : c'est le seul changement à son comportement (limite du lot 1 levée) ;
+  - butin partagé (`scripts/combat/loot.gd`), utilisé aussi par le sanglier sans changement ; réapparition des rencontres par les règles existantes (45 s, jamais sous les yeux du joueur) ;
+  - apparence provisoire : planche `rival_thrower.png` (peau de bête sombre et violacée, bandeau d'os, pierre en main), générée par `tools/generate_art.gd` ; les autres images sont inchangées ;
+  - **rencontres** (définies dans `scripts/world/enemy_spawner.gd`, carte inchangée) : un lanceur isolé dans la prairie fleurie au pied de la colline nord, case (64, 23), au nord du camp par le chemin ; deux lanceurs sur le grand plateau nord-est, cases (96, 14) et (104, 12), accès par l'escalier en (100, 25) ;
+  - **pour tester** : du camp, remonter le chemin vers le nord jusqu'à la colline (lanceur isolé à droite du chemin) ; puis traverser le pont nord et monter l'escalier du plateau nord-est. Outil de test : `-- --at=62,26` (près du lanceur isolé), `-- --at=100,19` (plateau) ; `--hurt=0:0,1:0,2:0` met les compagnons K.O. pour affronter seul un lanceur.
+- **Diversification de l'armée, lot 1 : frondeur allié** (section 5 de `docs/ROADMAP.md`), validé par le porteur du projet le 27/10/2026 (commit local, non poussé) :
   - caractéristiques `data/units/slinger.tres` : 28 PV (40 pour le combattant), 5 dégâts, portée 88 px, cadence 1,5 s, élan de 0,3 s, recul faible ; même vitesse et même régénération ;
   - `scripts/combat/ranged_attack.gd` (même interface que l'attaque de mêlée, pas de tir sans vue directe) et `scripts/combat/sling_stone.gd` (pierre visible en légère cloche avec son ombre, qui suit sa cible ; arrêtée par tout obstacle du monde, bâtiments, arbres, falaises et aussi l'eau comme les vues directes du combat ; dégâts une seule fois ; durée de vie 1 s ; cible tombée ou disparue sans erreur) ; FORCE et VIGUEUR appliquées ;
   - suivi (`party.gd`) : rang dans le groupe, combattants devant et frondeurs derrière dans la colonne et au repos ; en combat, place à trois quarts de portée du côté du héros (éventail de ±45°) ; arrêt pour tirer dès que la cible est à portée et en vue ; limites d'engagement et de poursuite inchangées ; un groupe sans frondeur se place exactement comme avant ;
@@ -351,7 +373,8 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## Problèmes connus / limites
 
-- Frondeur : sa pierre s'arrête aussi sur l'eau (même règle que les vues directes du combat). Il ne tire donc pas par-dessus une rivière ; à revoir si tu le souhaites.
+- Lignes de tir (lot 2) : les pierres passent au-dessus de l'eau ; forêts, faces de falaise et décors (arbres isolés, buissons, rochers, huttes, bâtiments) les arrêtent. Les rebords fins des plateaux, eux, ne les arrêtent pas. Le choix de cible des compagnons garde la vue directe d'origine : un frondeur n'engage pas de lui-même un ennemi de l'autre côté d'une rivière.
+- Lanceur de pierres : apparence provisoire (planche du clan rival) ; pas de son propre au lancer ; recul contre un obstacle vérifié par la logique (le recul n'est tenté que si la voie est libre), mais pas observé en situation lors des tests.
 - Frondeur : graphismes provisoires (planche du compagnon sans lance, fronde et sacoche) ; pas de son propre au tir.
 
 - Performances : jamais mesurées sur secteur (ordinateur sur batterie pendant les lots 3B et 3C). Au lot 3B, 26 à 50 FPS selon les moments ; au lot 3C, 60 FPS stables, toujours sur batterie.

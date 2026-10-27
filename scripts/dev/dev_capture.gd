@@ -143,6 +143,9 @@ func _run() -> void:
 	print("DevCapture : sons joués %s" % AudioManager.counts)
 	print("DevCapture : frondes : %d pierre(s) arrivée(s), %d arrêtée(s) par un obstacle, dégâts du dernier tir %.2f" % [SlingStone.landed,
 		SlingStone.blocked, SlingStone.last_damage])
+	var throwers := get_tree().get_nodes_in_group(&"enemies").filter(func(e: Node) -> bool: return e is StoneThrower)
+	print("DevCapture : lanceurs : %d debout ; pierres ennemies : %d lancée(s), %d touché(es), %d retombée(s) sans toucher" % [
+		throwers.size(), SlingStone.enemy_thrown, SlingStone.enemy_hits, SlingStone.enemy_missed])
 	print("DevCapture : musique %s" % AudioManager.music_summary())
 	if _capture_path != "":
 		for i in 3:
