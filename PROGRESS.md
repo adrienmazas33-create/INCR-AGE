@@ -484,7 +484,7 @@ Voir les priorités 2 et 3 du plan artistique.
 
 - Dépôt : https://github.com/adrienmazas33-create/INCR-AGE, branche `main`. Chaque lot validé porte un tag : `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`, `art-pass-1`, `camp-compass`, `mouse-move`, `hero-id`, `audio-a`, `audio-b`, `audio-b2`, `audio-c`, `audio-c2`.
 - Copie locale : `C:\Users\Adrien\OneDrive\Bureau\INCR-AGE`. Identité Git définie **uniquement pour ce dépôt** (`user.name` « Adrien »).
-- Bible créative : `Bible_creative_Jeu_incremental_2D_V01.md` / `.docx`, dans les Téléchargements de l'utilisateur, **hors dépôt**.
+- Bible créative : `Bible_creative_Jeu_incremental_2D_V01.md` / `.docx`, dans les Téléchargements de l'utilisateur, **hors dépôt**. Synthèse des décisions de conception (export ChatGPT du 21 au 23/10/2026) : `docs/BIBLE_SYNTHESE.md`.
 - **Chantier artistique** : étape 1 et passe visuelle 1 faites et validées (tag `art-pass-1`). Prochaine étape, sur demande : priorité 2 de `docs/ART_DIRECTION_PLAN.md`. Ne pas commencer d'autre phase sans demande explicite.
 - **Indicateur du campement** : validé et publié (tag `camp-compass`).
 - **Feuille de route** `docs/ROADMAP.md` : déplacement à la souris (**fait et validé**, tag `mouse-move`) ; identification du héros (**faite et validée**, tag `hero-id`). Audio : lot A **fait et validé** (tag `audio-a`), lot B **fait et validé** (tag `audio-b`). Lot C (musique) : **fait et validé** (tag `audio-c`). Rééquilibrage musical et panneau des volumes : **faits et validés** (tag `audio-c2`). Ensuite, **prévus et non développés** : variantes du thème par époque, art du monde (zone témoin au camp), troupes organiques, carte du monde ; amélioration VITESSE reportée.
