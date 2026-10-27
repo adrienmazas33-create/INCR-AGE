@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : lot 4, revenu du camp capturé, fait, en commit local, en attente de validation (non poussé, pas de tag). Lots 1 à 3 (frondeur, lanceur, camp capturable) et voie C validés et publiés. Audio terminé et validé.**
+**État : lot 4, revenu du camp capturé, validé, en commit local (non poussé, pas de tag). Lots 1 à 3 (frondeur, lanceur, camp capturable) et voie C validés et publiés. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -289,7 +289,7 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
-- **Lot 4 : revenu du camp capturé** (section 5 de `docs/ROADMAP.md`), en attente de validation :
+- **Lot 4 : revenu du camp capturé** (section 5 de `docs/ROADMAP.md`), validé par le porteur du projet (commits locaux, non poussés) :
   - réglages choisis avec toi : 1 vivre et 1 matériau toutes les 60 s de jeu, réserve au camp conquis, plafond de 10 de chaque ;
   - accumulation seulement pendant le jeu (`EnemyCamp._income`) : rien jeu fermé, et la minute en cours repart de zéro au lancement suivant ; aucun revenu tant que le camp n'est pas capturé ;
   - récupération : le héros debout, à moins de 40 px du mât, reçoit toute la réserve d'un coup (éclats, son de ramassage) ; la réserve est vidée au même instant (pas de double compte) et la partie aussitôt enregistrée ;
