@@ -45,7 +45,7 @@ Demandée en mission secondaire « si raisonnable », reportée pour tenir dans 
 2. **Montée majeure en qualité artistique du monde jouable** : sols, végétation, eau, reliefs, transitions et composition des environnements. Étude du lot 2 : `docs/WORLD_ART_PLAN.md` (en attente de décision).
    - D'abord une **zone témoin soignée autour du campement**, à valider avant toute refonte globale.
    - Étudier de vrais assets pixel art cohérents (gratuits et utilisables commercialement, licence vérifiée), plutôt que multiplier indéfiniment les dessins programmatiques.
-3. **Comportement plus organique des troupes autour du héros** : placements moins géométriques, petites variations de rythme et de position, sans perdre la fiabilité du suivi. **Lot 1 FAIT et validé** (non publié) (détail dans `PROGRESS.md`) : allure propre à chaque compagnon, colonne qui se balance, départs et arrivées échelonnés, petits gestes à la halte, éventail de combat moins régulier.
+3. **Comportement plus organique des troupes autour du héros** : placements moins géométriques, petites variations de rythme et de position, sans perdre la fiabilité du suivi. **Lot 1 FAIT et validé** (publié) (détail dans `PROGRESS.md`) : allure propre à chaque compagnon, colonne qui se balance, départs et arrivées échelonnés, petits gestes à la halte, éventail de combat moins régulier.
 4. **Carte du monde et mini-carte** : reportées à plus tard (section 2). La navigation actuelle (indicateur du camp et déplacement à la souris) suffit pour l'instant.
 
 La qualité artistique des personnages (section 4) suivra la même méthode que celle du monde : référence réelle d'abord, prototype à valider ensuite.

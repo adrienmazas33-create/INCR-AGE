@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : troupes organiques, lot 1, validé, en commit local (non poussé, pas de tag). Lots 1 à 4 de la diversification de l'armée et voie C validés et publiés. Audio terminé et validé.**
+**État : troupes organiques, lot 1, validé et publié (pas de tag). Lots 1 à 4 de la diversification de l'armée et voie C validés et publiés. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -295,7 +295,7 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
-- **Troupes organiques, lot 1** (priorité 3 de `docs/ROADMAP.md`), validé par le porteur du projet (commits locaux, non poussés) :
+- **Troupes organiques, lot 1** (priorité 3 de `docs/ROADMAP.md`), validé par le porteur du projet et publié :
   - le suivi reste celui d'avant (trace du héros, mêmes garde-fous contre les blocages) ; seules les places et les rythmes varient ;
   - allure propre à chaque compagnon, tirée une fois pour toutes d'après son numéro (`Party._give_gait`) : vitesse de marche ±5 %, avance ou retard dans la colonne ±4 px, écart à la trace 5 à 11 px au lieu de 8, et un lent balancement de ces deux places (±2,5 px, période de 5 à 9 s) ;
   - départ échelonné : quand le héros repart d'une halte, chacun se met en route avec 0 à 0,3 s de retard ; arrivée échelonnée : chacun gagne sa place de halte avec 0 à 0,45 s de délai ;
