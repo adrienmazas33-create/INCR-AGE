@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : voie C, étape 4 (arbres, buissons, souche et ombres à l'échelle de nos personnages) faite, en commit local, en attente de validation (non poussée). Étapes 1 à 3 validées. F2 fait défiler nos tuiles, le rendu original et l'essai LPC dans la zone témoin. Audio terminé et validé.**
+**État : voie C, étapes 1 à 4 validées et publiées. En cours : étape 5 (décalques au sol en grappes). F2 fait défiler nos tuiles, le rendu original et l'essai LPC dans la zone témoin. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -243,7 +243,7 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
-- **Voie C, étape 4 : arbres, buissons, souche et ombres** (section 13 de `docs/WORLD_ART_PLAN.md`), en attente de validation :
+- **Voie C, étape 4 : arbres, buissons, souche et ombres** (section 13 de `docs/WORLD_ART_PLAN.md`), validée et publiée :
   - `nature.png` et `nature.json` : 3 feuillus, 1 sapin, 2 buissons (dont un à baies), 1 souche, et leurs ombres à part ; dessinés dans `tools/draw_nature.gd` (silhouettes, écorce, taches et baies placées à la main ; éclairage et contour calculés), couleurs contrôlées ; arbres de 2 à 3 cases de haut ;
   - zone témoin : forêts, arbres et buissons isolés remplacés par les nôtres (dessins d'origine masqués, collisions inchangées), deux souches décoratives ; 60 FPS ;
   - restent dans l'ancien style : huttes, feu, pont, rochers et petits décors ; canopée continue et arbres de lisière à venir.

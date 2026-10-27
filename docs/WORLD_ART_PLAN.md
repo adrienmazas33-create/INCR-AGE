@@ -253,7 +253,7 @@ L'étape 1 ne change que l'herbe (prairie et sol des forêts compris) ; le reste
   - le pont, les roseaux, les arbres et les décors, encore dans l'ancien style ;
   - la même ondulation qui revient toutes les 32 px le long des longues berges droites, discrète.
 
-## 13. Voie C, étape 4 : arbres, buissons, souche et ombres (23/10/2026, en attente de validation)
+## 13. Voie C, étape 4 : arbres, buissons, souche et ombres (23/10/2026, validée)
 
 **Livrables** (dessinés dans `tools/draw_nature.gd`)
 - `assets/art/tiles/nature.png` et `nature.json` (rectangle et point d'ancrage aux pieds de chaque objet) :
