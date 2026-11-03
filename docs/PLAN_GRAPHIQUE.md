@@ -174,7 +174,7 @@ réservé au héros. L'armée ne portera donc pas ce bandeau (section 3 corrigé
   d'ensemble.
 - La refonte du monde n'est pas lancée sans ta validation.
 
-## 8. Intégration (faite le 03/11/2026, en attente de validation)
+## 8. Intégration (faite et validée le 03/11/2026 ; le sprite actuel reste le défaut)
 
 Tout se fait derrière une bascule : le sprite actuel reste le défaut et rien n'est enregistré.
 
