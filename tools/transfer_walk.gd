@@ -32,12 +32,34 @@ const SETTINGS := {
 		"head": [2, 21], "torso": [22, 39], "torso_cols": [15, 31],
 		"arms": [22, 39], "left_arm": [6, 14], "right_arm": [32, 41],
 		# Sous la rangée 40, tout ce qui est à gauche de la colonne 12 (la massue) disparaît.
-		"below_club": [40, 12],
+		"below_club": [40, 12, "left"],
 		# Le manche de la massue croise la jambe gauche (à l'écran) sur certaines images. Cette jambe est
 		# refaite avec la jambe droite de l'image opposée du cycle (k + 4), jamais masquée, retournée en
 		# miroir autour de l'axe du corps de chaque image : de la rangée 38 (sous la main, où passe le manche)
 		# aux pieds, jusqu'à la colonne 22.
-		"mirror_leg": [38, 22],
+		"mirror_leg": [38, 22, "left"],
+	},
+	# De dos, même géométrie ; la massue est à droite de l'image.
+	"north": {
+		"head": [2, 21], "torso": [22, 39], "torso_cols": [15, 31],
+		"arms": [22, 39], "left_arm": [6, 15], "right_arm": [32, 41],
+		"below_club": [40, 34, "right"],
+		"mirror_leg": [38, 25, "right"],
+	},
+	# De profil (regard vers la droite), la massue pend devant les jambes sur 5 images sur 8 : du héros,
+	# on ne garde que les jambes, sous la rangée 39 ; tout le haut vient du soldat (tête, torse avec son
+	# pagne, main), recalé sur le mouvement du héros. Les jambes de profil ont presque la même
+	# silhouette à l'image k et à l'image k + 4 (seuls les rôles des jambes proche et éloignée
+	# s'échangent) : une image où la massue masque les jambes reprend celles d'une image propre.
+	# Aux images 2 et 6, la massue masque les deux jambes partout : elles reprennent celles de l'image 3.
+	"east": {
+		"mode": "profile",
+		"head": [2, 23], "torso": [24, 40], "torso_cols": [14, 34],
+		"hand": [32, 38], "hand_cols": [14, 21],
+		# Jambes reprises dès la rangée 41 (au-dessus passent la massue tenue à la hanche et le bas de la
+		# jupe ; le pagne du soldat couvre la rangée 40), sans la queue du
+		# manche qui dépasse en arrière des jambes (avant la colonne 16).
+		"legs_from_row": 41, "legs_left": 16, "legs_from": [4, 5, 3, 3, 4, 5, 3, 3],
 	},
 }
 
@@ -46,6 +68,9 @@ func _init() -> void:
 	var args := OS.get_cmdline_user_args()
 	var dir: String = args[0] if args.size() > 0 else "south"
 	var s: Dictionary = SETTINGS[dir]
+	if s.get("mode", "") == "profile":
+		_profile(dir, s)
+		return
 	var hero_pose := _pose("hero", dir)
 	var soldier := _pose("soldier", dir)
 	var palette := _palette(soldier)
@@ -61,15 +86,18 @@ func _init() -> void:
 		report.append("%d: tête %s torse %s bras %s %s" % [k, head_off, torso_off, arms_off[0], arms_off[1]])
 		images.append(_transfer(frame, soldier, palette, s, head_off, torso_off, arms_off))
 		centers.append(torso_off.x)
-	# Jambe gauche refaite par miroir de la jambe droite de l'image opposée (axe : colonne 23,5 + décalage).
+	# Jambe du côté de la massue refaite par miroir de l'autre jambe de l'image opposée (axe : colonne
+	# 23,5 + décalage du torse de chaque image).
 	var leg: Array = s["mirror_leg"]
+	var left: bool = leg[2] == "left"
 	for k in frames.size():
 		var j := (k + frames.size() / 2) % frames.size()
 		var limit: int = leg[1] + centers[k]
 		for y in range(leg[0], H):
-			for x in range(limit + 1):
+			for x in (range(limit + 1) if left else range(limit, W)):
 				var sx: int = W - 1 + centers[j] + centers[k] - x
-				images[k].set_pixel(x, y, images[j].get_pixel(sx, y) if sx > limit and sx < W else Color(0, 0, 0, 0))
+				var ok := sx > limit and sx < W if left else sx < limit and sx >= 0
+				images[k].set_pixel(x, y, images[j].get_pixel(sx, y) if ok else Color(0, 0, 0, 0))
 	var sheet := Image.create(W * frames.size(), H, false, Image.FORMAT_RGBA8)
 	for k in frames.size():
 		sheet.blit_rect(images[k], Rect2i(0, 0, W, H), Vector2i(k * W, 0))
@@ -86,7 +114,8 @@ func _transfer(frame: Image, soldier: Image, palette: Array, s: Dictionary, head
 	var cols: Array = s["torso_cols"]
 	var arms: Array = s["arms"]
 	var below: Array = s["below_club"]
-	# Héros : ses jambes seulement, recolorées ; tête, torse, bras et massue retirés.
+	# Héros : ses jambes seulement, recolorées ; tête, torse, bras et massue retirés (la zone des bras
+	# jusqu'à 2 rangées sous la pose, quel que soit le balancement : la main et le manche y passent).
 	for y in H:
 		for x in W:
 			var c := frame.get_pixel(x, y)
@@ -96,9 +125,9 @@ func _transfer(frame: Image, soldier: Image, palette: Array, s: Dictionary, head
 				continue
 			if y >= torso[0] + torso_off.y and y <= torso[1] + torso_off.y and x >= cols[0] + torso_off.x and x <= cols[1] + torso_off.x:
 				continue
-			if y >= arms[0] and y <= arms[1] + maxi(arms_off[0].y, arms_off[1].y) and (x <= s["left_arm"][1] + arms_off[0].x or x >= s["right_arm"][0] + arms_off[1].x):
+			if y >= arms[0] and y <= arms[1] + 2 and (x <= s["left_arm"][1] + arms_off[0].x or x >= s["right_arm"][0] + arms_off[1].x):
 				continue
-			if y >= below[0] and x <= below[1]:
+			if y >= below[0] and (x <= below[1] if below[2] == "left" else x >= below[1]):
 				continue
 			out.set_pixel(x, y, _nearest(c, palette))
 	# Soldat : torse, bras puis tête, recalés sur le mouvement du héros.
@@ -114,6 +143,73 @@ func _transfer(frame: Image, soldier: Image, palette: Array, s: Dictionary, head
 		for x in W:
 			_paste(out, soldier, x, y, head_off)
 	return out
+
+
+## Profil : jambes du héros (prises dans l'image indiquée par legs_from), puis torse, main et tête du
+## soldat, recalés sur le mouvement du héros dans l'image elle-même.
+func _profile(dir: String, s: Dictionary) -> void:
+	var hero_pose := _pose("hero", dir)
+	var soldier := _pose("soldier", dir)
+	var palette := _palette(soldier)
+	var paths := _walk_frames(dir)
+	var frames: Array[Image] = []
+	for p in paths:
+		frames.append(_load(p).get_region(Rect2i(CROP, Vector2i(W, H))))
+	var legs_from: Array = s["legs_from"]
+	var outline: Color = palette[0]
+	for c: Color in palette:
+		if c.get_luminance() < outline.get_luminance():
+			outline = c
+	var report: Array[String] = []
+	var sheet := Image.create(W * frames.size(), H, false, Image.FORMAT_RGBA8)
+	for k in frames.size():
+		var frame := frames[k]
+		var head_off := _match(frame, hero_pose, s["head"], [0, W - 1])
+		var torso_off := _match(frame, hero_pose, s["torso"], s["torso_cols"])
+		var hand_off := _match(frame, hero_pose, s["hand"], s["hand_cols"])
+		report.append("%d: tête %s torse %s main %s jambes de %d" % [k, head_off, torso_off, hand_off, legs_from[k]])
+		var out := Image.create(W, H, false, Image.FORMAT_RGBA8)
+		var legs := frames[legs_from[k]]
+		for y in range(s["legs_from_row"], H):
+			for x in range(s["legs_left"], W):
+				var c := legs.get_pixel(x, y)
+				if c.a > 0.0:
+					out.set_pixel(x, y, _nearest(c, palette))
+		var hand: Array = s["hand"]
+		var hand_cols: Array = s["hand_cols"]
+		for y in range(s["torso"][0], s["torso"][1] + 1):
+			for x in range(s["torso_cols"][0], s["torso_cols"][1] + 1):
+				if not (_between(y, hand) and _between(x, hand_cols)):
+					_paste(out, soldier, x, y, torso_off)
+		for y in range(hand[0], hand[1] + 1):
+			for x in range(hand_cols[0], hand_cols[1] + 1):
+				_paste(out, soldier, x, y, hand_off)
+		# Le bras forme le bord arrière du corps : quand la main s'en écarte, le vide qu'elle laisse dans la
+		# silhouette du soldat reprend la couleur du torse voisin, et le bord garde son contour sombre.
+		for y in range(hand[0], hand[1] + 1):
+			var row := y + torso_off.y
+			var edge := -1
+			for x in range(hand_cols[1], hand_cols[0] - 1, -1):
+				var p := x + torso_off.x
+				if row < 0 or row >= H or p < 0 or p >= W:
+					continue
+				if out.get_pixel(p, row).a == 0.0 and soldier.get_pixel(x, y).a > 0.0 and p + 1 < W:
+					out.set_pixel(p, row, out.get_pixel(p + 1, row))
+					edge = p
+			if edge >= 0 and (edge == 0 or out.get_pixel(edge - 1, row).a == 0.0):
+				out.set_pixel(edge, row, outline)
+		for y in range(s["head"][0], s["head"][1] + 1):
+			for x in W:
+				_paste(out, soldier, x, y, head_off)
+		sheet.blit_rect(out, Rect2i(0, 0, W, H), Vector2i(k * W, 0))
+	sheet.save_png(OUT % dir)
+	_game_sheet(frames.size())
+	print("transfer_walk : %s -> %s, %d images ; %s" % [dir, OUT % dir, frames.size(), ", ".join(report)])
+	quit()
+
+
+func _between(v: int, r: Array) -> bool:
+	return v >= r[0] and v <= r[1]
 
 
 func _paste(out: Image, src: Image, x: int, y: int, off: Vector2i) -> void:

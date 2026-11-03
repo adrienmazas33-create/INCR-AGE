@@ -355,3 +355,25 @@ jaune) et `marche_bas_transfert_en_jeu.png` (groupe descendant, taille réelle).
 pagne un peu plus long ; la main gauche (à l'écran), refaite en miroir aux rangées basses, a l'ombrage
 inversé. Pour les autres directions, la même méthode demandera ses réglages : de dos, la massue est
 moins visible ; de profil, elle passe devant le corps, ce sera la direction la plus délicate.
+
+**Dos et profil (ajoutés le 03/11/2026, en attente de validation)** : même outil, réglages par direction.
+- **Dos** : même géométrie que la face ; la massue est à droite de l'image, la jambe refaite en miroir
+  est donc la droite. La zone des bras du héros est effacée sur une hauteur fixe, quel que soit le
+  balancement : un bras levé laissait passer un bout de manche à hauteur de la main (corrigé aussi
+  pour la face).
+- **Profil** : la massue pend devant les jambes sur 5 images sur 8 et passe devant le corps. Du héros,
+  on ne garde que les jambes (dès la rangée 41, sans la queue du manche en arrière) ; tout le haut
+  vient du soldat (tête, torse et pagne, main), recalé sur le mouvement du héros. Les jambes de profil
+  ont presque la même silhouette à l'image k et à k + 4 (seuls les rôles des jambes proche et
+  éloignée s'échangent) : les images 0, 1 et 7, masquées, reprennent les jambes des images 4, 5 et 3.
+  Aux images 2 et 6, la massue masque les deux jambes partout : elles reprennent celles de l'image 3.
+  Le bras forme le bord arrière du corps ; le vide que laisse la main en balançant reprend la couleur
+  du torse voisin, avec son contour.
+- En jeu (F3 puis F4), les trois directions utilisent ces marches ; plus aucun balancement.
+- Captures : `docs/art/soldat/marche_bas_transfert.png`, `marche_dos_transfert.png`,
+  `marche_profil_transfert.png` (8 images, ×4, ligne des pieds en jaune) et
+  `marche_trois_directions_en_jeu.png` (de dos, vers la droite, vers la gauche, taille réelle).
+- **Limites du profil** : les jambes s'arrêtent un bref instant à chaque pas (images 2-3 et 6-7
+  identiques en bas) ; la jambe proche et la jambe éloignée gardent le même ombrage d'un pas à
+  l'autre ; la main qui part en arrière forme un petit moignon. Pour aller plus loin, il faudrait
+  redessiner à la main les jambes des images 2 et 6.
