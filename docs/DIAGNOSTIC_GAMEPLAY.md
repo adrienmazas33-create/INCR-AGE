@@ -89,7 +89,7 @@ nouveaux ennemis, thème musical réarrangé).
   même façon : pixel art procédural, scripts Godot, retouches locales, dans la palette de la voie C.
 - Priorité à la lisibilité et à l'homogénéité ; animations volontairement simples.
 
-## 6. Lot G1 : un monde qui se durcit avec la distance (03/11/2026, en attente de validation)
+## 6. Lot G1 : un monde qui se durcit avec la distance (03/11/2026, validé)
 
 **Ce qui change** (`scripts/world/danger_zones.gd`, `scripts/world/enemy_spawner.gd`,
 `scenes/enemies/champion_mark.gd`) :
