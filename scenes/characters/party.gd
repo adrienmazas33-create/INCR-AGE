@@ -31,6 +31,8 @@ const SLING_SKINS: Array[Texture2D] = [
 ]
 ## Soldat de base PixelLab à l'essai, le même pour tous les rôles (les armes viendront plus tard).
 const SOLDIER_SKIN := preload("res://assets/art/soldier_pixellab.png")
+## Même soldat avec le prototype de marche vers le bas (tools/animate_walk.gd).
+const SOLDIER_WALK_SKIN := preload("res://assets/art/soldier_pixellab_walk.png")
 ## Espacement de la formation avec les personnages PixelLab (46 px au lieu de 26) : écarts dans la
 ## colonne et places à la halte élargis d'autant. La séparation et l'écart latéral restent ceux
 ## d'origine : élargis, ils coinçaient les soldats dans les passages étroits (43 replacements forcés
@@ -103,6 +105,8 @@ var hero_idle := false
 var pixellab_skin := false
 ## Facteur des distances de la formation (1, ou PIXELLAB_SPACING avec l'apparence PixelLab).
 var spacing := 1.0
+## Prototype de marche du soldat (F4), à l'essai.
+var walk_proto := false
 ## Statistiques de contrôle (outil de développement).
 var stats := {"teleports": 0, "max_gap": 0.0}
 
@@ -154,7 +158,7 @@ func add_follower(at: Vector2, role := GameState.DEFAULT_ROLE) -> Follower:
 		GameState.roles.append(role)
 	_world.add_entity(f)
 	if pixellab_skin:
-		f.apply_look(_skin(f.index, role), true)
+		f.apply_look(_skin(f.index, role), _look())
 	followers.append(f)
 	_update_ranks()
 	rejoin_trail(f)
@@ -195,14 +199,31 @@ func _give_gait(f: Follower) -> void:
 func set_pixellab_skin(on: bool) -> void:
 	pixellab_skin = on
 	spacing = PIXELLAB_SPACING if on else 1.0
+	_refresh_looks()
+
+
+## Prototype de marche du soldat (cycle vers le bas, F4), dans l'apparence PixelLab seulement.
+func set_walk_proto(on: bool) -> void:
+	walk_proto = on
+	if pixellab_skin:
+		_refresh_looks()
+
+
+func _refresh_looks() -> void:
 	for f in followers:
-		f.apply_look(_skin(f.index, f.role), on)
+		f.apply_look(_skin(f.index, f.role), _look())
 	_slots = _compute_idle_slots()
+
+
+func _look() -> Dictionary:
+	if not pixellab_skin:
+		return Follower.CLASSIC_LOOK
+	return Follower.PIXELLAB_WALK_LOOK if walk_proto else Follower.PIXELLAB_LOOK
 
 
 func _skin(i: int, role: String) -> Texture2D:
 	if pixellab_skin:
-		return SOLDIER_SKIN
+		return SOLDIER_WALK_SKIN if walk_proto else SOLDIER_SKIN
 	return (SLING_SKINS if role == "sling" else SKINS)[i % SKINS.size()]
 
 

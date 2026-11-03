@@ -27,6 +27,9 @@ func _ready() -> void:
 	var args := OS.get_cmdline_user_args()
 	if "--skin=pixellab" in args or "--hero-skin=pixellab" in args:
 		_set_pixellab_skin(true)
+	# Prototype de marche du soldat (vers le bas) : « -- --walk-proto », ou F4 en jeu.
+	if "--walk-proto" in args:
+		_party.set_walk_proto(true)
 	var spawner := EnemySpawner.new()
 	spawner.name = "EnemySpawner"
 	add_child(spawner)
@@ -134,6 +137,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		# Essai du héros et des soldats PixelLab (apparence seulement, jamais enregistrée).
 		_set_pixellab_skin(not _hero.pixellab_skin)
 		_hud.announce("PIXELLAB" if _hero.pixellab_skin else "RENDU ACTUEL")
+		get_viewport().set_input_as_handled()
+	elif event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_F4:
+		# Prototype de marche du soldat, visible dans l'apparence PixelLab (F3).
+		_party.set_walk_proto(not _party.walk_proto)
+		_hud.announce("MARCHE PROTOTYPE" if _party.walk_proto else "MARCHE BALANCEE")
 		get_viewport().set_input_as_handled()
 
 

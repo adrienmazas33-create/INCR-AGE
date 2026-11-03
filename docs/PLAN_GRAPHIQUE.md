@@ -271,3 +271,39 @@ décalage, marche, barre, espacement) ; vitesse et collisions inchangées.
 - En colonne, les deux files se chevauchent : l'écart latéral est resté celui d'origine (8 px) pour
   que le suivi passe les ponts et l'escalier. Un écart plus grand demanderait de revoir le suivi
   dans les passages étroits.
+
+## 11. Marche fabriquée sans PixelLab : prototype vers le bas (03/11/2026, en attente de validation)
+
+Décision du porteur du projet : PixelLab ne sert plus à générer d'animations ; ses designs restent les
+références. Les cycles de marche se fabriquent dans le dépôt, à partir des poses fixes.
+
+**Méthode retenue : découpage des membres en pixels entiers** (`tools/animate_walk.gd`).
+- Écartées : la déformation du personnage entier (le balancement actuel, jugé insuffisant) et les
+  rotations de membres (pixels flous ou incohérents à cette taille). Un dessin image par image dans un
+  éditeur local donnerait le meilleur résultat, mais demande un dessinateur.
+- Jambes découpées sous le pagne : leur longueur change en retirant ou en dupliquant des rangées du
+  tibia (raccourci de la jambe levée vers la caméra, jambe tendue en appui) ; cuisse, pied et contours
+  restent ceux de l'original ; la jambe levée se rapproche du centre d'un pixel.
+- Avant-bras décalés d'un pixel en opposition avec les jambes ; le corps monte d'un pixel quand une
+  jambe passe.
+- Chaque pixel affiché vient de la pose d'origine : rien n'est redessiné ni lissé. Les sources et les
+  planches validées ne changent pas.
+
+**Prototype** : soldat de base, marche vers le bas, cycle de 4 images (contact, passage, contact
+inverse, passage inverse), 7 images par seconde à la vitesse des compagnons (2 pas par cycle).
+- `assets/art/soldier_walk_south.png` : le cycle seul ; `assets/art/soldier_pixellab_walk.png` : la
+  planche du jeu (les autres directions gardent leur pose et leur balancement).
+- En jeu, dans l'apparence PixelLab (F3) : **F4** bascule entre la marche balancée validée et ce
+  prototype, ou `-- --skin=pixellab --walk-proto` au lancement. Apparence seulement, rien
+  n'est enregistré.
+- Comparaison dans `docs/art/soldat/` : `marche_bas_prototype.png` (pose d'origine puis les 4 images,
+  agrandies six fois), `marche_bas_reference_pixellab.png` (la marche de face exportée par PixelLab
+  avant l'arrêt, pour mémoire) et `marche_bas_en_jeu.png` (groupe descendant, taille réelle).
+
+**Limites, à juger en jeu**
+- L'amplitude est faible à cette taille : 1 à 3 px de jeu de jambes, 1 px de bras. Plus ample, la
+  jambe levée devient une jambe trop courte au lieu d'un genou plié.
+- Vue de face, le raccourci suffit. **De profil**, une jambe doit passer devant l'autre en
+  s'inclinant : il faudra décaler les rangées de la jambe progressivement (pixels entiers, sans
+  rotation) et redessiner quelques pixels de genou. C'est la direction la plus difficile ; à essayer
+  avant de généraliser.

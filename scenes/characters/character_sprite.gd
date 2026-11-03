@@ -21,6 +21,10 @@ var walk_fps := 9.0
 ## Planche de poses fixes, sans images de marche (soldat PixelLab) : la marche est un balancement
 ## calculé. Le parent remet la position du sprite à zéro à chaque image (Combatant).
 var walk_sway := false
+## Orientations qui ont un vrai cycle de marche (pas de balancement), et pas de balancement par image
+## de marche (1 : une image par pas ; 0,5 : un cycle de 4 images pour 2 pas).
+var cycle_facings: Array[int] = []
+var sway_rate := 1.0
 
 var facing := Facing.DOWN
 var _anim_time := 0.0
@@ -47,8 +51,8 @@ func animate(velocity: Vector2, reference_speed: float, delta: float) -> void:
 	var frames: Array[int] = walk_frames if walking else idle_frames
 	_anim_time += delta * (walk_fps * clampf(velocity.length() / reference_speed, 0.6, 1.2) if walking else idle_fps)
 	frame = facing * hframes + frames[int(_anim_time) % frames.size()]
-	if walk_sway and walking:
-		var s := sin(PI * _anim_time)
+	if walk_sway and walking and not facing in cycle_facings:
+		var s := sin(PI * _anim_time * sway_rate)
 		position += Vector2(roundf(s * SWAY_SIDE), -roundf(absf(s) * SWAY_BOB))
 
 
