@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : marche du soldat reprise de celle du héros, face, dos et profil (touche F4), validée et publiée (pas de tag). Soldat PixelLab dans le groupe validé et publié. Héros PixelLab validé et publié. Troupes organiques (lot 1), lots 1 à 4 de la diversification de l'armée et voie C, étapes 1 à 6 (zone témoin complète), validés et publiés. Audio terminé et validé.**
+**État : réorientation vers le gameplay (diagnostic et feuille de route G1 à G5 dans docs/DIAGNOSTIC_GAMEPLAY.md), en commit local, en attente de validation. Marche du soldat PixelLab validée, publiée et archivée. Soldat PixelLab dans le groupe validé et publié. Héros PixelLab validé et publié. Troupes organiques (lot 1), lots 1 à 4 de la diversification de l'armée et voie C, étapes 1 à 6 (zone témoin complète), validés et publiés. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 

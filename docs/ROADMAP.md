@@ -41,6 +41,8 @@ Demandée en mission secondaire « si raisonnable », reportée pour tenir dans 
 
 ## Ordre des prochaines sessions (revu le 22/10/2026)
 
+**Réorientation du 03/11/2026 (remplace la priorité graphique ci-dessous) : le gameplay d'abord.** Diagnostic de l'expérience de jeu, cinq améliorations et lots G1 à G5 : `docs/DIAGNOSTIC_GAMEPLAY.md`. Personnages classiques par défaut ; travaux PixelLab archivés (touches F3 et F4 conservées pour mémoire). Prochain lot proposé : G1, zones de difficulté autour du camp.
+
 **Priorité depuis le 03/11/2026 : le graphisme avant le gameplay.** Audit, plan simplifié (héros, base commune de l'armée, variantes mêlée et distance, monde) et méthode de production : `docs/PLAN_GRAPHIQUE.md`. Prochaine étape : la vitrine autour du campement, qui attend les exports PixelLab du héros. Aucune nouvelle mécanique d'ici là.
 
 1. **Ambiance sonore** : bruitages et musique rétro originale, douce et entraînante (section 3).
