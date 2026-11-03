@@ -324,7 +324,7 @@ inverse, passage inverse), 7 images par seconde à la vitesse des compagnons (2 
 - **Limites** : les jambes inclinées restent droites (pas de genou fléchi au contact) ; le dos du soldat
   garde le balancement ; il reste le dos (même technique que la face, attendue plus simple).
 
-## 12. Marche du soldat reprise de celle du héros (03/11/2026, en attente de validation)
+## 12. Marche du soldat reprise de celle du héros (03/11/2026, validée : face, dos et profil)
 
 Décision du porteur du projet : les prototypes des sections 10 et 11 (balancement, puis membres
 découpés) ne sont pas satisfaisants. Le soldat et le héros ont presque les mêmes proportions, et le
@@ -356,7 +356,7 @@ pagne un peu plus long ; la main gauche (à l'écran), refaite en miroir aux ran
 inversé. Pour les autres directions, la même méthode demandera ses réglages : de dos, la massue est
 moins visible ; de profil, elle passe devant le corps, ce sera la direction la plus délicate.
 
-**Dos et profil (ajoutés le 03/11/2026, en attente de validation)** : même outil, réglages par direction.
+**Dos et profil (ajoutés le 03/11/2026, validés)** : même outil, réglages par direction.
 - **Dos** : même géométrie que la face ; la massue est à droite de l'image, la jambe refaite en miroir
   est donc la droite. La zone des bras du héros est effacée sur une hauteur fixe, quel que soit le
   balancement : un bras levé laissait passer un bout de manche à hauteur de la main (corrigé aussi
