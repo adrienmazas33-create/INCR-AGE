@@ -25,6 +25,7 @@ var _glow_duration := 0.0
 var _glow_color := Color.WHITE
 var _lunge := Vector2.ZERO
 var _sprite_rest := Vector2.ZERO
+var _bar: HealthBar
 
 
 func _ready() -> void:
@@ -35,11 +36,17 @@ func _ready() -> void:
 	mat.shader = FLASH_SHADER
 	sprite.material = mat
 	_sprite_rest = sprite.position
-	var bar := HealthBar.new()
-	bar.health = health
-	bar.position = Vector2(0, -bar_height)
-	bar.color = HealthBar.ENEMY_COLOR if is_in_group("enemies") else (HealthBar.HERO_COLOR if is_in_group("hero") else HealthBar.PARTY_COLOR)
-	add_child(bar)
+	_bar = HealthBar.new()
+	_bar.health = health
+	_bar.position = Vector2(0, -bar_height)
+	_bar.color = HealthBar.ENEMY_COLOR if is_in_group("enemies") else (HealthBar.HERO_COLOR if is_in_group("hero") else HealthBar.PARTY_COLOR)
+	add_child(_bar)
+
+
+## Hauteur de la barre de vie et des chiffres de dégâts (changement d'apparence).
+func set_bar_height(height: float) -> void:
+	bar_height = height
+	_bar.position = Vector2(0, -bar_height)
 
 
 func is_alive() -> bool:

@@ -7,9 +7,6 @@ extends Node2D
 
 const GOLD := Color8(255, 214, 90)
 const DARK := Color8(118, 78, 36)
-## Demi-axes de l'anneau, en pixels (vue 3/4 : ovale aplati).
-const RX := 11
-const RY := 4
 const ALPHA_ALONE := 0.4
 const ALPHA_CROWD := 0.95
 ## Unités (alliés ou ennemis) à moins de cette distance au-delà desquelles le héros est « entouré ».
@@ -18,9 +15,12 @@ const CROWD_COUNT := 2
 const CHECK_EVERY := 0.25
 ## Un ennemi à moins de cette distance : combat, le chevron s'affiche.
 const FIGHT_RADIUS := 96.0
-## Hauteur du chevron, juste au-dessus de la barre de vie.
-const PIP_Y := -35
 
+## Demi-axes de l'anneau, en pixels (vue 3/4 : ovale aplati), et hauteur du chevron, juste au-dessus
+## de la barre de vie ; ils suivent la taille du sprite du héros (voir resize).
+var rx := 11
+var ry := 4
+var pip_y := -35
 var _target := ALPHA_ALONE
 var _fighting := false
 var _check := 0.0
@@ -31,10 +31,19 @@ func _ready() -> void:
 	modulate.a = ALPHA_ALONE
 	# Au-dessus des personnages et des barres de vie (z 4).
 	_pip.z_index = 5
-	_pip.position = Vector2(0, PIP_Y + 1)
+	_pip.position = Vector2(0, pip_y + 1)
 	_pip.modulate.a = 0.0
 	_pip.draw.connect(_draw_pip)
 	add_child(_pip)
+
+
+## Adapte l'anneau et le chevron à un sprite d'une autre taille.
+func resize(ring_x: int, ring_y: int, pip_height: int) -> void:
+	rx = ring_x
+	ry = ring_y
+	pip_y = pip_height
+	_pip.position = Vector2(0, pip_y + 1)
+	queue_redraw()
 
 
 func _process(delta: float) -> void:
@@ -62,7 +71,7 @@ func _draw() -> void:
 	var pixels := {}
 	for i in 64:
 		var a := TAU * i / 64.0
-		pixels[Vector2i(roundi(cos(a) * RX), roundi(sin(a) * RY))] = true
+		pixels[Vector2i(roundi(cos(a) * rx), roundi(sin(a) * ry))] = true
 	# Liseré brun un pixel plus bas : l'anneau se lit sur l'herbe comme sur la terre battue.
 	for p: Vector2i in pixels:
 		draw_rect(Rect2(Vector2(p) + Vector2(0, 1), Vector2.ONE), DARK)

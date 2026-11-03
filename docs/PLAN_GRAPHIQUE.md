@@ -174,7 +174,7 @@ réservé au héros. L'armée ne portera donc pas ce bandeau (section 3 corrigé
   d'ensemble.
 - La refonte du monde n'est pas lancée sans ta validation.
 
-## 8. Intégration proposée (en attente de validation)
+## 8. Intégration (faite le 03/11/2026, en attente de validation)
 
 Tout se fait derrière une bascule : le sprite actuel reste le défaut et rien n'est enregistré.
 
@@ -189,10 +189,23 @@ Tout se fait derrière une bascule : le sprite actuel reste le défaut et rien n
    hauteur de la barre de vie, du chevron et des étincelles de coup, taille de l'ombre et de l'anneau.
 4. **Inchangés** : collisions, vitesse, portée, combat, caméra, sauvegarde, monde, armée.
 
-**Tests prévus** : captures des trois directions et du miroir, au repos et en marche ; contrôle des
-pieds ; marche sans glissement à 100 px/s ; aller-retour de la bascule identique au pixel près ; tour
-complet de la carte (même durée, mêmes statistiques) ; combat (éclair, élan, mise à terre, barre de
-vie, chevron) ; 60 FPS ; sauvegardes isolées uniquement.
+Réglages de l'apparence, à ajuster à l'œil : `Hero.PIXELLAB_SKIN` (marche à 16 images/s, barre de vie
+à 54 px, anneau de 14 × 5, chevron à 59 px, ombre ×1,6). Régénérer la planche :
+`godot --headless --path . --script res://tools/pack_pixellab.gd -- hero`, puis `--import`.
+
+**Vérifications** (sauvegardes de test isolées) :
+- assemblage : pieds de toutes les images aux rangées 55 à 59 de la case (bande commune) ;
+- captures dans `docs/art/heros/` : repos de face et marche vers la gauche (profil retourné), combat
+  avec le héros blessé, ancien et nouveau côte à côte ;
+- bascule : F3, F3 puis F3 depuis l'argument : l'état du sprite revient exactement à l'origine
+  (image, grille, décalage, images, cadences, barre, ombre). Une comparaison au pixel près n'a pas de
+  sens : deux lancements identiques diffèrent déjà (troupe, feu, gestes à la halte) ;
+- vitesse (100), portée (14) et collision des pieds (rayon 5) identiques dans les deux apparences ;
+- barre de vie au-dessus de la nouvelle tête en combat ;
+- tour complet de la carte avec le héros PixelLab : 149,8 s comme avec l'ancien, 60 FPS, 4 retours
+  forcés (comme la référence), frondes et lanceurs inchangés, aucune erreur ;
+- **non vérifié, à juger en jeu** : glissement éventuel des pieds à la cadence choisie, chevron de
+  combat (le combat de test s'est terminé avant), mise à terre.
 
 ## 9. Production de l'armée : méthode réutilisable
 

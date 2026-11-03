@@ -1,14 +1,15 @@
 class_name CharacterSprite
 extends Sprite2D
-## Animation commune aux personnages (planche 6 x 3 du générateur) : repos ou marche,
-## orientation face / dos / profil (retourné pour la gauche).
+## Animation commune aux personnages : repos ou marche, orientation face / dos / profil (retourné pour
+## la gauche), une rangée par orientation. Par défaut, la planche 6 x 3 du générateur ; une autre
+## planche (héros PixelLab) règle ses propres images et cadences.
 
 enum Facing { DOWN, UP, SIDE }
 
-const IDLE_FRAMES := [0, 1]
-const WALK_FRAMES := [2, 3, 4, 5]
-const IDLE_FPS := 2.0
-const WALK_FPS := 9.0
+var idle_frames: Array[int] = [0, 1]
+var walk_frames: Array[int] = [2, 3, 4, 5]
+var idle_fps := 2.0
+var walk_fps := 9.0
 ## Vitesse sous laquelle le personnage est considéré à l'arrêt.
 const WALK_THRESHOLD := 12.0
 
@@ -34,8 +35,8 @@ func animate(velocity: Vector2, reference_speed: float, delta: float) -> void:
 	if walking != _walking:
 		_walking = walking
 		_anim_time = 0.0
-	var frames: Array = WALK_FRAMES if walking else IDLE_FRAMES
-	_anim_time += delta * (WALK_FPS * clampf(velocity.length() / reference_speed, 0.6, 1.2) if walking else IDLE_FPS)
+	var frames: Array[int] = walk_frames if walking else idle_frames
+	_anim_time += delta * (walk_fps * clampf(velocity.length() / reference_speed, 0.6, 1.2) if walking else idle_fps)
 	frame = facing * hframes + frames[int(_anim_time) % frames.size()]
 
 

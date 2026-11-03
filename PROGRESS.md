@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : voie C, étape 6 (falaises du plateau témoin) faite, retouchée (escalier lisible, lèvre d'herbe, rebords), validée et publiée (pas de tag). Troupes organiques (lot 1), lots 1 à 4 de la diversification de l'armée et voie C, étapes 1 à 5, validés et publiés. Audio terminé et validé.**
+**État : héros PixelLab à l'essai (touche F3), fait, en commit local, en attente de validation (non poussé, pas de tag). Troupes organiques (lot 1), lots 1 à 4 de la diversification de l'armée et voie C, étapes 1 à 6 (zone témoin complète), validés et publiés. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -307,6 +307,7 @@ Voir les priorités 2 et 3 du plan artistique.
 ## En cours
 
 - **Plan graphique** (03/11/2026) : audit et plan simplifié dans `docs/PLAN_GRAPHIQUE.md`, captures de l'état actuel dans `docs/art/audit/`. Rien de développé : la vitrine attend les exports PixelLab du héros et la décision de taille des personnages (section 2 du plan).
+- **Héros PixelLab à l'essai** (03/11/2026), en attente de validation (commits locaux, non poussés) : version retenue de l'export (la moins détaillée), à sa taille réelle (46 à 50 px), derrière la touche F3 ou l'argument `-- --hero-skin=pixellab` ; le sprite actuel reste le défaut, rien n'est enregistré. Apparence seulement : collisions, vitesse, portée, combat, caméra et sauvegarde inchangés. Planche assemblée par `tools/pack_pixellab.gd` depuis `assets/source/pixellab/hero/`. Détail et vérifications : `docs/PLAN_GRAPHIQUE.md`, sections 7 et 8.
 
 - **Voie C, étape 6 : falaises, escalier et rebords** (section 15 de `docs/WORLD_ART_PLAN.md`), validée par le porteur du projet le 27/10/2026 (retouches comprises) et publiée :
   - `cliffs.png` (26 tuiles) dessinée par le nouvel outil `tools/draw_cliffs.gd` : faces haute et basse en strates (3 variantes chacune), coins saillants arrondis, coins rentrants, escalier et ses joues, ombre au pied, rebords ouest, est et nord ; couleurs contrôlées contre la palette ;

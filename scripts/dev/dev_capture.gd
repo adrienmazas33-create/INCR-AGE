@@ -105,11 +105,12 @@ func _run() -> void:
 		await get_tree().create_timer(0.25).timeout
 	# « --set-role=2:sling,5:spear » : réaffectations au camp (comme un clic sur la bande TROUPE).
 	var party_node := get_tree().get_first_node_in_group("party") as Party
-	# « --hurt=1:10,2:0 » : vie du compagnon 1 ramenée à 10, compagnon 2 mis K.O. (avant réaffectation).
+	# « --hurt=1:10,2:0 » : vie du compagnon 1 ramenée à 10, compagnon 2 mis K.O. (avant réaffectation) ;
+	# « hero:10 » pour le héros.
 	for entry: String in _hurts:
 		var h := entry.split(":")
-		var f := party_node.followers[int(h[0])]
-		f.health.take_damage(f.health.current - float(h[1]))
+		var unit: Combatant = _hero if h[0] == "hero" else party_node.followers[int(h[0])]
+		unit.health.take_damage(unit.health.current - float(h[1]))
 	for entry: String in _set_roles:
 		var q := entry.split(":")
 		var i := int(q[0])
@@ -146,6 +147,11 @@ func _run() -> void:
 		print("DevCapture : " + party.debug_summary())
 	print("DevCapture : ressources %s ; héros %d/%d PV, %d coup(s) porté(s) ; %d ennemi(s) debout ; échelle de temps %.2f" % [GameState.summary(),
 		_hero.health.current, _hero.health.max_health, _hero.attack.hits, get_tree().get_nodes_in_group(&"enemies").size(), Engine.time_scale])
+	var hs := _hero.sprite as CharacterSprite
+	print("DevCapture : apparence du héros %s : %s, %d x %d, décalage %s, repos %s à %.0f i/s, marche %s à %.0f i/s, barre %.0f, ombre x%.1f, vitesse %.0f, portée %.0f, pieds %.0f" % [
+		"PixelLab" if _hero.pixellab_skin else "actuelle", hs.texture.resource_path.get_file(), hs.hframes, hs.vframes, hs.offset,
+		hs.idle_frames, hs.idle_fps, hs.walk_frames, hs.walk_fps, _hero.bar_height, (_hero.get_node("Shadow") as Node2D).scale.x,
+		_hero.stats.move_speed, _hero.stats.attack_range, (_hero.get_node("Feet").shape as CircleShape2D).radius])
 	print("DevCapture : audio %d bruitage(s) joué(s), %d écarté(s) (anti-empilement) ; niveau ambiance %.0f dB" % [AudioManager.played, AudioManager.skipped,
 		AudioServer.get_bus_peak_volume_left_db(AudioServer.get_bus_index(AudioManager.AMBIENCE), 0)])
 	var ambience := get_tree().current_scene.get_node_or_null("Ambience")

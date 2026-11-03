@@ -126,3 +126,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("quit"):
 		SaveGame.save_now()
 		get_tree().quit()
+	elif event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_F3:
+		# Essai du héros PixelLab (apparence seulement, jamais enregistrée).
+		_hero.set_pixellab_skin(not _hero.pixellab_skin)
+		_hud.announce("HEROS PIXELLAB" if _hero.pixellab_skin else "HEROS ACTUEL")
+		get_viewport().set_input_as_handled()
