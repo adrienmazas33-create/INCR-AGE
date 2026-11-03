@@ -306,6 +306,8 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
+- **Plan graphique** (03/11/2026) : audit et plan simplifié dans `docs/PLAN_GRAPHIQUE.md`, captures de l'état actuel dans `docs/art/audit/`. Rien de développé : la vitrine attend les exports PixelLab du héros et la décision de taille des personnages (section 2 du plan).
+
 - **Voie C, étape 6 : falaises, escalier et rebords** (section 15 de `docs/WORLD_ART_PLAN.md`), validée par le porteur du projet le 27/10/2026 (retouches comprises) et publiée :
   - `cliffs.png` (26 tuiles) dessinée par le nouvel outil `tools/draw_cliffs.gd` : faces haute et basse en strates (3 variantes chacune), coins saillants arrondis, coins rentrants, escalier et ses joues, ombre au pied, rebords ouest, est et nord ; couleurs contrôlées contre la palette ;
   - seconde zone témoin (`ZoneTemoin.CLIFF_ZONE`) : le grand plateau nord-est entier et ses abords, avec aussi notre herbe, nos chemins, nos arbres et nos décalques ; bascule F2 comme pour la zone du camp (l'essai LPC n'y change rien) ;
