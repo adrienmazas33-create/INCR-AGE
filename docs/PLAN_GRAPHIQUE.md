@@ -307,3 +307,19 @@ inverse, passage inverse), 7 images par seconde à la vitesse des compagnons (2 
   s'inclinant : il faudra décaler les rangées de la jambe progressivement (pixels entiers, sans
   rotation) et redessiner quelques pixels de genou. C'est la direction la plus difficile ; à essayer
   avant de généraliser.
+
+**Profil (ajouté le 03/11/2026, en attente de validation)** : même outil, mode « profile ».
+- Dans la pose, les deux jambes se superposent. La jambe proche (pied compris) sert de modèle et est
+  dessinée deux fois : la jambe éloignée en est la copie, assombrie avec les teintes de la jambe
+  elle-même, et dessinée derrière le corps.
+- Chaque jambe s'incline par un décalage progressif de ses rangées, de la hanche au pied (jusqu'à
+  5 px), en marches d'un pixel : au contact, les jambes forment un compas ouvert ; au passage, la
+  jambe levée perd deux rangées de tibia et le corps monte d'un pixel. La main avance et recule d'un
+  pixel, en opposition avec la jambe proche.
+- La gauche est le miroir de la droite, comme pour tous les profils du jeu.
+- Captures : `docs/art/soldat/marche_profil_prototype.png` (pose puis 4 images, ×6) et
+  `marche_profil_en_jeu.png` (groupe vers la droite, puis vers la gauche, taille réelle).
+- Premier essai écarté : un modèle de jambe trop large (il prenait une partie de la jambe éloignée) et
+  un pas de ±3 px, plus petit que la largeur de la jambe, donnaient des jambes emmêlées au contact.
+- **Limites** : les jambes inclinées restent droites (pas de genou fléchi au contact) ; le dos du soldat
+  garde le balancement ; il reste le dos (même technique que la face, attendue plus simple).

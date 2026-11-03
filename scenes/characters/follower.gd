@@ -23,10 +23,10 @@ const CLASSIC_LOOK := {"hframes": 6, "offset": Vector2(0, -14), "idle": [0, 1], 
 	"sway": false, "cycles": [], "sway_rate": 1.0, "bar_height": 30.0, "shadow_scale": 1.0}
 const PIXELLAB_LOOK := {"hframes": 1, "offset": Vector2(0, -21), "idle": [0], "walk": [0], "walk_fps": 3.5,
 	"sway": true, "cycles": [], "sway_rate": 1.0, "bar_height": 52.0, "shadow_scale": 1.5}
-## Prototype de marche (tools/animate_walk.gd, touche F4) : vrai cycle de 4 images vers le bas,
-## balancement inchangé dans les autres directions (même rythme de pas : 2 pas par cycle).
+## Prototype de marche (tools/animate_walk.gd, touche F4) : vrai cycle de 4 images vers le bas et de profil,
+## balancement inchangé de dos (même rythme de pas : 2 pas par cycle).
 const PIXELLAB_WALK_LOOK := {"hframes": 5, "offset": Vector2(0, -21), "idle": [0], "walk": [1, 2, 3, 4], "walk_fps": 7.0,
-	"sway": true, "cycles": [CharacterSprite.Facing.DOWN], "sway_rate": 0.5, "bar_height": 52.0, "shadow_scale": 1.5}
+	"sway": true, "cycles": [CharacterSprite.Facing.DOWN, CharacterSprite.Facing.SIDE], "sway_rate": 0.5, "bar_height": 52.0, "shadow_scale": 1.5}
 const KO_DURATION := 8.0
 const REVIVE_HEALTH := 0.5
 ## Retard sur sa place (le long de la trace) au-delà duquel il accélère, et facteur de vitesse.
