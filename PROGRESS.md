@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : réorientation vers le gameplay (diagnostic et feuille de route G1 à G5 dans docs/DIAGNOSTIC_GAMEPLAY.md), en commit local, en attente de validation. Marche du soldat PixelLab validée, publiée et archivée. Soldat PixelLab dans le groupe validé et publié. Héros PixelLab validé et publié. Troupes organiques (lot 1), lots 1 à 4 de la diversification de l'armée et voie C, étapes 1 à 6 (zone témoin complète), validés et publiés. Audio terminé et validé.**
+**État : lot G1 (difficulté géographique), fait, en commits locaux, en attente de validation (non poussé, pas de tag). Feuille de route G1 à G5 dans docs/DIAGNOSTIC_GAMEPLAY.md. Marche du soldat PixelLab validée, publiée et archivée. Soldat PixelLab dans le groupe validé et publié. Héros PixelLab validé et publié. Troupes organiques (lot 1), lots 1 à 4 de la diversification de l'armée et voie C, étapes 1 à 6 (zone témoin complète), validés et publiés. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -306,6 +306,7 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
+- **Lot G1 : difficulté géographique** (03/11/2026), en attente de validation (commit local, non poussé) : trois cercles autour du feu (terres proches inchangées, sauvages, hostiles), ennemis renforcés et mieux récompensés au loin, deux champions marqués d'un crâne (nord-ouest, est), bandeau au changement de zone. Rien de nouveau dans la sauvegarde. Détail, essais et réglages : `docs/DIAGNOSTIC_GAMEPLAY.md`, section 6.
 - **Plan graphique** (03/11/2026) : audit et plan simplifié dans `docs/PLAN_GRAPHIQUE.md`, captures de l'état actuel dans `docs/art/audit/`. Rien de développé : la vitrine attend les exports PixelLab du héros et la décision de taille des personnages (section 2 du plan).
 - **Héros PixelLab à l'essai** (03/11/2026), validé par le porteur du projet et publié : version retenue de l'export (la moins détaillée), à sa taille réelle (46 à 50 px), derrière la touche F3 ou l'argument `-- --hero-skin=pixellab` ; le sprite actuel reste le défaut, rien n'est enregistré. Apparence seulement : collisions, vitesse, portée, combat, caméra et sauvegarde inchangés. Planche assemblée par `tools/pack_pixellab.gd` depuis `assets/source/pixellab/hero/`. Détail et vérifications : `docs/PLAN_GRAPHIQUE.md`, sections 7 et 8.
 - **Soldat PixelLab dans le groupe** (03/11/2026), validé par le porteur du projet et publié : soldat de base (poses fixes, balancement de marche calculé) pour tous les compagnons, avec le héros PixelLab ; F3 bascule désormais le groupe entier, `-- --skin=pixellab` au lancement ; espacement de la formation ×1,5 dans ce rendu ; rôles, statistiques, collisions, sauvegarde et règles du suivi inchangés. Tour complet à 8 compagnons : 149,8 s, 60 FPS, 6 retours forcés. Détail et limites : `docs/PLAN_GRAPHIQUE.md`, section 10.

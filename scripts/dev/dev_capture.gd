@@ -167,6 +167,10 @@ func _run() -> void:
 	print("DevCapture : frondes : %d pierre(s) arrivée(s), %d arrêtée(s) par un obstacle, dégâts du dernier tir %.2f" % [SlingStone.landed,
 		SlingStone.blocked, SlingStone.last_damage])
 	var throwers := get_tree().get_nodes_in_group(&"enemies").filter(func(e: Node) -> bool: return e is StoneThrower)
+	var spawner := get_tree().current_scene.get_node_or_null("EnemySpawner") as EnemySpawner
+	if spawner:
+		print("DevCapture : zones : héros en %s ; %s" % [DangerZones.NAMES[DangerZones.zone_at(_hero.global_position)],
+			spawner.zone_summary()])
 	var camp := get_tree().current_scene.get_node_or_null("EnemyCamp") as EnemyCamp
 	if camp:
 		print("DevCapture : camp du plateau : état %s, %d capture(s) déclenchée(s), %d défenseur(s) debout, réserve %s, %d récolte(s)" % [

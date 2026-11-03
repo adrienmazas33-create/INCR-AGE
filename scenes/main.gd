@@ -30,12 +30,18 @@ func _ready() -> void:
 	# Prototype de marche du soldat (vers le bas) : « -- --walk-proto », ou F4 en jeu.
 	if "--walk-proto" in args:
 		_party.set_walk_proto(true)
+	# Difficulté géographique (lot G1) : cercles centrés sur le feu, avant l'apparition des ennemis.
+	DangerZones.center = _world.spawn_position
 	var spawner := EnemySpawner.new()
 	spawner.name = "EnemySpawner"
 	add_child(spawner)
 	spawner.setup(_world, _hero)
 	_hud = Hud.new()
 	add_child(_hud)
+	var zones := DangerZones.new()
+	zones.name = "DangerZones"
+	add_child(zones)
+	zones.setup(_hero, _hud)
 	var panel := CampPanel.new()
 	panel.setup(_hero, _world.camp_position, _party)
 	_hud.add_panel(panel)

@@ -88,3 +88,40 @@ nouveaux ennemis, thème musical réarrangé).
 - Les nouveautés visuelles (champions, lieux, ressources, effet de la compétence) sont produites de la
   même façon : pixel art procédural, scripts Godot, retouches locales, dans la palette de la voie C.
 - Priorité à la lisibilité et à l'homogénéité ; animations volontairement simples.
+
+## 6. Lot G1 : un monde qui se durcit avec la distance (03/11/2026, en attente de validation)
+
+**Ce qui change** (`scripts/world/danger_zones.gd`, `scripts/world/enemy_spawner.gd`,
+`scenes/enemies/champion_mark.gd`) :
+- Trois cercles autour du feu de camp, en cases :
+  - **terres proches** (moins de 40) : rien ne change (3 repaires de jeunes sangliers, le lanceur isolé) ;
+  - **terres sauvages** (40 à 50) : vie ×1,6, dégâts ×1,3, butin ×1,5, chance de savoir ×1,5 ;
+  - **terres hostiles** (au-delà de 50, dont le camp rival) : vie ×2,4, dégâts ×1,6, butin ×2, savoir ×2.
+- **Deux champions**, des grands sangliers : au nord-ouest (terres sauvages) et à l'est (terres hostiles).
+  En plus du renfort de leur zone : vie ×1,8, butin ×2, savoir toujours lâché, réapparition après
+  3 minutes au lieu de 45 s. Un crâne cornu flotte au-dessus d'eux et un cercle rouge marque le sol :
+  on les repère de loin.
+- Un bandeau annonce le passage d'une zone à l'autre (avec une marge, pour éviter les annonces en rafale).
+- Chaque ennemi reçoit une copie renforcée de ses caractéristiques à son apparition : les fiches de
+  `data/units/` ne changent pas. Rien de nouveau dans la sauvegarde.
+
+**Essais en jeu** (8 compagnons, héros immobile : il n'esquive aucune charge) :
+
+| Groupe | Champion des terres sauvages | Champion des terres hostiles |
+|---|---|---|
+| 8 compagnons, aucune amélioration de force ni de vigueur | abattu | le héros tombe, retour au camp sans rien perdre |
+| Améliorations au maximum | abattu | abattu (héros à 90/96 PV) |
+
+Un premier réglage (vie ×2,5, dégâts ×1,25) rendait les deux champions imbattables même avec un groupe
+au maximum : écarté. Le butin du champion, d'abord ×3, rapportait près de 30 vivres d'un coup : ramené
+à ×2.
+
+**À juger en jouant** : la difficulté réelle en esquivant les charges, la lisibilité des marques, le
+rythme de l'économie. Les zones lointaines rapportent plus : la progression actuelle (environ 20 min)
+raccourcit un peu, ce que le lot G4 rallongera.
+
+Tour complet de la carte (8 compagnons, parcours de test qui ne s'arrête pas pour combattre) :
+149,8 s comme avant, 60 FPS, aucune erreur ; 7 retours forcés (référence : 4 à 6) et un compagnon
+une fois distancé de 771 px : les combats plus longs des zones lointaines retiennent la troupe pendant
+que le héros poursuit sa route. Captures : `docs/art/g1/` (bandeau des terres sauvages, champion de
+l'est et son crâne vu de loin).
