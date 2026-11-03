@@ -29,6 +29,13 @@ const SLING_SKINS: Array[Texture2D] = [
 	preload("res://assets/art/slinger_6.png"),
 	preload("res://assets/art/slinger_7.png"),
 ]
+## Soldat de base PixelLab à l'essai, le même pour tous les rôles (les armes viendront plus tard).
+const SOLDIER_SKIN := preload("res://assets/art/soldier_pixellab.png")
+## Espacement de la formation avec les personnages PixelLab (46 px au lieu de 26) : écarts dans la
+## colonne et places à la halte élargis d'autant. La séparation et l'écart latéral restent ceux
+## d'origine : élargis, ils coinçaient les soldats dans les passages étroits (43 replacements forcés
+## sur le tour de la carte au lieu de 6). Les règles du suivi ne changent pas.
+const PIXELLAB_SPACING := 1.5
 const TRAIL_STEP := 4.0
 const TRAIL_MAX := 400
 ## Colonne par deux : distance le long de la trace du premier rang, écart entre rangs,
@@ -92,6 +99,10 @@ const REACH_JITTER := 3.0
 var hero: Hero
 var followers: Array[Follower] = []
 var hero_idle := false
+## Apparence PixelLab à l'essai (soldats), basculée avec celle du héros (F3).
+var pixellab_skin := false
+## Facteur des distances de la formation (1, ou PIXELLAB_SPACING avec l'apparence PixelLab).
+var spacing := 1.0
 ## Statistiques de contrôle (outil de développement).
 var stats := {"teleports": 0, "max_gap": 0.0}
 
@@ -142,6 +153,8 @@ func add_follower(at: Vector2, role := GameState.DEFAULT_ROLE) -> Follower:
 	if GameState.roles.size() <= f.index:
 		GameState.roles.append(role)
 	_world.add_entity(f)
+	if pixellab_skin:
+		f.apply_look(_skin(f.index, role), true)
 	followers.append(f)
 	_update_ranks()
 	rejoin_trail(f)
@@ -178,7 +191,18 @@ func _give_gait(f: Follower) -> void:
 	f.reach_shift = rng.randf_range(-REACH_JITTER, REACH_JITTER)
 
 
+## Bascule l'apparence de tous les compagnons (soldat PixelLab ou planches du générateur).
+func set_pixellab_skin(on: bool) -> void:
+	pixellab_skin = on
+	spacing = PIXELLAB_SPACING if on else 1.0
+	for f in followers:
+		f.apply_look(_skin(f.index, f.role), on)
+	_slots = _compute_idle_slots()
+
+
 func _skin(i: int, role: String) -> Texture2D:
+	if pixellab_skin:
+		return SOLDIER_SKIN
 	return (SLING_SKINS if role == "sling" else SKINS)[i % SKINS.size()]
 
 
@@ -236,13 +260,13 @@ func _physics_process(delta: float) -> void:
 func target_for(f: Follower) -> Vector2:
 	# Halte : chacun gagne sa place à son tour (délai propre), puis y fait de petits pas.
 	var slot := hero.global_position + _slot(f)
-	if is_resting(f) and slot.is_finite() and f.global_position.distance_to(hero.global_position) < IDLE_REACH \
+	if is_resting(f) and slot.is_finite() and f.global_position.distance_to(hero.global_position) < IDLE_REACH * spacing \
 			and _clear(f.global_position, slot + _fidget.get(f.index, Vector2.ZERO)):
 		f.trail_lag = 0.0
 		return slot + _fidget.get(f.index, Vector2.ZERO)
 	# Départ échelonné : quand le héros repart d'une halte, chacun se met en route à son tour, s'il est
 	# encore près de lui.
-	if not hero_idle and _move_time < f.start_delay and f.global_position.distance_to(hero.global_position) < IDLE_REACH:
+	if not hero_idle and _move_time < f.start_delay and f.global_position.distance_to(hero.global_position) < IDLE_REACH * spacing:
 		f.trail_lag = 0.0
 		return f.global_position
 	# Place dans la colonne : avance et écart propres, qui se balancent lentement.
@@ -390,7 +414,7 @@ func debug_summary() -> String:
 
 
 func _gap(i: int) -> float:
-	return GAP_FIRST + GAP_ROW * (i / 2)
+	return (GAP_FIRST + GAP_ROW * (i / 2)) * spacing
 
 
 ## Point de la trace à `dist` derrière le héros, décalé sur la file (gauche ou droite) de l'allié `i`.
@@ -444,7 +468,7 @@ func _clear(from: Vector2, to: Vector2) -> bool:
 
 func _slot_offset(i: int) -> Vector2:
 	var back := -_heading
-	var slot: Vector2 = IDLE_SLOTS[i % IDLE_SLOTS.size()] + Vector2(18.0 * (i / IDLE_SLOTS.size()), 0)
+	var slot: Vector2 = (IDLE_SLOTS[i % IDLE_SLOTS.size()] + Vector2(18.0 * (i / IDLE_SLOTS.size()), 0)) * spacing
 	return back * slot.x + back.orthogonal() * slot.y
 
 

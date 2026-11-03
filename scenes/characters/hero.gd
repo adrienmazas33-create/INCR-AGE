@@ -9,7 +9,7 @@ extends Combatant
 
 ## Apparence à l'essai : héros PixelLab (planche de tools/pack_pixellab.gd), à sa taille réelle
 ## (46 à 50 px). Seul l'affichage change : collisions, vitesse, portée, combat et sauvegarde restent
-## ceux du héros. Choisie par « -- --hero-skin=pixellab » ou basculée par F3 ; jamais enregistrée.
+## ceux du héros. Choisie au lancement ou basculée par F3, avec les soldats (voir main.gd) ; jamais enregistrée.
 const PIXELLAB_SKIN := {
 	"texture": preload("res://assets/art/hero_pixellab.png"), "hframes": 9, "vframes": 3,
 	# Pieds à la rangée 56 d'une case de 68 : 34 - 56.
@@ -47,8 +47,6 @@ func _ready() -> void:
 		"bar_height": bar_height, "hit_y": -10.0, "ring": Vector2i(_marker.rx, _marker.ry), "pip_y": _marker.pip_y,
 		"shadow_scale": 1.0,
 	}
-	if "--hero-skin=pixellab" in OS.get_cmdline_user_args():
-		set_pixellab_skin(true)
 
 
 ## Bascule entre le sprite d'origine et le héros PixelLab.

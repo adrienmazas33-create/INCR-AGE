@@ -1,0 +1,75 @@
+{
+  "group_id": "ddbf4d47-87bc-4b84-ab4b-15d3a075cfea",
+  "states": [
+    {
+      "character": {
+        "id": "e751c75b-0110-4299-a811-f57a6889a553",
+        "name": "Create a common basi",
+        "prompt": "Original prehistoric adventurer hero for a warm top-down pixel art game. Adult with expressive friendly face, tousled dark brown hair, ochre golden cloth headband, small asymmetrical golden-tan fur mantle over one shoulder, moss-green woven waist sash, brown hide tunic, leather wrist wraps and boots. A short wooden club with a stone head held low at one side. Readable distinctive silhouette, slightly stylized natural proportions, head about one quarter of body height, not chibi. Handcrafted RPG pixel art with rounded organic forms, carefully shaded pixel clusters, warm earthy colors, selective dark colored outlines, light from upper left. Full body centered with feet visible and a little transparent padding. Front-facing neutral standing pose appropriate for low top-down camera. No metal armor, no text, no scenery, no giant weapon, no thick black outline.",
+        "size": {
+          "width": 48,
+          "height": 48
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-11-03T18:04:40.646290+00:00"
+      },
+      "folder": "Create_a_common_basi",
+      "frames": {
+        "rotations": {
+          "south": "Create_a_common_basi/rotations/south.png",
+          "south-east": "Create_a_common_basi/rotations/south-east.png",
+          "east": "Create_a_common_basi/rotations/east.png",
+          "north-east": "Create_a_common_basi/rotations/north-east.png",
+          "north": "Create_a_common_basi/rotations/north.png",
+          "north-west": "Create_a_common_basi/rotations/north-west.png",
+          "west": "Create_a_common_basi/rotations/west.png",
+          "south-west": "Create_a_common_basi/rotations/south-west.png"
+        },
+        "animations": {
+          "Walking": {
+            "south": [
+              "Create_a_common_basi/animations/Walking/south/frame_000.png",
+              "Create_a_common_basi/animations/Walking/south/frame_001.png",
+              "Create_a_common_basi/animations/Walking/south/frame_002.png",
+              "Create_a_common_basi/animations/Walking/south/frame_003.png",
+              "Create_a_common_basi/animations/Walking/south/frame_004.png",
+              "Create_a_common_basi/animations/Walking/south/frame_005.png",
+              "Create_a_common_basi/animations/Walking/south/frame_006.png",
+              "Create_a_common_basi/animations/Walking/south/frame_007.png"
+            ]
+          },
+          "Breathing_Idle": {
+            "east": [
+              "Create_a_common_basi/animations/Breathing_Idle/east/frame_000.png",
+              "Create_a_common_basi/animations/Breathing_Idle/east/frame_001.png",
+              "Create_a_common_basi/animations/Breathing_Idle/east/frame_002.png",
+              "Create_a_common_basi/animations/Breathing_Idle/east/frame_003.png"
+            ],
+            "north-east": [
+              "Create_a_common_basi/animations/Breathing_Idle/north-east/frame_000.png",
+              "Create_a_common_basi/animations/Breathing_Idle/north-east/frame_001.png",
+              "Create_a_common_basi/animations/Breathing_Idle/north-east/frame_002.png",
+              "Create_a_common_basi/animations/Breathing_Idle/north-east/frame_003.png"
+            ],
+            "south": [
+              "Create_a_common_basi/animations/Breathing_Idle/south/frame_000.png",
+              "Create_a_common_basi/animations/Breathing_Idle/south/frame_001.png",
+              "Create_a_common_basi/animations/Breathing_Idle/south/frame_002.png",
+              "Create_a_common_basi/animations/Breathing_Idle/south/frame_003.png"
+            ],
+            "south-east": [
+              "Create_a_common_basi/animations/Breathing_Idle/south-east/frame_000.png",
+              "Create_a_common_basi/animations/Breathing_Idle/south-east/frame_001.png",
+              "Create_a_common_basi/animations/Breathing_Idle/south-east/frame_002.png",
+              "Create_a_common_basi/animations/Breathing_Idle/south-east/frame_003.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.1",
+  "export_date": "2026-11-03T19:38:14.217168"
+}

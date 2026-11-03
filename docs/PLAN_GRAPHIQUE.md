@@ -226,3 +226,48 @@ premier personnage. C'est la méthode à réutiliser pour l'armée :
    bascule, validation.
 
 Les unités ne sont pas créées tant que le héros et la taille cible ne sont pas validés.
+
+## 10. Soldat de base PixelLab dans le groupe (03/11/2026, en attente de validation)
+
+Consignes de la transmission (`POUR-CLAUDE.md`, préparée hors du dépôt) : intégrer le soldat validé
+auprès du héros, avec ses **poses fixes** et un **balancement de marche calculé**, sans nouvelle
+génération ; cohérence entre directions avant richesse d'animation.
+
+**Sources** : `assets/source/pixellab/soldier/` (export complet ; le `prompt` des métadonnées est celui
+du héros, hérité par PixelLab, mais les images sont bien le soldat). Poses fixes de 48 × 48, soldat de
+**44 à 46 px**, la taille du héros : même base de corps. Le héros se distingue par son bandeau doré,
+sa massue et sa tunique. Animations partielles (marche de face seulement, repos dans 4 directions)
+gardées pour plus tard, non utilisées : elles ne couvrent pas le dos ni l'ouest.
+
+**Intégration**
+- `tools/pack_pixellab.gd -- soldier --poses` : planche des seules poses (face, dos, profil est),
+  `assets/art/soldier_pixellab.png`, pieds aux rangées 45 à 46.
+- `CharacterSprite.walk_sway` : en marche, le personnage monte de 2 px au milieu de chaque pas et se
+  reporte d'1 px d'un côté puis de l'autre, en pixels entiers (pas de rotation : dessin net). Pas par
+  seconde suivant la vitesse réelle, comme les autres marches.
+- `Follower.apply_look` : planche, découpage, ancrage aux pieds, marche, barre de vie et ombre.
+  Même soldat pour la lance et la fronde : les armes sont un travail visuel ultérieur.
+- `Party` : la même apparence pour tous les compagnons, recrues comprises ; **espacement ×1,5** des
+  écarts de la colonne et des places à la halte, sinon des personnages de 46 px s'empilent. Élargir
+  aussi la séparation et l'écart latéral coinçait les soldats dans les passages étroits (43 retours
+  forcés sur le tour de la carte) : ils restent d'origine. Les règles du suivi ne changent pas.
+- **F3 bascule désormais le groupe entier** (héros et soldats) ; `-- --skin=pixellab` au lancement
+  (`--hero-skin=pixellab` reste accepté). Rien n'est enregistré dans la sauvegarde.
+
+**Vérifications** (copies de sauvegardes de test, à 4 et à 8 compagnons) : captures dans
+`docs/art/soldat/` (camp, marche de dos et de profil, combat avec un soldat à terre) ; directions
+justes (dos en montant, profil retourné à gauche) ; barre de vie et chevron du héros au-dessus de sa
+tête en combat ; tour complet de la carte à 8 compagnons en PixelLab : 149,8 s, 60 FPS, 6 retours
+forcés (référence : 4 à 6), aucune erreur ; F3 rend aux compagnons exactement leur apparence d'origine (planche, découpage,
+décalage, marche, barre, espacement) ; vitesse et collisions inchangées.
+
+**Limites visibles**
+- Les soldats sont tous identiques et sans arme : lanciers et frondeurs ne se distinguent pas à l'œil.
+- Le balancement ne remplace pas une vraie marche : les jambes restent immobiles.
+- Le lanceur rival, les villageois, le décor et les huttes restent à l'ancienne échelle : ils paraissent
+  minuscules à côté du groupe.
+- À 8 compagnons au camp, des places de halte bloquées par les décors (feu, rondins) font qu'un soldat
+  reste contre le héros ; c'était déjà le cas avant, mais cela se voit plus à cette taille.
+- En colonne, les deux files se chevauchent : l'écart latéral est resté celui d'origine (8 px) pour
+  que le suivi passe les ponts et l'escalier. Un écart plus grand demanderait de revoir le suivi
+  dans les passages étroits.

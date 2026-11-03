@@ -23,6 +23,10 @@ func _ready() -> void:
 	_party.name = "Party"
 	add_child(_party)
 	_party.setup(_hero, _world, Upgrades.companion_count())
+	# Apparence PixelLab à l'essai (héros et soldats) : « -- --skin=pixellab » (ou l'ancien --hero-skin=pixellab).
+	var args := OS.get_cmdline_user_args()
+	if "--skin=pixellab" in args or "--hero-skin=pixellab" in args:
+		_set_pixellab_skin(true)
 	var spawner := EnemySpawner.new()
 	spawner.name = "EnemySpawner"
 	add_child(spawner)
@@ -127,7 +131,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		SaveGame.save_now()
 		get_tree().quit()
 	elif event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_F3:
-		# Essai du héros PixelLab (apparence seulement, jamais enregistrée).
-		_hero.set_pixellab_skin(not _hero.pixellab_skin)
-		_hud.announce("HEROS PIXELLAB" if _hero.pixellab_skin else "HEROS ACTUEL")
+		# Essai du héros et des soldats PixelLab (apparence seulement, jamais enregistrée).
+		_set_pixellab_skin(not _hero.pixellab_skin)
+		_hud.announce("PIXELLAB" if _hero.pixellab_skin else "RENDU ACTUEL")
 		get_viewport().set_input_as_handled()
+
+
+## Bascule l'apparence du héros et de tous les compagnons ensemble, pour juger le groupe entier.
+func _set_pixellab_skin(on: bool) -> void:
+	_hero.set_pixellab_skin(on)
+	_party.set_pixellab_skin(on)

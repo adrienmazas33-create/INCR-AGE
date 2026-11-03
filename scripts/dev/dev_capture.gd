@@ -152,6 +152,12 @@ func _run() -> void:
 		"PixelLab" if _hero.pixellab_skin else "actuelle", hs.texture.resource_path.get_file(), hs.hframes, hs.vframes, hs.offset,
 		hs.idle_frames, hs.idle_fps, hs.walk_frames, hs.walk_fps, _hero.bar_height, (_hero.get_node("Shadow") as Node2D).scale.x,
 		_hero.stats.move_speed, _hero.stats.attack_range, (_hero.get_node("Feet").shape as CircleShape2D).radius])
+	if party and not (party as Party).followers.is_empty():
+		var f := (party as Party).followers[0]
+		var fs := f.sprite as CharacterSprite
+		print("DevCapture : apparence des compagnons %s : %s, %d x %d, décalage %s, marche %s%s, barre %.0f, espacement x%.1f, vitesse %.0f" % [
+			"PixelLab" if (party as Party).pixellab_skin else "actuelle", fs.texture.resource_path.get_file(), fs.hframes, fs.vframes, fs.offset,
+			fs.walk_frames, " balancée" if fs.walk_sway else "", f.bar_height, (party as Party).spacing, f.stats.move_speed])
 	print("DevCapture : audio %d bruitage(s) joué(s), %d écarté(s) (anti-empilement) ; niveau ambiance %.0f dB" % [AudioManager.played, AudioManager.skipped,
 		AudioServer.get_bus_peak_volume_left_db(AudioServer.get_bus_index(AudioManager.AMBIENCE), 0)])
 	var ambience := get_tree().current_scene.get_node_or_null("Ambience")

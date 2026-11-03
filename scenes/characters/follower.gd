@@ -17,6 +17,12 @@ const ROLE_STATS := {
 
 ## Vitesse de référence de l'animation de marche (celle du héros).
 const ANIM_SPEED := 100.0
+## Apparences : planches du générateur (6 x 3 images de 32 px), ou soldat PixelLab à l'essai (poses
+## fixes de 48 px, pieds à la rangée 45, balancement de marche calculé ; basculé avec le héros, F3).
+const CLASSIC_LOOK := {"hframes": 6, "offset": Vector2(0, -14), "idle": [0, 1], "walk": [2, 3, 4, 5], "walk_fps": 9.0,
+	"sway": false, "bar_height": 30.0, "shadow_scale": 1.0}
+const PIXELLAB_LOOK := {"hframes": 1, "offset": Vector2(0, -21), "idle": [0], "walk": [0], "walk_fps": 3.5,
+	"sway": true, "bar_height": 52.0, "shadow_scale": 1.5}
 const KO_DURATION := 8.0
 const REVIVE_HEALTH := 0.5
 ## Retard sur sa place (le long de la trace) au-delà duquel il accélère, et facteur de vitesse.
@@ -171,6 +177,23 @@ func convert_role(new_role: String, skin: Texture2D) -> void:
 	health.set_maximum(_max_health())
 	sprite.texture = skin
 	_foe = null
+
+
+## Change l'apparence seulement (planche, découpage, ancrage aux pieds, marche, barre de vie, ombre) :
+## rôle, caractéristiques, collisions et suivi ne bougent pas.
+func apply_look(skin: Texture2D, pixellab: bool) -> void:
+	var look: Dictionary = PIXELLAB_LOOK if pixellab else CLASSIC_LOOK
+	var anim := _anim()
+	sprite.frame = 0
+	sprite.texture = skin
+	sprite.hframes = look["hframes"]
+	sprite.offset = look["offset"]
+	anim.idle_frames.assign(look["idle"])
+	anim.walk_frames.assign(look["walk"])
+	anim.walk_fps = look["walk_fps"]
+	anim.walk_sway = look["sway"]
+	set_bar_height(look["bar_height"])
+	(get_node("Shadow") as Node2D).scale = Vector2.ONE * look["shadow_scale"]
 
 
 ## Replace l'allié sans transition (appelé par le groupe).
