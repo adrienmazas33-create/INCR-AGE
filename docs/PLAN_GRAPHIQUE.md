@@ -323,3 +323,35 @@ inverse, passage inverse), 7 images par seconde à la vitesse des compagnons (2 
   un pas de ±3 px, plus petit que la largeur de la jambe, donnaient des jambes emmêlées au contact.
 - **Limites** : les jambes inclinées restent droites (pas de genou fléchi au contact) ; le dos du soldat
   garde le balancement ; il reste le dos (même technique que la face, attendue plus simple).
+
+## 12. Marche du soldat reprise de celle du héros (03/11/2026, en attente de validation)
+
+Décision du porteur du projet : les prototypes des sections 10 et 11 (balancement, puis membres
+découpés) ne sont pas satisfaisants. Le soldat et le héros ont presque les mêmes proportions, et le
+héros a une vraie marche PixelLab de 8 images : on la réutilise pour le soldat, sans rien générer.
+
+**Méthode** (`tools/transfer_walk.gd`), image par image, sur la marche de face du héros :
+- les **jambes** du héros sont gardées, chaque couleur ramenée à la plus proche de la palette du
+  soldat (la jupe de la tunique devient un pagne un peu plus long que celui du soldat) ;
+- la **tête**, le **torse** et les **bras** du soldat remplacent ceux du héros, recalés à chaque image
+  sur son mouvement : le décalage de chaque partie est mesuré en la comparant à la pose fixe du héros
+  (balancement de la tête, du buste, des bras). Ni bandeau, ni collier, ni tunique, ni
+  protège-poignets ; mains vides ;
+- la **massue** : tout ce qui dépasse sous le bras qui la tenait est effacé. Là où son manche croise
+  la jambe gauche, cette jambe est refaite avec la jambe droite de l'image opposée du cycle (k + 4),
+  jamais masquée, retournée en miroir autour de l'axe du corps de chaque image. Un premier essai, qui
+  effaçait les couleurs du manche, entamait la jambe : écarté ;
+- **case de 48 × 52** : la marche du héros, rebond compris, dépasse 48 px de haut ; les poses fixes y
+  sont posées 2 px plus bas, si bien que l'ancrage aux pieds du jeu ne change pas (pieds à 1 px près
+  de la ligne de la pose).
+
+**En jeu** : apparence PixelLab (F3), puis **F4** pour cette marche vers le bas (8 images, 16 images par
+seconde, comme le héros) ; dos et profil gardent le balancement. Le prototype de la section 11 est mis
+de côté : ses fichiers restent dans le dépôt, il n'est plus affiché. Captures :
+`docs/art/soldat/marche_bas_transfert.png` (pose du soldat puis les 8 images, ×4, ligne des pieds en
+jaune) et `marche_bas_transfert_en_jeu.png` (groupe descendant, taille réelle).
+
+**Limites** : pieds un peu plus foncés que ceux de la pose du soldat (ceux du héros, recolorés) ;
+pagne un peu plus long ; la main gauche (à l'écran), refaite en miroir aux rangées basses, a l'ombrage
+inversé. Pour les autres directions, la même méthode demandera ses réglages : de dos, la massue est
+moins visible ; de profil, elle passe devant le corps, ce sera la direction la plus délicate.

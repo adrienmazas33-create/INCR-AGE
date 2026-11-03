@@ -31,8 +31,8 @@ const SLING_SKINS: Array[Texture2D] = [
 ]
 ## Soldat de base PixelLab à l'essai, le même pour tous les rôles (les armes viendront plus tard).
 const SOLDIER_SKIN := preload("res://assets/art/soldier_pixellab.png")
-## Même soldat avec le prototype de marche vers le bas (tools/animate_walk.gd).
-const SOLDIER_WALK_SKIN := preload("res://assets/art/soldier_pixellab_walk.png")
+## Même soldat avec le prototype de marche vers le bas (marche du héros transférée, tools/transfer_walk.gd).
+const SOLDIER_WALK_SKIN := preload("res://assets/art/soldier_pixellab_transfer.png")
 ## Espacement de la formation avec les personnages PixelLab (46 px au lieu de 26) : écarts dans la
 ## colonne et places à la halte élargis d'autant. La séparation et l'écart latéral restent ceux
 ## d'origine : élargis, ils coinçaient les soldats dans les passages étroits (43 replacements forcés
