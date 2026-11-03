@@ -1,0 +1,98 @@
+{
+  "group_id": "f021b675-47e3-4c78-91ab-8971e19e7f73",
+  "states": [
+    {
+      "character": {
+        "id": "2978a354-80ff-4548-9240-38dc1b103286",
+        "name": "Idle",
+        "prompt": "Original prehistoric adventurer hero for a warm top-down pixel art game. Adult with expressive friendly face, tousled dark brown hair, ochre golden cloth headband, small asymmetrical golden-tan fur mantle over one shoulder, moss-green woven waist sash, brown hide tunic, leather wrist wraps and boots. A short wooden club with a stone head held low at one side. Readable distinctive silhouette, slightly stylized natural proportions, head about one quarter of body height, not chibi. Handcrafted RPG pixel art with rounded organic forms, carefully shaded pixel clusters, warm earthy colors, selective dark colored outlines, light from upper left. Full body centered with feet visible and a little transparent padding. Front-facing neutral standing pose appropriate for low top-down camera. No metal armor, no text, no scenery, no giant weapon, no thick black outline.",
+        "size": {
+          "width": 48,
+          "height": 48
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-10-27T12:36:59.002782+00:00"
+      },
+      "folder": "Idle",
+      "frames": {
+        "rotations": {
+          "south": "Idle/rotations/south.png",
+          "south-east": "Idle/rotations/south-east.png",
+          "east": "Idle/rotations/east.png",
+          "north-east": "Idle/rotations/north-east.png",
+          "north": "Idle/rotations/north.png",
+          "north-west": "Idle/rotations/north-west.png",
+          "west": "Idle/rotations/west.png",
+          "south-west": "Idle/rotations/south-west.png"
+        },
+        "animations": {}
+      }
+    },
+    {
+      "character": {
+        "id": "22c04910-6bd1-4559-ab7b-c6ca17bb457e",
+        "name": "Transform ONLY the o",
+        "prompt": "Original prehistoric adventurer hero for a warm top-down pixel art game. Adult with expressive friendly face, tousled dark brown hair, ochre golden cloth headband, small asymmetrical golden-tan fur mantle over one shoulder, moss-green woven waist sash, brown hide tunic, leather wrist wraps and boots. A short wooden club with a stone head held low at one side. Readable distinctive silhouette, slightly stylized natural proportions, head about one quarter of body height, not chibi. Handcrafted RPG pixel art with rounded organic forms, carefully shaded pixel clusters, warm earthy colors, selective dark colored outlines, light from upper left. Full body centered with feet visible and a little transparent padding. Front-facing neutral standing pose appropriate for low top-down camera. No metal armor, no text, no scenery, no giant weapon, no thick black outline.",
+        "size": {
+          "width": 48,
+          "height": 48
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-10-27T12:44:33.953033+00:00"
+      },
+      "folder": "Transform_ONLY_the_o",
+      "frames": {
+        "rotations": {
+          "south": "Transform_ONLY_the_o/rotations/south.png",
+          "south-east": "Transform_ONLY_the_o/rotations/south-east.png",
+          "east": "Transform_ONLY_the_o/rotations/east.png",
+          "north-east": "Transform_ONLY_the_o/rotations/north-east.png",
+          "north": "Transform_ONLY_the_o/rotations/north.png",
+          "north-west": "Transform_ONLY_the_o/rotations/north-west.png",
+          "west": "Transform_ONLY_the_o/rotations/west.png",
+          "south-west": "Transform_ONLY_the_o/rotations/south-west.png"
+        },
+        "animations": {
+          "Walking": {
+            "east": [
+              "Transform_ONLY_the_o/animations/Walking/east/frame_000.png",
+              "Transform_ONLY_the_o/animations/Walking/east/frame_001.png",
+              "Transform_ONLY_the_o/animations/Walking/east/frame_002.png",
+              "Transform_ONLY_the_o/animations/Walking/east/frame_003.png",
+              "Transform_ONLY_the_o/animations/Walking/east/frame_004.png",
+              "Transform_ONLY_the_o/animations/Walking/east/frame_005.png",
+              "Transform_ONLY_the_o/animations/Walking/east/frame_006.png",
+              "Transform_ONLY_the_o/animations/Walking/east/frame_007.png"
+            ],
+            "north": [
+              "Transform_ONLY_the_o/animations/Walking/north/frame_000.png",
+              "Transform_ONLY_the_o/animations/Walking/north/frame_001.png",
+              "Transform_ONLY_the_o/animations/Walking/north/frame_002.png",
+              "Transform_ONLY_the_o/animations/Walking/north/frame_003.png",
+              "Transform_ONLY_the_o/animations/Walking/north/frame_004.png",
+              "Transform_ONLY_the_o/animations/Walking/north/frame_005.png",
+              "Transform_ONLY_the_o/animations/Walking/north/frame_006.png",
+              "Transform_ONLY_the_o/animations/Walking/north/frame_007.png"
+            ],
+            "south": [
+              "Transform_ONLY_the_o/animations/Walking/south/frame_000.png",
+              "Transform_ONLY_the_o/animations/Walking/south/frame_001.png",
+              "Transform_ONLY_the_o/animations/Walking/south/frame_002.png",
+              "Transform_ONLY_the_o/animations/Walking/south/frame_003.png",
+              "Transform_ONLY_the_o/animations/Walking/south/frame_004.png",
+              "Transform_ONLY_the_o/animations/Walking/south/frame_005.png",
+              "Transform_ONLY_the_o/animations/Walking/south/frame_006.png",
+              "Transform_ONLY_the_o/animations/Walking/south/frame_007.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.1",
+  "export_date": "2026-11-03T17:14:54.525827"
+}

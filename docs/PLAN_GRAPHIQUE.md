@@ -50,6 +50,10 @@ réelle, mesurée sur les exports :
 vrai héros, et n'agrandir que ce qui le demande (arbres d'abord, huttes seulement si elles paraissent
 des tentes). Si le héros validé dépasse cette taille, en reparler avant de produire l'armée.
 
+**Mise à jour du 03/11/2026** : le héros PixelLab retenu mesure **46 à 50 px** (section 7). C'est
+l'échelle de l'option C de l'étude, celle que l'essai LPC avait jugée juste pour les personnages.
+La question est rouverte : voir la section 7.
+
 ## 3. Plan
 
 ### Personnages : une base, des variantes
@@ -60,7 +64,8 @@ des tentes). Si le héros validé dépasse cette taille, en reparler avant de pr
 - **Héros** : la base, plus imposante (épaules, cape de fourrure claire), **massue à tête de pierre**,
   plume, et l'**or** comme couleur d'accent, réservée au héros (déjà le cas de l'anneau, de la barre de
   vie et de ses coups). On le reconnaît à sa silhouette avant sa couleur.
-- **Armée** : la base, sans cape, avec un **bandeau ocre** commun (la couleur de la tribu).
+- **Armée** : la base, sans cape ni bandeau doré (réservé au héros, voir section 7), avec un même
+  signe de tribu discret (cordelette de cuir au front ou peinture ocre sur l'épaule).
   - **Mêlée** : longue lance à pointe de silex, qui dépasse au-dessus de la tête.
   - **Distance** : fronde à la main, sacoche de pierres à la hanche, pas de lance ; posture plus droite.
   - Variété limitée à **2 ou 3 teintes de peau et de cheveux**, par simple changement de couleurs, pas
@@ -118,3 +123,93 @@ Hors vitrine : aucun changement. Pas de nouvelle mécanique, règles et sauvegar
 - Le **personnage de référence** de l'armée et ses déclinaisons : lancier, frondeur, lanceur rival
   (mêmes réglages que le héros).
 - La **licence** de l'offre PixelLab utilisée (usage commercial).
+
+## 7. Héros PixelLab : examen des exports (03/11/2026)
+
+Sources retenues : `assets/source/pixellab/hero/` (non importées par Godot). Planche de contrôle,
+agrandie trois fois : `docs/art/heros/pixellab_examen.png` (ligne 1 : version écartée ; ligne 2 :
+version retenue ; lignes 3 à 5 : sa marche de face, de profil, de dos ; en bas : héros et compagnon
+actuels à la même échelle).
+
+**Les deux versions de l'export**
+
+| Dossier du ZIP | Ce que c'est | Contenu | Décision |
+|---|---|---|---|
+| `Idle` | Première version : manteau de fourrure, ceinture verte, bottes | 8 orientations, aucune animation | **Écartée** (malgré son nom, ce n'est pas un repos) |
+| `Transform_ONLY_the_o` | Version simplifiée : tunique de peau, bandeau ocre doré, massue, pieds nus | 8 orientations + marche | **Retenue** |
+
+**Mesures de la version retenue**
+- Orientations : toile de 48 × 48, personnage de **45 à 48 px** de haut, pieds à la rangée 45 à 47,
+  15 couleurs.
+- Marche : 8 images en face, de dos et de profil est (il regarde vers la droite), toile de 68 × 68,
+  personnage de **46 à 50 px**, 28 à 45 couleurs.
+- Les orientations sont centrées dans la toile de la marche : avec un décalage de 10 px, leurs pieds
+  tombent au même endroit (rangées 55 à 57 contre 55 à 59). Un seul point d'ancrage par toile suffit.
+- Aucune cadence n'est fournie : elle sera réglée sur la vitesse réelle (pas de glissement).
+
+**Incohérences et manques**
+- **Échelle** : 1,8 fois le héros et les compagnons actuels (26 px), et autant face aux huttes et aux
+  arbres. C'est le point principal, voir ci-dessous.
+- **Pas d'animation de repos** : seule une pose fixe par direction. Le héros resterait immobile à
+  l'arrêt (pas de respiration) ; un repos peut être généré plus tard dans PixelLab.
+- **Pas de marche vers l'ouest** : le profil est sera retourné, comme aujourd'hui. La massue change
+  alors de main ; c'est peu visible à cette taille.
+- **Couleurs** : la marche a 2 à 3 fois plus de nuances que les poses fixes ; au passage du repos à la
+  marche, le rendu change très légèrement.
+- **Rebond** : le pied le plus bas varie de 4 px au cours d'un pas ; avec un ancrage fixe, le corps
+  monte et descend un peu, ce qui est naturel. À juger en jeu.
+- Diagonales disponibles en poses fixes seulement ; le jeu n'utilise que face, dos et profil.
+- **Licence** : celle de l'offre PixelLab utilisée reste à confirmer pour un usage commercial.
+
+**Identité** : le bandeau ocre doré et la massue font la signature du héros, ce qui rejoint l'or
+réservé au héros. L'armée ne portera donc pas ce bandeau (section 3 corrigée).
+
+**La question d'échelle**
+- Réduire le héros pour l'adapter au monde actuel n'est pas une option : une réduction de pixel art
+  détruit le dessin.
+- Le héros à sa taille réelle (47 px) correspond à l'option C de l'étude d'échelle : à terme, armée à
+  la même taille (même toile de 48 px), arbres et huttes agrandis d'environ 1,7, par lots validés.
+- Pour l'essai, le héros est affiché **à sa taille réelle**, monde et armée inchangés : il dominera
+  nettement le groupe. Cela sert à juger le personnage et la taille cible, pas encore la cohérence
+  d'ensemble.
+- La refonte du monde n'est pas lancée sans ta validation.
+
+## 8. Intégration proposée (en attente de validation)
+
+Tout se fait derrière une bascule : le sprite actuel reste le défaut et rien n'est enregistré.
+
+1. **Outil d'assemblage** `tools/pack_pixellab.gd` : lit un dossier de sources PixelLab et écrit une
+   planche au format du jeu, `assets/art/hero_pixellab.png`. Cases de 68 × 68 ; rangées face, dos,
+   profil (l'ordre de `CharacterSprite`) ; une image de repos (la pose fixe, recentrée de 10 px) puis
+   les 8 images de marche. Il vérifie que tous les pieds tombent dans la même bande.
+2. **`CharacterSprite`** : les listes d'images et les cadences deviennent des réglages, avec les
+   valeurs actuelles par défaut. Compagnons, villageois et lanceur ne changent pas.
+3. **`Hero`** : bascule par l'argument `-- --hero-skin=pixellab` et par la touche F3, avec un bandeau
+   comme pour F2. Elle ne change que l'apparence : texture, grille, décalage aux pieds, cadence,
+   hauteur de la barre de vie, du chevron et des étincelles de coup, taille de l'ombre et de l'anneau.
+4. **Inchangés** : collisions, vitesse, portée, combat, caméra, sauvegarde, monde, armée.
+
+**Tests prévus** : captures des trois directions et du miroir, au repos et en marche ; contrôle des
+pieds ; marche sans glissement à 100 px/s ; aller-retour de la bascule identique au pixel près ; tour
+complet de la carte (même durée, mêmes statistiques) ; combat (éclair, élan, mise à terre, barre de
+vie, chevron) ; 60 FPS ; sauvegardes isolées uniquement.
+
+## 9. Production de l'armée : méthode réutilisable
+
+Le héros retenu est lui-même né d'une retouche PixelLab (« Transform ONLY the… ») appliquée à un
+premier personnage. C'est la méthode à réutiliser pour l'armée :
+
+1. **Un soldat de base**, créé une fois dans PixelLab avec les mêmes réglages que le héros : modèle
+   « mannequin », toile de 48 px, vue « low top-down », 8 directions, même bloc de style dans la
+   consigne (« Handcrafted RPG pixel art… light from upper left… selective dark colored outlines »).
+   Plus simple que le héros : pagne de peau, pas de bandeau doré, pas de massue, cheveux différents.
+2. **Les variantes par retouche** de ce soldat (« Transform ONLY the weapon… ») : une lance à pointe de
+   silex pour la mêlée, une fronde et une sacoche de pierres pour le frondeur. Mêmes proportions, même
+   tenue, même lumière par construction.
+3. **Une seule animation** par variante au départ : la marche, face, dos et profil est, comme le héros.
+4. **Variété dans le jeu, pas dans PixelLab** : 2 ou 3 teintes de peau et de cheveux par changement de
+   couleurs à l'affichage, au lieu de huit dessins.
+5. **Même chaîne** que le héros : dossier de sources, `tools/pack_pixellab.gd`, essai derrière une
+   bascule, validation.
+
+Les unités ne sont pas créées tant que le héros et la taille cible ne sont pas validés.
