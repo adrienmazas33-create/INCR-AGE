@@ -227,7 +227,7 @@ premier personnage. C'est la méthode à réutiliser pour l'armée :
 
 Les unités ne sont pas créées tant que le héros et la taille cible ne sont pas validés.
 
-## 10. Soldat de base PixelLab dans le groupe (03/11/2026, en attente de validation)
+## 10. Soldat de base PixelLab dans le groupe (03/11/2026, validé)
 
 Consignes de la transmission (`POUR-CLAUDE.md`, préparée hors du dépôt) : intégrer le soldat validé
 auprès du héros, avec ses **poses fixes** et un **balancement de marche calculé**, sans nouvelle
