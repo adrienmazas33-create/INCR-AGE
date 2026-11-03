@@ -142,6 +142,12 @@ func _set_state(s: State, time := 0.0) -> void:
 	_timer = time
 
 
+## Frappe circulaire du héros : une charge préparée ou lancée est brisée, le sanglier reste étourdi.
+func stagger(duration: float) -> void:
+	if _state in [State.WINDUP, State.CHARGE]:
+		_set_state(State.RECOVER, duration)
+
+
 func _on_hit(from: Vector2) -> void:
 	if _state in [State.WANDER, State.RETURN]:
 		var attacker := Targeting.nearest(self, &"party_members", 120.0, false)

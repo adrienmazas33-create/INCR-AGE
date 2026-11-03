@@ -1,7 +1,8 @@
 class_name Hero
 extends Combatant
 ## Héros jouable. Le joueur dirige ses déplacements ; le héros frappe seul l'ennemi le plus proche
-## à portée de massue. Les futures compétences actives seront des composants voisins de AutoAttack.
+## à portée de massue. Sa compétence active (lot G2, FRAPPE CIRCULAIRE) se déclenche avec ESPACE ou
+## le clic droit ; c'est un composant voisin de AutoAttack (voir ActiveSkill).
 
 ## Accélération et freinage élevés : contrôle précis, sans glissade.
 @export var acceleration := 1500.0
@@ -19,6 +20,7 @@ const PIXELLAB_SKIN := {
 }
 
 var attack := AutoAttack.new()
+var skill: ActiveSkill = SweepStrike.new()
 
 ## Direction voulue par le déplacement à la souris (ClickMover), zéro sinon ; le clavier reste prioritaire.
 var steer := Vector2.ZERO
@@ -36,6 +38,8 @@ func _ready() -> void:
 	super()
 	attack.unit = self
 	add_child(attack)
+	skill.unit = self
+	add_child(skill)
 	# Marqueur au sol, dessiné sous le personnage (avant le sprite).
 	_marker.position = Vector2(0, -1)
 	add_child(_marker)
@@ -47,6 +51,14 @@ func _ready() -> void:
 		"bar_height": bar_height, "hit_y": -10.0, "ring": Vector2i(_marker.rx, _marker.ry), "pip_y": _marker.pip_y,
 		"shadow_scale": 1.0,
 	}
+
+
+## Compétence active : ESPACE, ou clic droit (le clic gauche reste au déplacement).
+func _unhandled_input(event: InputEvent) -> void:
+	var click := event as InputEventMouseButton
+	if event.is_action_pressed("hero_skill") or (click and click.pressed and click.button_index == MOUSE_BUTTON_RIGHT):
+		skill.try_use()
+		get_viewport().set_input_as_handled()
 
 
 ## Bascule entre le sprite d'origine et le héros PixelLab.

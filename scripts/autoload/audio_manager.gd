@@ -21,6 +21,8 @@ const SOUNDS := {
 	&"boar_grunt": ["res://assets/audio/sfx/boar_grunt.wav", -13.0, 0.1, 2, 0.4],
 	&"boar_down": ["res://assets/audio/sfx/boar_down.wav", -12.0, 0.08, 2, 0.1],
 	&"camp_stage": ["res://assets/audio/sfx/camp_stage.wav", -10.0, 0.0, 1, 1.0],
+	# Frappe circulaire du héros (lot G2).
+	&"sweep": ["res://assets/audio/sfx/sweep.wav", -9.0, 0.05, 1, 0.2],
 	# Pas du héros : discrets, sous les autres bruitages.
 	&"step_grass": ["res://assets/audio/sfx/step_grass.wav", -25.0, 0.1, 2, 0.08],
 	&"step_dirt": ["res://assets/audio/sfx/step_dirt.wav", -25.0, 0.1, 2, 0.08],

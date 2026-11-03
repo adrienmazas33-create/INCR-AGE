@@ -42,6 +42,10 @@ func _ready() -> void:
 	zones.name = "DangerZones"
 	add_child(zones)
 	zones.setup(_hero, _hud)
+	# Compétence active du héros (lot G2) : indicateur de recharge en bas de l'écran.
+	var slot := SkillSlot.new()
+	slot.setup(_hero.skill)
+	_hud.add_panel(slot)
 	var panel := CampPanel.new()
 	panel.setup(_hero, _world.camp_position, _party)
 	_hud.add_panel(panel)

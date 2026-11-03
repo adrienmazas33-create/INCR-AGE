@@ -29,7 +29,31 @@ func _init() -> void:
 	_save(_water_loop(), "water_loop.wav", 0.5)
 	for k in 4:
 		_save(_bird(k), "bird_%d.wav" % k, 0.5)
+	# Lot G2 (ajouté en dernier pour ne pas changer les sons précédents).
+	_save(_sweep(), "sweep.wav", 0.75)
 	quit()
+
+
+## Frappe circulaire : souffle d'air qui monte puis retombe (bruit filtré dont la bande glisse vers
+## l'aigu puis redescend), et un choc sourd au moment où la massue passe.
+func _sweep() -> PackedFloat32Array:
+	var out := _buffer(0.34)
+	var low := 0.0
+	var band := 0.0
+	var phase := 0.0
+	for i in out.size():
+		var t := float(i) / RATE
+		var u := t / 0.34
+		# Bande passante : de 0,08 à 0,45 puis 0,15 (filtres du premier ordre en cascade).
+		var cut := lerpf(0.08, 0.45, sin(PI * minf(u * 1.4, 1.0)) ) if u < 0.72 else lerpf(0.45, 0.15, (u - 0.72) / 0.28)
+		var n := _rng.randf_range(-1.0, 1.0)
+		low += cut * (n - low)
+		band += 0.5 * (low - band)
+		var air := (low - band) * sin(PI * minf(u * 1.25, 1.0)) * 1.6
+		phase += TAU * (70.0 + 90.0 * exp(-maxf(t - 0.11, 0.0) * 30.0)) / RATE
+		var thump := sin(phase) * exp(-maxf(t - 0.11, 0.0) * 22.0) * (1.0 if t >= 0.11 else 0.0) * 0.8
+		out[i] = tanh((air + thump) * 1.1) * minf(t / 0.004, 1.0)
+	return out
 
 
 ## Pas dans l'herbe : froissement doux, sans claquement.

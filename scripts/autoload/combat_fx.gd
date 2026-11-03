@@ -5,6 +5,7 @@ extends Node
 const ONE_SHOT := preload("res://scenes/fx/one_shot_fx.gd")
 const DAMAGE_NUMBER := preload("res://scenes/fx/damage_number.gd")
 const RING := preload("res://scenes/fx/ring_fx.gd")
+const SWEEP := preload("res://scenes/fx/sweep_fx.gd")
 ## Chargées à la demande : un autoload est compilé avant l'import des images sur un clone neuf.
 const SLASH := "res://assets/art/fx/slash.png"
 const SPARK := "res://assets/art/fx/spark.png"
@@ -115,6 +116,16 @@ func ring(pos: Vector2, radius: float, color: Color) -> void:
 	fx.position = pos
 	fx.radius = radius
 	fx.color = color
+	layer.add_child(fx)
+
+
+## Arc doré qui fait le tour du héros (frappe circulaire, lot G2).
+func sweep(pos: Vector2, radius: float) -> void:
+	if layer == null:
+		return
+	var fx := SWEEP.new()
+	fx.position = pos
+	fx.radius = radius
 	layer.add_child(fx)
 
 

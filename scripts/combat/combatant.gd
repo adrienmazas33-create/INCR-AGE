@@ -72,6 +72,12 @@ func receive_hit(amount: float, from: Vector2, knockback: float) -> void:
 	_on_hit(from)
 
 
+## Interrompt l'attaque en préparation ou en cours, et laisse l'unité étourdie `duration` secondes
+## (frappe circulaire du héros). Chaque ennemi décide de ce qu'il interrompt ; par défaut, rien.
+func stagger(_duration: float) -> void:
+	pass
+
+
 ## Vie maximale : celle des caractéristiques, plus l'amélioration VIGUEUR pour le groupe.
 func _max_health() -> float:
 	return stats.max_health * (1.0 if is_in_group(&"enemies") else Upgrades.health_multiplier())

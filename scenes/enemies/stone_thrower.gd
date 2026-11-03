@@ -169,6 +169,13 @@ func _set_state(s: State, time := 0.0) -> void:
 	_timer = time
 
 
+## Frappe circulaire du héros : un tir en préparation est perdu, et le suivant retardé d'autant.
+func stagger(duration: float) -> void:
+	if _state == State.WINDUP:
+		_set_state(State.ENGAGE, LOST_SIGHT_TIME)
+		_cooldown = maxf(_cooldown, duration)
+
+
 func _on_hit(_from: Vector2) -> void:
 	if _state in [State.IDLE, State.RETURN]:
 		var attacker := Targeting.nearest(self, &"party_members", 160.0, false)

@@ -125,3 +125,47 @@ Tour complet de la carte (8 compagnons, parcours de test qui ne s'arrête pas po
 une fois distancé de 771 px : les combats plus longs des zones lointaines retiennent la troupe pendant
 que le héros poursuit sa route. Captures : `docs/art/g1/` (bandeau des terres sauvages, champion de
 l'est et son crâne vu de loin).
+
+## 7. Lot G2 : FRAPPE CIRCULAIRE, première compétence active du héros (03/11/2026, en attente de validation)
+
+**Commandes** : **ESPACE**, ou le **clic droit** (le clic gauche reste au déplacement à la souris).
+
+**Effet** (`scripts/combat/sweep_strike.gd`) : le héros tourne sur lui-même et frappe tous les ennemis
+à portée de massue autour de lui (26 px entre les corps, environ une case), sans viser :
+- dégâts : 2,5 fois son coup (amélioration FORCE comprise), soit 17 à 31 ;
+- recul net de chaque ennemi touché ;
+- **interruption** : un sanglier qui prépare ou mène sa charge est arrêté et reste étourdi 0,9 s ; un
+  lanceur qui arme son tir le perd, et le suivant est retardé d'autant ;
+- recharge de **6 secondes**.
+
+**Sensations** : tour sur lui-même avec les images classiques (droite, face, gauche, dos), lueur dorée,
+arc blanc et or qui balaie le sol en un éclair puis s'efface, poussière soulevée, étincelles sur chaque
+ennemi touché ; une seule micro-pause (0,06 s) et une légère secousse, quel que soit le nombre
+d'ennemis ; son de souffle et choc sourd (`assets/audio/sfx/sweep.wav`, produit par
+`tools/generate_sfx.gd` ; les autres sons restent identiques).
+
+**Indicateur** (`scenes/ui/skill_slot.gd`) : petite case en bas au centre, avec une flèche circulaire et
+le rappel « ESPACE » ; en recharge, un voile sombre la couvre et se retire ; prête, elle brille un instant.
+
+**Code réutilisable** : `ActiveSkill` (recharge, déclenchement, signaux) porte tout ce qui est commun ;
+une compétence ne décrit que son effet. Les ennemis exposent `stagger()` pour être interrompus.
+
+**Essais au contact** (héros posé sur le repaire, la compétence déclenchée dès qu'un ennemi est à portée,
+option `--auto-skill` de l'outil de test) :
+
+| Situation | Sans la compétence | Avec |
+|---|---|---|
+| Jeune sanglier, 4 compagnons | abattu, héros à 52/60 PV | abattu, héros intact (charge brisée) |
+| Lanceur isolé, 4 compagnons | abattu | abattu, frappé une fois |
+| Champion de l'est, groupe au maximum | le héros tombe, le champion survit | champion abattu ; la frappe ne lui retire qu'environ 9 % de sa vie par coup |
+
+La compétence sert à se dégager et à briser une attaque ; les compagnons font l'essentiel des dégâts,
+et un champion ne tombe pas sous la seule frappe.
+
+**Sans régression** : tour complet de la carte (sans utiliser la compétence) identique à celui du lot
+G1 : 149,8 s, 60 FPS, mêmes chiffres de suivi, aucune erreur. Déplacements, attaques automatiques,
+formation et sauvegarde inchangés ; rien de nouveau n'est enregistré. Captures : `docs/art/g2/`
+(frappe en pleine mêlée ; indicateur prêt, puis en recharge).
+
+**Non vérifié par un vrai clic** : le déclenchement au clic droit (seules les touches sont simulées par
+l'outil de test) ; à confirmer en jouant.

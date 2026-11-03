@@ -62,6 +62,10 @@ toggle_fullscreen={
 "deadzone": 0.2,
 "events": [Object(InputEventKey,"keycode":4194342)]
 }
+hero_skill={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":32)]
+}
 buy_1={
 "deadzone": 0.2,
 "events": [Object(InputEventKey,"physical_keycode":49), Object(InputEventKey,"keycode":4194439)]

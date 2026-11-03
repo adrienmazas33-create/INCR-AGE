@@ -28,6 +28,10 @@ var _clicks := []
 var _presses := []
 var _set_roles := []
 var _hurts := []
+## « --auto-skill » : le héros déclenche sa compétence dès qu'elle est prête et qu'un ennemi est à portée.
+var _auto_skill := false
+## « --press-wait=s » : attente après chaque touche simulée (0,3 s par défaut).
+var _press_wait := 0.3
 var _sling_test := ""
 var _kill_camp := false
 
@@ -35,7 +39,7 @@ var _kill_camp := false
 static func attach_if_requested(parent: Node, hero: Node2D, camera: GameCamera, mover: ClickMover = null) -> void:
 	var args := OS.get_cmdline_user_args()
 	if not Array(args).any(func(a: String) -> bool:
-			return a.begins_with("--capture") or a.begins_with("--walk") or a.begins_with("--at") or a.begins_with("--route") or a.begins_with("--buy") or a.begins_with("--click") or a.begins_with("--press") or a.begins_with("--set-role") or a.begins_with("--hurt") or a.begins_with("--sling-test") or a.begins_with("--kill-camp") or a.begins_with("--income-period")):
+			return a.begins_with("--capture") or a.begins_with("--walk") or a.begins_with("--at") or a.begins_with("--route") or a.begins_with("--buy") or a.begins_with("--click") or a.begins_with("--press") or a.begins_with("--set-role") or a.begins_with("--hurt") or a.begins_with("--sling-test") or a.begins_with("--kill-camp") or a.begins_with("--income-period") or a.begins_with("--auto-skill")):
 		return
 	var dev := DevCapture.new()
 	dev._hero = hero
@@ -71,6 +75,10 @@ func _parse(args: PackedStringArray) -> void:
 				_kill_camp = true
 			"--sling-test":
 				_sling_test = kv[1] if kv.size() > 1 else "clear"
+			"--press-wait":
+				_press_wait = float(kv[1])
+			"--auto-skill":
+				_auto_skill = true
 			"--hurt":
 				_hurts = Array(kv[1].split(","))
 			"--set-role":
@@ -171,6 +179,9 @@ func _run() -> void:
 	if spawner:
 		print("DevCapture : zones : héros en %s ; %s" % [DangerZones.NAMES[DangerZones.zone_at(_hero.global_position)],
 			spawner.zone_summary()])
+	var skill := (_hero as Hero).skill
+	print("DevCapture : compétence %s : %d utilisation(s), %d ennemi(s) touché(s), %d abattu(s) par elle ; recharge restante %.1f s" % [
+		skill.display_name, skill.uses, SweepStrike.hits, SweepStrike.kills, skill.remaining])
 	var camp := get_tree().current_scene.get_node_or_null("EnemyCamp") as EnemyCamp
 	if camp:
 		print("DevCapture : camp du plateau : état %s, %d capture(s) déclenchée(s), %d défenseur(s) debout, réserve %s, %d récolte(s)" % [
@@ -261,6 +272,20 @@ func _test_sling() -> void:
 		before, str(int(boar.health.current)) if is_instance_valid(boar) else "disparu"])
 
 
+## « --auto-skill » : compétence déclenchée dès qu'elle est prête et qu'un ennemi est à sa portée.
+func _physics_process(_delta: float) -> void:
+	if not _auto_skill:
+		return
+	var hero := _hero as Hero
+	if not hero.skill.is_ready() or not hero.is_alive():
+		return
+	for node in get_tree().get_nodes_in_group(&"enemies"):
+		var foe := node as Combatant
+		if foe and foe.is_alive() and hero.edge_distance(foe) <= SweepStrike.RADIUS:
+			hero.skill.try_use()
+			return
+
+
 ## Appui puis relâche d'une touche (nom Godot, ex. « F2 »), comme au clavier.
 func _press(key_name: String) -> void:
 	for pressed in [true, false]:
@@ -271,7 +296,7 @@ func _press(key_name: String) -> void:
 		get_viewport().push_input(key)
 		await get_tree().process_frame
 	print("DevCapture : touche %s" % key_name)
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(_press_wait).timeout
 
 
 ## Clic gauche (mouvement, appui, relâche) envoyé à la fenêtre de jeu, interface comprise.
