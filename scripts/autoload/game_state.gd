@@ -8,6 +8,8 @@ signal upgrade_bought(id: String, level: int)
 signal roles_changed
 ## Camp ennemi capturé (capture définitive).
 signal camp_captured(id: String)
+## Lieu découvert (lot G3, définitif).
+signal discovered(id: String)
 
 const KINDS := ["food", "materials", "knowledge"]
 ## Rôles des compagnons : combattant à la lance (rôle historique) ou frondeur.
@@ -25,6 +27,8 @@ var next_recruit_role := DEFAULT_ROLE
 var captured_camps: Array[String] = []
 ## Réserve de chaque camp capturé (lot 4) : camp -> {"food": n, "materials": n}, à récupérer sur place.
 var camp_stock := {}
+## Lieux découverts (identifiants, voir Exploration).
+var discoveries: Array[String] = []
 
 
 func add(kind: String, amount := 1) -> void:
@@ -51,7 +55,8 @@ func set_upgrade(id: String, new_level: int) -> void:
 
 func summary() -> String:
 	return "vivres %d, matériaux %d, savoir %d ; améliorations %s ; rôles %s" % [resources["food"], resources["materials"],
-		resources["knowledge"], upgrades, roles] + (" ; camps capturés %s, réserves %s" % [captured_camps, camp_stock] if not captured_camps.is_empty() else "")
+		resources["knowledge"], upgrades, roles] + (" ; camps capturés %s, réserves %s" % [captured_camps, camp_stock] if not captured_camps.is_empty() else "") \
+		+ (" ; lieux découverts %s" % [discoveries] if not discoveries.is_empty() else "")
 
 
 func set_role(index: int, role: String) -> void:
@@ -81,6 +86,12 @@ func capture_camp(id: String) -> void:
 	if not is_camp_captured(id):
 		captured_camps.append(id)
 		camp_captured.emit(id)
+
+
+func discover(id: String) -> void:
+	if not id in discoveries:
+		discoveries.append(id)
+		discovered.emit(id)
 
 
 ## Ajoute `amount` de `kind` à la réserve du camp, sans dépasser `cap` ; renvoie vrai si elle a changé.

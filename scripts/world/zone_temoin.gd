@@ -79,6 +79,8 @@ var _our_trees: Array[Node2D] = []
 var _hidden_incr: Array[CanvasItem] = []
 ## Cases des deux zones, dans l'ordre (rangée par rangée).
 var _cells: Array[Vector2i] = []
+## Buissons à baies de nos tuiles (lot G3) : case -> sprite, pour montrer ou retirer les baies.
+var _berry_bushes := {}
 var _nature := {}
 ## Décalques au sol : [numéro dans decals.png, position des pieds en pixels], calculés une fois.
 var _decals: Array = []
@@ -208,7 +210,10 @@ func _plant_our_trees() -> void:
 		elif ch == "p":
 			_add_ours("pine", at, 1.0, _hash(c) % 2 == 0)
 		elif ch == "b":
-			_add_ours("bush_berry" if _hash(c) % 3 == 0 else "bush", at, 1.0, _hash(c) % 2 == 0)
+			var berries := Exploration.is_berry_bush(c)
+			var bush := _add_ours("bush_berry" if berries else "bush", at, 1.0, _hash(c) % 2 == 0)
+			if berries:
+				_berry_bushes[c] = bush
 	for c in STUMPS:
 		_add_ours("stump", Vector2(c * T) + Vector2(T * 0.5, T * 0.75), 1.0, false)
 
@@ -220,10 +225,12 @@ func _forest_edge(c: Vector2i) -> bool:
 	return false
 
 
-## Un objet de la planche nature.png, posé à ses pieds, avec son ombre dessous (même nœud, trié en profondeur).
-func _add_ours(key: String, at: Vector2, shade: float, flip: bool) -> void:
+## Un objet de la planche nature.png, posé à ses pieds, avec son ombre dessous (même nœud, trié en
+## profondeur) ; renvoie le sprite de l'objet lui-même.
+func _add_ours(key: String, at: Vector2, shade: float, flip: bool) -> Sprite2D:
 	var node := Node2D.new()
 	node.position = at.round()
+	var main: Sprite2D
 	for part in [key + "_shadow", key]:
 		var info: Dictionary = _nature[part]
 		var sprite := Sprite2D.new()
@@ -236,9 +243,11 @@ func _add_ours(key: String, at: Vector2, shade: float, flip: bool) -> void:
 		sprite.flip_h = flip and part == key
 		if part == key:
 			sprite.modulate = Color(shade, shade, shade)
+			main = sprite
 		node.add_child(sprite)
 	_entities.add_child(node)
 	_our_trees.append(node)
+	return main
 
 
 ## Arbres LPC : un toutes les deux cases en forêt (couvert dense), et sur chaque arbre isolé.
@@ -472,6 +481,10 @@ func _in_zone(p: Vector2) -> bool:
 
 ## Case dans l'une des deux zones (camp, plateau).
 func _in_zones(c: Vector2i) -> bool:
+	return covers(c)
+
+
+static func covers(c: Vector2i) -> bool:
 	for zone in ZONES:
 		if zone.has_point(c):
 			return true
@@ -480,6 +493,20 @@ func _in_zones(c: Vector2i) -> bool:
 
 static func _hash(c: Vector2i) -> int:
 	return absi((c.x * 73856093) ^ (c.y * 19349663)) % 1000
+
+
+static func hash_cell(c: Vector2i) -> int:
+	return _hash(c)
+
+
+## Buisson à baies cueilli ou repoussé (lot G3, Exploration) : notre buisson montre ou perd ses baies.
+func set_berries(c: Vector2i, ripe: bool) -> void:
+	var sprite: Sprite2D = _berry_bushes.get(c)
+	if sprite == null:
+		return
+	var info: Dictionary = _nature["bush_berry" if ripe else "bush"]
+	sprite.region_rect = Rect2(info["rect"][0], info["rect"][1], info["rect"][2], info["rect"][3])
+	sprite.offset = -Vector2(info["pivot"][0], info["pivot"][1])
 
 
 # --- Décalques au sol (voie C, étape 5) -------------------------------------------------------

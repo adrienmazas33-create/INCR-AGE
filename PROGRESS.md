@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : lot G2 (FRAPPE CIRCULAIRE, compétence du héros), validé et publié (pas de tag). Lot G1 validé et publié. Feuille de route G1 à G5 dans docs/DIAGNOSTIC_GAMEPLAY.md. Marche du soldat PixelLab validée, publiée et archivée. Soldat PixelLab dans le groupe validé et publié. Héros PixelLab validé et publié. Troupes organiques (lot 1), lots 1 à 4 de la diversification de l'armée et voie C, étapes 1 à 6 (zone témoin complète), validés et publiés. Audio terminé et validé.**
+**État : lot G3 (récompenses d'exploration), fait, en commit local, en attente de validation (non poussé, pas de tag). Lot G2 validé et publié. Lot G1 validé et publié. Feuille de route G1 à G5 dans docs/DIAGNOSTIC_GAMEPLAY.md. Marche du soldat PixelLab validée, publiée et archivée. Soldat PixelLab dans le groupe validé et publié. Héros PixelLab validé et publié. Troupes organiques (lot 1), lots 1 à 4 de la diversification de l'armée et voie C, étapes 1 à 6 (zone témoin complète), validés et publiés. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -306,6 +306,7 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
+- **Lot G3 : récompenses d'exploration** (05/11/2026), en attente de validation (commit local, non poussé) : sept lieux à découvrir une seule fois (pierres levées, anciens foyers, ossements de mammouth), récompense plus riche au loin, découvertes enregistrées ; baies sur 29 buissons et silex sur 7 rochers, cueillis en passant, qui repoussent. Détail et essais : `docs/DIAGNOSTIC_GAMEPLAY.md`, section 8.
 - **Lot G2 : FRAPPE CIRCULAIRE** (03/11/2026), validé par le porteur du projet et publié : première compétence active du héros, ESPACE ou clic droit ; frappe tout autour (portée courte), repousse, brise une charge ou un tir en préparation, recharge 6 s ; effet doré, son, indicateur en bas de l'écran. Base `ActiveSkill` réutilisable. Détail et essais : `docs/DIAGNOSTIC_GAMEPLAY.md`, section 7.
 - **Lot G1 : difficulté géographique** (03/11/2026), validé par le porteur du projet et publié : trois cercles autour du feu (terres proches inchangées, sauvages, hostiles), ennemis renforcés et mieux récompensés au loin, deux champions marqués d'un crâne (nord-ouest, est), bandeau au changement de zone. Rien de nouveau dans la sauvegarde. Détail, essais et réglages : `docs/DIAGNOSTIC_GAMEPLAY.md`, section 6.
 - **Plan graphique** (03/11/2026) : audit et plan simplifié dans `docs/PLAN_GRAPHIQUE.md`, captures de l'état actuel dans `docs/art/audit/`. Rien de développé : la vitrine attend les exports PixelLab du héros et la décision de taille des personnages (section 2 du plan).

@@ -1,7 +1,7 @@
 extends Node
 ## Sauvegarde locale de la progression (lot 3C) : ressources, améliorations (dont compagnons et stade
 ## du camp, qui en découlent), rôle de chaque compagnon (version 2), camps ennemis capturés (champ
-## facultatif de la version 2), dernière position valide du héros.
+## facultatif de la version 2), lieux découverts (lot G3, facultatif), dernière position valide du héros.
 ## Fichier JSON dans user://.
 ##
 ## Fiabilité :
@@ -95,6 +95,7 @@ func start() -> void:
 	GameState.resource_changed.connect(func(_kind, _total): _mark_dirty())
 	GameState.roles_changed.connect(save_now)
 	GameState.camp_captured.connect(func(_id: String) -> void: save_now())
+	GameState.discovered.connect(func(_id: String) -> void: save_now())
 
 
 func save_now() -> bool:
@@ -164,6 +165,7 @@ func _snapshot() -> Dictionary:
 		"next_recruit_role": GameState.next_recruit_role,
 		"captured_camps": GameState.captured_camps.duplicate(),
 		"camp_stock": GameState.camp_stock.duplicate(true),
+		"discoveries": GameState.discoveries.duplicate(),
 		"hero": null,
 	}
 	var pos: Variant = hero_position_provider.call() if hero_position_provider.is_valid() else null
@@ -208,6 +210,13 @@ func _apply(data: Dictionary) -> void:
 		for id: Variant in camps:
 			if id is String and id in EnemyCamp.KNOWN and not id in GameState.captured_camps:
 				GameState.captured_camps.append(id)
+	# Lieux découverts (lot G3, champ facultatif) : identifiants connus seulement, sans doublon.
+	GameState.discoveries.clear()
+	var found: Variant = data.get("discoveries", [])
+	if found is Array:
+		for id: Variant in found:
+			if id is String and Exploration.LANDMARKS.has(id) and not id in GameState.discoveries:
+				GameState.discoveries.append(id)
 	# Réserves des camps capturés (lot 4, champ facultatif) : quantités bornées au plafond, camps pris seulement.
 	GameState.camp_stock.clear()
 	var stocks: Variant = data.get("camp_stock", {})

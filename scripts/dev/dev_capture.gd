@@ -179,6 +179,9 @@ func _run() -> void:
 	if spawner:
 		print("DevCapture : zones : héros en %s ; %s" % [DangerZones.NAMES[DangerZones.zone_at(_hero.global_position)],
 			spawner.zone_summary()])
+	var exploration := get_tree().current_scene.get_node_or_null("Exploration") as Exploration
+	if exploration:
+		print("DevCapture : exploration : " + exploration.summary())
 	var skill := (_hero as Hero).skill
 	print("DevCapture : compétence %s : %d utilisation(s), %d ennemi(s) touché(s), %d abattu(s) par elle ; recharge restante %.1f s" % [
 		skill.display_name, skill.uses, SweepStrike.hits, SweepStrike.kills, skill.remaining])

@@ -56,6 +56,12 @@ func _ready() -> void:
 	# Sous la couche des ponts et nénuphars d'origine, qui restent visibles par-dessus notre eau.
 	_world.move_child(zone, _world.get_node("Overlay").get_index())
 	zone.setup(_world.map, _world.entity_layer(), _hud, _world.get_node("Overlay"))
+	# Récompenses d'exploration (lot G3) : lieux à découvrir, baies et silex à récolter.
+	var exploration := Exploration.new()
+	exploration.name = "Exploration"
+	add_child(exploration)
+	exploration.setup(_world.map, _hero, _hud, _world.entity_layer())
+	exploration.berries_changed.connect(zone.set_berries)
 	# Camp ennemi capturable du plateau nord-est (lot 3) : décor au sol sous les personnages, mât trié en profondeur.
 	var camp_ground := Node2D.new()
 	camp_ground.name = "CampGround"

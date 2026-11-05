@@ -169,3 +169,41 @@ formation et sauvegarde inchangés ; rien de nouveau n'est enregistré. Captures
 
 **Non vérifié par un vrai clic** : le déclenchement au clic droit (seules les touches sont simulées par
 l'outil de test) ; à confirmer en jouant.
+
+## 8. Lot G3 : récompenses d'exploration (05/11/2026, en attente de validation)
+
+**Lieux à découvrir** (`scripts/world/exploration.gd`, `scenes/props/landmark.gd`) : sept lieux posés
+sur des clairières dégagées, dans les trois zones. Le héros qui passe à moins de 40 px découvre le lieu :
+bandeau à son nom, éclat de lumière, arpège, et la récompense jaillit au sol, ramassée par l'aimant du
+groupe comme le butin. Tant qu'il n'est pas découvert, une étincelle dorée le signale de temps en temps.
+
+| Lieu | Où | Terres proches / sauvages / hostiles |
+|---|---|---|
+| Pierre levée (3) | ouest, nord, sous le plateau à l'est | savoir 1 / 2 / 3 |
+| Ancien foyer (2) | sud, sud-est | vivres 3 / 5 / 8, savoir 1 / 1 / 2 |
+| Ossements de mammouth (2) | ouest lointain, est | matériaux 3 / 5 / 8, savoir 1 / 1 / 2 |
+
+Une seule récompense par lieu : les découvertes sont enregistrées (champ facultatif `discoveries` de
+la sauvegarde, identifiants validés au chargement ; une ancienne sauvegarde n'en a aucun).
+
+**Ressources à récolter** (`scenes/props/harvest_spot.gd`) : 29 buissons portent des baies, 7 rochers des
+éclats de silex. En les frôlant, le héros les cueille : 1 vivre ou 1 matériau dans les terres proches,
+2 au-delà, qui jaillissent au sol. Les baies repoussent en 90 s, le silex en 120 s. Dans les zones
+témoins, ce sont les buissons que la voie C dessine déjà avec des baies : cueillis, ils les perdent,
+puis les retrouvent. Leur état n'est pas enregistré (tout est mûr au lancement).
+
+**Essais** (copies de sauvegardes de test) :
+- ancien foyer du sud découvert : +3 vivres et +1 savoir ramassés ; découverte enregistrée aussitôt, et
+  toujours là après une relance (pas de seconde récompense) ;
+- baies hors zone témoin : 1 récolte, +1 vivre ; dans le camp : 1 récolte ;
+- silex au pied du plateau (terres sauvages) : 1 récolte, +2 matériaux.
+- Premier dessin du foyer trop discret dans l'herbe (`docs/art/g3/lieux_avant_retouche.png`) : redessiné
+  avec un cercle de pierres éclairées, une bûche calcinée et deux braises ; éclats de silex grossis.
+
+**Non vérifié à l'œil** : l'échange d'image d'un buisson à baies de la voie C une fois cueilli (le
+buisson testé était caché par les arbres ; la récolte, elle, est comptée).
+
+**Sans régression** : tour complet de la carte identique à celui du lot G2 (149,8 s, 60 FPS, mêmes
+chiffres de suivi, aucune erreur ; 46 nœuds de plus pour les lieux et les ressources). Le parcours de
+test suit les chemins et ne frôle ni lieu ni ressource. Captures : `docs/art/g3/` (pierre levée,
+ossements, ancien foyer ; baies ; silex avant et après la cueillette).

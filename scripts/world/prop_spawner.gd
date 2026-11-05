@@ -68,6 +68,18 @@ func spawn(entities: Node2D) -> void:
 				butterflies += 1
 
 
+## Position du pied d'un décor du catalogue (avec son petit décalage déterministe) : les ressources à
+## récolter (Exploration) se posent exactement sur leur buisson ou leur rocher.
+static func prop_position(c: Vector2i, ch: String) -> Vector2:
+	var anchor := Vector2(c * T) + Vector2(T * 0.5, T * 0.75)
+	var jitter: float = PROPS[ch]["jitter"]
+	return anchor + Vector2(_rand(c, 1) - 0.5, _rand(c, 2) - 0.5) * 2.0 * jitter
+
+
+static func hash_cell(c: Vector2i) -> int:
+	return _hash(c)
+
+
 func _spawn_prop(parent: Node2D, def: Dictionary, c: Vector2i, anchor: Vector2) -> Node2D:
 	var sprites: Array = def["sprites"]
 	var jitter: float = def["jitter"]
