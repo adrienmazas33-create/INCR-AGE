@@ -126,7 +126,7 @@ une fois distancé de 771 px : les combats plus longs des zones lointaines retie
 que le héros poursuit sa route. Captures : `docs/art/g1/` (bandeau des terres sauvages, champion de
 l'est et son crâne vu de loin).
 
-## 7. Lot G2 : FRAPPE CIRCULAIRE, première compétence active du héros (03/11/2026, en attente de validation)
+## 7. Lot G2 : FRAPPE CIRCULAIRE, première compétence active du héros (03/11/2026, validé)
 
 **Commandes** : **ESPACE**, ou le **clic droit** (le clic gauche reste au déplacement à la souris).
 
