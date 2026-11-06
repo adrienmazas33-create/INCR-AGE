@@ -170,7 +170,7 @@ formation et sauvegarde inchangés ; rien de nouveau n'est enregistré. Captures
 **Non vérifié par un vrai clic** : le déclenchement au clic droit (seules les touches sont simulées par
 l'outil de test) ; à confirmer en jouant.
 
-## 8. Lot G3 : récompenses d'exploration (05/11/2026, en attente de validation)
+## 8. Lot G3 : récompenses d'exploration (05/11/2026, validé le 06/11/2026)
 
 **Lieux à découvrir** (`scripts/world/exploration.gd`, `scenes/props/landmark.gd`) : sept lieux posés
 sur des clairières dégagées, dans les trois zones. Le héros qui passe à moins de 40 px découvre le lieu :
