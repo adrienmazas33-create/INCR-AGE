@@ -129,8 +129,9 @@ func _harvest(spot: Dictionary) -> void:
 	var node: Node2D = spot["node"]
 	harvests += 1
 	_set_ripe(spot, false)
-	spot["timer"] = def["regrow"]
-	_spill(node.position, def["kind"], def["amount"][spot["zone"]])
+	# Amélioration RECOLTE (lot G4) : cueillette plus riche, repousse plus rapide.
+	spot["timer"] = def["regrow"] * Upgrades.harvest_regrow_factor()
+	_spill(node.position, def["kind"], def["amount"][spot["zone"]] + Upgrades.harvest_bonus())
 	CombatFx.puff(node.position)
 
 

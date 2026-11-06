@@ -26,7 +26,16 @@ var _spin := -1.0
 
 func _init() -> void:
 	display_name = "FRAPPE CIRCULAIRE"
-	cooldown = 6.0
+	cooldown = Upgrades.SKILL_COOLDOWN
+
+
+## Recharge raccourcie par l'amélioration FRAPPE (lot G4), dès le lancement puis à chaque achat.
+func _ready() -> void:
+	cooldown = Upgrades.skill_cooldown()
+	GameState.upgrade_bought.connect(func(id: String, _level: int) -> void:
+		if id == "skill":
+			cooldown = Upgrades.skill_cooldown()
+			remaining = minf(remaining, cooldown))
 
 
 func _activate() -> void:

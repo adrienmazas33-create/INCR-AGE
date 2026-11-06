@@ -1,7 +1,8 @@
 class_name CampPanel
 extends Control
 ## Panneau du feu de camp : glisse depuis la gauche quand le héros approche du feu, se range quand
-## il s'éloigne. Une ligne par amélioration ; achat par clic, toucher, ou touches 1 à 4.
+## il s'éloigne. Une ligne par amélioration ; achat par clic, toucher, ou touches 1 à 7.
+## Dernière ligne, séparée des autres (lot G4) : le grand objectif de l'âge, AGE DES METAUX.
 ## Sous les améliorations, la bande TROUPE : rôle de chaque compagnon et de la prochaine recrue.
 ## Le héros reste pilotable pendant ce temps : rien ne change dans les commandes de base.
 
@@ -35,7 +36,7 @@ func setup(hero: Hero, camp: Vector2, party: Party = null) -> void:
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_PASS
-	size = Vector2(WIDTH, HEADER_H + ROW_H * Upgrades.ORDER.size() + TROOP_H + FOOTER_H + UiFrame.BORDER)
+	size = Vector2(WIDTH, HEADER_H + ROW_H * _ids().size() + TROOP_H + FOOTER_H + UiFrame.BORDER)
 	_stage_label.align = 0.0
 	_stage_label.modulate = TITLE
 	_stage_label.position = Vector2(9, size.y - UiFrame.BORDER - FOOTER_H * 0.5)
@@ -45,9 +46,9 @@ func _ready() -> void:
 	title.modulate = TITLE
 	title.position = Vector2(WIDTH * 0.5, 10)
 	add_child(title)
-	for i in Upgrades.ORDER.size():
+	for i in _ids().size():
 		var row := CampPanelRow.new()
-		row.id = Upgrades.ORDER[i]
+		row.id = _ids()[i]
 		row.key = i + 1
 		row.position = Vector2(UiFrame.BORDER, HEADER_H + i * ROW_H)
 		row.size = Vector2(WIDTH - UiFrame.BORDER * 2.0, ROW_H - 2)
@@ -56,7 +57,7 @@ func _ready() -> void:
 		_rows.append(row)
 	var troop := TroopStrip.new()
 	troop.party = _party
-	troop.position = Vector2(UiFrame.BORDER, HEADER_H + Upgrades.ORDER.size() * ROW_H)
+	troop.position = Vector2(UiFrame.BORDER, HEADER_H + _ids().size() * ROW_H)
 	troop.size = Vector2(WIDTH - UiFrame.BORDER * 2.0, TROOP_H - 2)
 	add_child(troop)
 	GameState.resource_changed.connect(func(_k, _t): _refresh())
@@ -102,8 +103,16 @@ func _draw() -> void:
 	# Pied : stade du campement et barre de progression vers le stade suivant.
 	var foot_y := size.y - UiFrame.BORDER - FOOTER_H
 	draw_rect(Rect2(UiFrame.BORDER, foot_y, size.x - UiFrame.BORDER * 2.0, 1), UiFrame.WOOD_DARK)
+	# Filet doré au-dessus de l'objectif de l'âge, pour le détacher des améliorations.
+	var age_y := HEADER_H + Upgrades.ORDER.size() * ROW_H - 2.0
+	draw_rect(Rect2(UiFrame.BORDER + 4, age_y, size.x - UiFrame.BORDER * 2.0 - 8, 1), Color(TITLE, 0.55))
 	var bar := Rect2(size.x - BAR_WIDTH - 9, foot_y + FOOTER_H * 0.5 - 2, BAR_WIDTH, 4)
 	draw_rect(bar.grow(1), UiFrame.OUTER)
 	draw_rect(bar, Color8(70, 50, 40))
 	draw_rect(Rect2(bar.position, Vector2(roundf(BAR_WIDTH * Upgrades.camp_progress()), 4)), TITLE)
 	draw_rect(Rect2(bar.position, Vector2(roundf(BAR_WIDTH * Upgrades.camp_progress()), 1)), TITLE.lightened(0.4))
+
+
+## Lignes du panneau : améliorations, puis objectif de l'âge.
+static func _ids() -> Array:
+	return Upgrades.ORDER + [Upgrades.AGE]

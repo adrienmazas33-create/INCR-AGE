@@ -54,3 +54,9 @@ func _on_bought(id: String, _level: int) -> void:
 				CombatFx.sparkle(m.global_position + Vector2(0, -16), GREEN)
 		"magnet":
 			CombatFx.ring(_party.hero.global_position + Vector2(0, -4), Upgrades.magnet_radius(), GOLD)
+		"skill":
+			_party.hero.glow(GOLD, 0.8)
+			CombatFx.sweep(_party.hero.global_position + Vector2(0, -6), 40.0)
+		"harvest":
+			_party.hero.glow(GREEN, 0.8)
+			CombatFx.ring(_party.hero.global_position + Vector2(0, -4), 48.0, GREEN)

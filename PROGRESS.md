@@ -1,6 +1,6 @@
 # INCR-AGE — Suivi du projet
 
-**État : lots G3 (récompenses d'exploration), G2 et G1 validés et publiés (sans tag). Feuille de route G1 à G5 dans docs/DIAGNOSTIC_GAMEPLAY.md. Marche du soldat PixelLab validée, publiée et archivée. Soldat PixelLab dans le groupe validé et publié. Héros PixelLab validé et publié. Troupes organiques (lot 1), lots 1 à 4 de la diversification de l'armée et voie C, étapes 1 à 6 (zone témoin complète), validés et publiés. Audio terminé et validé.**
+**État : lot G4 (stades du campement qui débloquent, objectif AGE DES METAUX), fait, en commit local, en attente de validation (non poussé, pas de tag). Lots G3 (récompenses d'exploration), G2 et G1 validés et publiés (sans tag). Feuille de route G1 à G5 dans docs/DIAGNOSTIC_GAMEPLAY.md. Marche du soldat PixelLab validée, publiée et archivée. Soldat PixelLab dans le groupe validé et publié. Héros PixelLab validé et publié. Troupes organiques (lot 1), lots 1 à 4 de la diversification de l'armée et voie C, étapes 1 à 6 (zone témoin complète), validés et publiés. Audio terminé et validé.**
 **Validé : phases 1, 2 (lots A et B), 3 (lots 3A, 3B, 3C) — tags `phase-1`, `phase-2a`, `phase-2b`, `phase-3a`, `phase-3b`, `phase-3c`. Plans : `docs/PHASE_2_PLAN.md`, `docs/PHASE_3_PLAN.md`.**
 Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 
@@ -12,7 +12,7 @@ Titre du jeu non choisi : « INCR-AGE » est le nom du dossier, pas un titre.
 - Contrôles : ZQSD, WASD ou flèches pour se déplacer, ou clic gauche sur le sol ; molette pour zoomer ; V (ou le bouton à note de musique en bas à droite) pour les volumes ; au camp, bande TROUPE du panneau du feu (clic sur un compagnon : lance ou fronde ; clic sur la case libre : rôle de la prochaine recrue) ; F2 pour faire défiler les rendus de la zone témoin (nos tuiles, original, essai LPC) ; F11 pour le plein écran ; Échap pour quitter.
 - Couper les effets d'ambiance : lancer avec `-- --no-fx`, ou passer `ambient_effects` à `false` dans `scripts/autoload/game_settings.gd`.
 - Combat : rien à presser. Le héros et ses compagnons frappent seuls les ennemis à portée ; le joueur choisit où se battre par ses déplacements. `-- --no-hitstop` coupe la micro-pause d'impact.
-- Améliorations : s'approcher du feu de camp ouvre le panneau ; cliquer (ou toucher) une ligne, ou touches 1 à 4. Un repère doré flotte au-dessus du feu quand un achat est possible.
+- Améliorations : s'approcher du feu de camp ouvre le panneau ; cliquer (ou toucher) une ligne, ou touches 1 à 7 (lignes ouvertes selon le stade du campement, lot G4). Un repère doré flotte au-dessus du feu quand un achat est possible.
 - Évolution du camp : automatique avec la prospérité (niveaux achetés) ; le stade et la progression s'affichent au pied du panneau du feu.
 - Sauvegarde : automatique, rien à faire. La partie reprend au lancement là où elle s'était arrêtée.
   - Fichier : `%APPDATA%\Godot\app_userdata\INCR-AGE (prototype)\save.json`, avec sa copie de secours `save.bak.json`.
@@ -306,6 +306,7 @@ Voir les priorités 2 et 3 du plan artistique.
 
 ## En cours
 
+- **Lot G4 : une civilisation qui débloque** (06/11/2026), en attente de validation (commit local, non poussé) : la TRIBU ouvre FRAPPE (recharge de la compétence du héros de 6 à 3 s), le VILLAGE ouvre RECOLTE (cueillettes plus riches, repousse plus rapide) et le grand objectif AGE DES METAUX en trois étapes (passage effectif non développé) ; lignes verrouillées visibles avec leur stade ; FORCE et VIGUEUR montent plus haut ; tout acheter coûte environ cinq fois plus ; bandeaux en file. Détail et essais : `docs/DIAGNOSTIC_GAMEPLAY.md`, section 9.
 - **Lot G3 : récompenses d'exploration** (05/11/2026), validé et publié le 06/11/2026 : sept lieux à découvrir une seule fois (pierres levées, anciens foyers, ossements de mammouth), récompense plus riche au loin, découvertes enregistrées ; baies sur 29 buissons et silex sur 7 rochers, cueillis en passant, qui repoussent. Détail et essais : `docs/DIAGNOSTIC_GAMEPLAY.md`, section 8.
 - **Lot G2 : FRAPPE CIRCULAIRE** (03/11/2026), validé par le porteur du projet et publié : première compétence active du héros, ESPACE ou clic droit ; frappe tout autour (portée courte), repousse, brise une charge ou un tir en préparation, recharge 6 s ; effet doré, son, indicateur en bas de l'écran. Base `ActiveSkill` réutilisable. Détail et essais : `docs/DIAGNOSTIC_GAMEPLAY.md`, section 7.
 - **Lot G1 : difficulté géographique** (03/11/2026), validé par le porteur du projet et publié : trois cercles autour du feu (terres proches inchangées, sauvages, hostiles), ennemis renforcés et mieux récompensés au loin, deux champions marqués d'un crâne (nord-ouest, est), bandeau au changement de zone. Rien de nouveau dans la sauvegarde. Détail, essais et réglages : `docs/DIAGNOSTIC_GAMEPLAY.md`, section 6.

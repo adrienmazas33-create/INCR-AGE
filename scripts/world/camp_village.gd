@@ -24,6 +24,9 @@ const STAGE_VILLAGERS := {
 		[Vector2(63.5, 62.4), Vector2(64.6, 59.7), Vector2(60.6, 58.9)]],
 }
 const ANNOUNCES := {2: "LA TRIBU GRANDIT", 3: "LE VILLAGE PROSPERE"}
+## Ce que chaque stade ouvre au feu de camp (lot G4), annoncé juste après.
+const UNLOCKS := {2: ["NOUVELLE AMELIORATION - FRAPPE"],
+	3: ["NOUVELLE AMELIORATION - RECOLTE", "OBJECTIF - AGE DES METAUX"]}
 ## Les nouveaux villageois arrivent par le chemin du sud.
 const ARRIVAL := Vector2(57.5, 62.0)
 const STEP_DELAY := 0.28
@@ -50,17 +53,37 @@ func setup(world: World, hud: Hud) -> void:
 	GameState.upgrade_bought.connect(_on_upgrade_bought)
 
 
-func _on_upgrade_bought(_id: String, _level: int) -> void:
+func _on_upgrade_bought(id: String, level: int) -> void:
+	if id == Upgrades.AGE:
+		_age_step(level)
 	var target := Upgrades.camp_stage()
 	while stage < target:
 		stage += 1
 		await _build(stage, true)
 
 
+## Étape de l'objectif de l'âge franchie : bandeau, rayons ; la dernière est un grand moment.
+func _age_step(level: int) -> void:
+	var at := _fire.global_position if _fire else _world.camp_position
+	var steps: int = Upgrades.DEFS[Upgrades.AGE]["max"]
+	if level < steps:
+		_hud.announce("AGE DES METAUX %d/%d" % [level, steps])
+		CombatFx.ring(at + Vector2(0, -4), 36.0, GOLD)
+		return
+	_hud.announce("AGE DES METAUX - TRIBU PRETE")
+	AudioManager.play(&"camp_stage")
+	CombatFx.rays(at + Vector2(0, -14), 2.2)
+	CombatFx.flash_screen()
+	CombatFx.burst(at + Vector2(0, -12), GOLD)
+	CombatFx.ring(at + Vector2(0, -4), 56.0, GOLD)
+
+
 ## Ajoute les éléments d'un stade ; `animated` : apparition un à un, bandeau, arrivée des villageois.
 func _build(s: int, animated: bool) -> void:
 	if animated:
 		_hud.announce(ANNOUNCES[s])
+		for text: String in UNLOCKS.get(s, []):
+			_hud.announce(text)
 		AudioManager.play(&"camp_stage")
 		# Moment fort : grands rayons au-dessus du feu et bref éclat de l'écran.
 		var at := _fire.global_position if _fire else _world.camp_position

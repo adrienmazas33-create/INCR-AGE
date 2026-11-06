@@ -183,8 +183,8 @@ func _run() -> void:
 	if exploration:
 		print("DevCapture : exploration : " + exploration.summary())
 	var skill := (_hero as Hero).skill
-	print("DevCapture : compétence %s : %d utilisation(s), %d ennemi(s) touché(s), %d abattu(s) par elle ; recharge restante %.1f s" % [
-		skill.display_name, skill.uses, SweepStrike.hits, SweepStrike.kills, skill.remaining])
+	print("DevCapture : compétence %s : %d utilisation(s), %d ennemi(s) touché(s), %d abattu(s) par elle ; recharge restante %.1f s sur %.2f s" % [
+		skill.display_name, skill.uses, SweepStrike.hits, SweepStrike.kills, skill.remaining, skill.cooldown])
 	var camp := get_tree().current_scene.get_node_or_null("EnemyCamp") as EnemyCamp
 	if camp:
 		print("DevCapture : camp du plateau : état %s, %d capture(s) déclenchée(s), %d défenseur(s) debout, réserve %s, %d récolte(s)" % [

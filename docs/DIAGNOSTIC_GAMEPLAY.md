@@ -207,3 +207,52 @@ buisson testé était caché par les arbres ; la récolte, elle, est comptée).
 chiffres de suivi, aucune erreur ; 46 nœuds de plus pour les lieux et les ressources). Le parcours de
 test suit les chemins et ne frôle ni lieu ni ressource. Captures : `docs/art/g3/` (pierre levée,
 ossements, ancien foyer ; baies ; silex avant et après la cueillette).
+
+## 9. Lot G4 : une civilisation qui débloque (06/11/2026, en attente de validation)
+
+**Un déblocage par stade** (`scripts/progression/upgrades.gd`, `scenes/ui/camp_panel*.gd`) : le panneau
+du feu de camp montre désormais sept lignes (touches 1 à 7). Celles qu'un stade n'a pas encore ouvertes
+restent visibles, grisées, avec le stade qui les ouvrira : le joueur voit ses prochains paliers.
+
+| Stade (prospérité) | Ce qu'il ouvre |
+|---|---|
+| CAMPEMENT (0) | RECRUE, FORCE, AIMANT, VIGUEUR (inchangées) |
+| TRIBU (3) | **FRAPPE** : la recharge de la FRAPPE CIRCULAIRE passe de 6 s à 5,25 / 4,5 / 3,75 / 3 s (4 niveaux) |
+| VILLAGE (8) | **RECOLTE** : +1 vivre ou matériau par cueillette et repousse 20 % plus rapide, par niveau (3 niveaux) ; **AGE DES METAUX**, le grand objectif de l'âge |
+
+Les seuils des stades n'ont pas bougé (les campements déjà construits restent au même stade). Chaque
+passage de stade annonce ce qu'il ouvre (« NOUVELLE AMELIORATION - FRAPPE », puis au village
+« NOUVELLE AMELIORATION - RECOLTE » et « OBJECTIF - AGE DES METAUX ») ; les bandeaux rapprochés passent
+désormais l'un après l'autre au lieu de se recouvrir.
+
+**Objectif « âge suivant »** : AGE DES METAUX, dernière ligne du panneau, détachée par un filet doré, en
+trois étapes (60 / 90 / 135 vivres et matériaux, 6 / 10 / 14 savoirs). Chaque étape a son bandeau
+(« AGE DES METAUX 1/3 ») ; la dernière est un grand moment (rayons, éclat d'écran, son du stade,
+« AGE DES METAUX - TRIBU PRETE »). Le passage effectif à l'âge suivant n'est **pas développé** : l'objectif
+atteint est enregistré (niveau 3 de la ligne `age` dans la sauvegarde) et le panneau affiche
+« TRIBU PRETE ». Il ne compte pas dans la prospérité.
+
+**Courbe allongée** : FORCE monte à 8 niveaux (au lieu de 5), VIGUEUR à 6 (au lieu de 4), mêmes formules
+de coût ; les niveaux déjà achetés coûtent exactement pareil. Tout acheter demande désormais environ
+**580 vivres, 570 matériaux et 72 savoirs**, contre 118, 89 et 8 avant le lot (dont 280, 280 et 30 pour
+l'objectif de l'âge). Estimation, à juger en jouant : avec les zones lointaines et les récoltes, une
+heure de jeu environ au lieu de 20 minutes ; le savoir (ennemis, lieux à découvrir) devient la ressource
+qui rythme la fin.
+
+**Sauvegardes** : aucun champ nouveau ; les lignes `skill`, `harvest` et `age` s'ajoutent aux
+améliorations enregistrées. Une ancienne partie se charge telle quelle (essai : groupe au maximum de
+l'ancienne courbe, FORCE et VIGUEUR rachetables au-delà, coûts conformes).
+
+**Essais** (copies de sauvegardes de test) :
+- stade TRIBU : FRAPPE ouverte, RECOLTE et AGE DES METAUX grisées « STADE VILLAGE » ;
+- passage au VILLAGE par un achat de FRAPPE : bandeau du stade puis les deux annonces, dans l'ordre ;
+  RECOLTE puis les trois étapes de l'objectif achetées, ressources débitées exactement, objectif
+  enregistré, panneau « TRIBU PRETE » ;
+- FRAPPE au maximum : recharge de 3 s ;
+- RECOLTE au maximum : silex à +5 matériaux (contre +2), repoussé et recueilli avant 50 s (120 s sans).
+
+**Sans régression** : tour complet de la carte inchangé (149,6 s, 60 FPS, 7 retours forcés comme aux lots
+G1 à G3, aucune erreur).
+
+Captures : `docs/art/g4/` (panneau au stade TRIBU, panneau au VILLAGE avec l'objectif atteint, bandeau
+de l'objectif).

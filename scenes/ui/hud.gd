@@ -17,6 +17,9 @@ var _labels := {}
 var _bumps := {}
 var _bump_colors := {}
 var _veil := ColorRect.new()
+var _announce_queue: Array[String] = []
+var _announcing := false
+var _announce_current := ""
 
 
 func _ready() -> void:
@@ -49,7 +52,22 @@ func _ready() -> void:
 
 
 ## Bandeau d'annonce en haut de l'écran (évolution du campement) : apparaît, tient, s'efface.
+## Les annonces rapprochées passent l'une après l'autre (lot G4), sans se recouvrir.
 func announce(text: String) -> void:
+	if text in _announce_queue or (_announcing and text == _announce_current):
+		return
+	_announce_queue.append(text)
+	if not _announcing:
+		_next_announce()
+
+
+func _next_announce() -> void:
+	_announcing = not _announce_queue.is_empty()
+	if not _announcing:
+		_announce_current = ""
+		return
+	var text: String = _announce_queue.pop_front()
+	_announce_current = text
 	var band := Node2D.new()
 	var back := UiFrame.new()
 	var label := PixelText.new()
@@ -70,6 +88,8 @@ func announce(text: String) -> void:
 	tween.tween_property(band, "modulate:a", 1.0, 0.3)
 	tween.tween_interval(2.0)
 	tween.tween_property(band, "modulate:a", 0.0, 0.6)
+	# La suivante démarre pendant que celle-ci finit de s'effacer.
+	tween.parallel().tween_callback(_next_announce).set_delay(0.3)
 	tween.tween_callback(band.queue_free)
 
 
