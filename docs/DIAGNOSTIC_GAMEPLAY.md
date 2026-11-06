@@ -208,7 +208,7 @@ chiffres de suivi, aucune erreur ; 46 nœuds de plus pour les lieux et les resso
 test suit les chemins et ne frôle ni lieu ni ressource. Captures : `docs/art/g3/` (pierre levée,
 ossements, ancien foyer ; baies ; silex avant et après la cueillette).
 
-## 9. Lot G4 : une civilisation qui débloque (06/11/2026, validé)
+## 9. Lot G4 : une civilisation qui débloque (06/11/2026, validé et publié)
 
 **Un déblocage par stade** (`scripts/progression/upgrades.gd`, `scenes/ui/camp_panel*.gd`) : le panneau
 du feu de camp montre désormais sept lignes (touches 1 à 7). Celles qu'un stade n'a pas encore ouvertes
